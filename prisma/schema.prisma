@@ -62,7 +62,7 @@ model MenuItem{
   category String
   description String
   image String
-  price Decimal(12,2)
+  price Decimal
   restaurantId Int @unique
   restaurant Restaurant @relation(fields: [id], references: [id])
   menu OrderLine[]
