@@ -19,26 +19,75 @@ model User {
   updatedAt DateTime @updatedAt
 
   email String @unique
-  hash  String
+  password  String
 
-  firstName String?
-  lastName  String?
-  bookmarks  Bookmark[]
+  name String
+  surname  String
+  username String
+  
+  userOwner Owner?
+  userCustomer Customer?
 
-  @@map("users")
 }
 
-model Bookmark {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title       String
-  description String?
-  link        String
-
-  userId Int
+model Owner {
+  id Int @id @default(autoincrement())
+  userId Int @unique
   user   User @relation(fields: [userId], references: [id])
+  restaurant Restaurant?
+}
 
-  @@map("bookmarks")
+model Customer{
+  id Int @id @default(autoincrement())
+  customerAddress String
+  userId Int @unique
+  user User @relation(fields: [userId], references: [id])
+  order Order[]
+}
+
+model Restaurant{
+  id Int @id @default(autoincrement())
+  name String
+  address String
+  ownerId Int @unique
+  orderId Int @unique
+  owner Owner @relation(fields: [ownerId], references: [id])
+  orders Order[]
+  menu MenuItem[]
+}
+
+model MenuItem{
+  id Int @id @default(autoincrement())
+  nameOfDish String
+  category String
+  description String
+  image String
+  price Int
+  restaurantId Int @unique
+  restaurant Restaurant @relation(fields: [id], references: [id])
+  menu OrderLine[]
+
+}
+model Order{
+  id Int @id @default(autoincrement())
+  customerId Int 
+  restaurantId Int
+  orderDate DateTime @default(now())
+  status String
+  totalAmount Int
+  freeDelivery Boolean    @default(false)
+  address String
+  restaurant Restaurant @relation(fields: [id], references: [orderId])
+  customer Customer @relation(fields: [customerId],references: [id])
+  orders OrderLine[]
+}
+
+model OrderLine{
+  id Int @id @default(autoincrement())
+  menuId Int 
+  orderId Int 
+  quantity Int
+  totalPrice Int
+  menu MenuItem @relation(fields: [menuId],references: [id])
+  order Order @relation(fields: [orderId],references: [id])
 }
