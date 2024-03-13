@@ -21,16 +21,16 @@ model User {
   email String @unique
   password  String
 
-  name String
-  surname  String
+  firstName String
+  lastName  String
   username String
   
-  userOwner Owner?
-  userCustomer Customer?
+  owner RestaurantOwner?
+  customer Customer?
 
 }
 
-model Owner {
+model RestaurantOwner {
   id Int @id @default(autoincrement())
   userId Int @unique
   user   User @relation(fields: [userId], references: [id])
@@ -39,7 +39,7 @@ model Owner {
 
 model Customer{
   id Int @id @default(autoincrement())
-  customerAddress String
+  address String
   userId Int @unique
   user User @relation(fields: [userId], references: [id])
   order Order[]
@@ -51,7 +51,7 @@ model Restaurant{
   address String
   ownerId Int @unique
   orderId Int @unique
-  owner Owner @relation(fields: [ownerId], references: [id])
+  owner RestaurantOwner @relation(fields: [ownerId], references: [id])
   orders Order[]
   menu MenuItem[]
 }
@@ -62,7 +62,7 @@ model MenuItem{
   category String
   description String
   image String
-  price Int
+  price Decimal(12,2)
   restaurantId Int @unique
   restaurant Restaurant @relation(fields: [id], references: [id])
   menu OrderLine[]
