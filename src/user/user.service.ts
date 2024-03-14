@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { UserAlreadyExistsError } from './errors';
 
 @Injectable()
 export class UserService {
@@ -22,7 +23,7 @@ export class UserService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException('User Exists');
+          throw new UserAlreadyExistsError('User Already Exists');
         }
       }
       throw error;
