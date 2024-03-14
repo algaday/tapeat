@@ -23,7 +23,7 @@ model User {
 
   firstName String
   lastName  String
-  username String
+  username String @unique
   
   owner RestaurantOwner?
   customer Customer?
