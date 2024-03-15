@@ -3,7 +3,6 @@ import { UserDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserAlreadyExistsError } from './errors';
-import { GetCurrentUser } from 'src/common/decorators';
 
 @Injectable()
 export class UserService {
