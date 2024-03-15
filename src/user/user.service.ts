@@ -3,6 +3,7 @@ import { UserDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserAlreadyExistsError } from './errors';
+import { UserInfo } from 'src/common/decorators';
 
 @Injectable()
 export class UserService {
@@ -39,10 +40,10 @@ export class UserService {
     return user;
   }
 
-  async getUserInfo(user) {
+  async getUserInfo(user: UserInfo) {
     const userInfo = await this.prisma.user.findFirst({
       where: {
-        email: user,
+        id: user.id,
       },
     });
     return userInfo;
