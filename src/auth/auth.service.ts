@@ -1,8 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserDto } from 'src/user/dto';
@@ -19,20 +17,9 @@ export class AuthService {
     // generate the password hash
     const hash = await argon.hash(dto.password);
     //save the new user in the db
-    try {
-      const user = await this.user.createUser({ ...dto, password: hash });
-      //return the saved user
-      return this.signToken(user.id, user.email);
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ForbiddenException(
-            'Credentials are taken, use another email',
-          );
-        }
-      }
-      throw error;
-    }
+    const user = await this.user.createUser({ ...dto, password: hash });
+    //return the saved user
+    return this.signToken(user.id, user.email);
   }
   async signin(dto: AuthDto) {
     //find the user by email}

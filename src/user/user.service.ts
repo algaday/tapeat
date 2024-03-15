@@ -1,8 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { UserAlreadyExistsError } from './errors';
+import { GetCurrentUser } from 'src/common/decorators';
 
 @Injectable()
 export class UserService {
@@ -37,5 +38,14 @@ export class UserService {
       },
     });
     return user;
+  }
+
+  async getUserInfo(user) {
+    const userInfo = await this.prisma.user.findFirst({
+      where: {
+        email: user,
+      },
+    });
+    return userInfo;
   }
 }
