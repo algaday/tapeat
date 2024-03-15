@@ -10,8 +10,9 @@ export class AuthController {
 
   @Public()
   @Post('signup')
-  signup(@Body() dto: UserDto) {
-    return this.authService.signup(dto);
+  async signup(@Body() dto: UserDto) {
+    const user = await this.authService.signup(dto);
+    return this.authService.signToken(user.id, user.email);
   }
 
   @Public()

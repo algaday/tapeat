@@ -13,14 +13,14 @@ export class RestaurantOwnerService {
   ) {}
 
   async restaurantOwnerSignup(dto: UserDto) {
-    const registered = await this.authService.signup(dto);
-    const user = this.jwtService.decode(registered.access_token);
+    const user = await this.authService.signup(dto);
+    // const user = this.jwtService.decode(registered.access_token);
     await this.prisma.restaurantOwner.create({
       data: {
-        userId: user.sub,
+        userId: user.id,
       },
     });
 
-    return registered;
+    return user;
   }
 }

@@ -18,7 +18,7 @@ export class AuthService {
     //save the new user in the db
     const user = await this.user.createUser({ ...dto, password: hash });
     //return the saved user
-    return this.signToken(user.id, user.email);
+    return user;
   }
   async signin(dto: AuthDto) {
     //find the user by email}
