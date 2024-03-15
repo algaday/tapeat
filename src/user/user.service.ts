@@ -9,26 +9,17 @@ import { UserInfo } from 'src/common/decorators';
 export class UserService {
   constructor(private prisma: PrismaService) {}
   async createUser(dto: UserDto) {
-    try {
-      const { email, password, lastName, firstName, username } = dto;
-      const user = await this.prisma.user.create({
-        data: {
-          email,
-          password,
-          lastName,
-          firstName,
-          username,
-        },
-      });
-      return user;
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new UserAlreadyExistsError('User Already Exists');
-        }
-      }
-      throw error;
-    }
+    const { email, password, lastName, firstName, username } = dto;
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        password,
+        lastName,
+        firstName,
+        username,
+      },
+    });
+    return user;
   }
 
   async findUser(email: string) {

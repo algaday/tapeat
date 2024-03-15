@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Response } from 'express';
 import { ApplicationError } from 'src/errors';
 
@@ -30,6 +31,14 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
         timestamp: new Date().toISOString(),
       });
     }
+    if (exception instanceof PrismaClientKnownRequestError) {
+      return response.status(400).json({
+        statusCode: 400,
+        message: 'Email or Username already exists',
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     return response.status(500).json({
       statusCode: 500,
       exception,
