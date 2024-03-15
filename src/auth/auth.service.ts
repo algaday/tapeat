@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserDto } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
   async signup(dto: UserDto) {
     // generate the password hash
-    const hash = await argon.hash(dto.password);
+    const hash = await bcrypt.hash(dto.password, 10);
     //save the new user in the db
     const user = await this.user.createUser({ ...dto, password: hash });
     //return the saved user
@@ -27,7 +27,7 @@ export class AuthService {
     //if user does not exist throw exception
     if (!user) throw new ForbiddenException('Credentials incorrect');
     //compare password
-    const pwMatches = await argon.verify((await user).password, dto.password);
+    const pwMatches = await bcrypt.compare(dto.password, user.password);
     //if password is incorrect throw an exception
     if (!pwMatches) throw new ForbiddenException('Wrong password');
     //send back the user
