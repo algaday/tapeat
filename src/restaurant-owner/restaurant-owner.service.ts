@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserDto } from 'src/user/dto';
@@ -9,18 +8,15 @@ export class RestaurantOwnerService {
   constructor(
     private authService: AuthService,
     private prisma: PrismaService,
-    private jwtService: JwtService,
   ) {}
 
   async restaurantOwnerSignup(dto: UserDto) {
     const user = await this.authService.signup(dto);
-    // const user = this.jwtService.decode(registered.access_token);
     await this.prisma.restaurantOwner.create({
       data: {
         userId: user.id,
       },
     });
-
-    return user;
+    return await this.authService.signToken(user.id, user.email);
   }
 }

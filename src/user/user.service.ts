@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { UserAlreadyExistsError } from './errors';
 import { UserInfo } from 'src/common/decorators';
 
 @Injectable()
