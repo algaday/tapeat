@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { RestaurantDto } from './dto';
 import { GetCurrentUser, UserInfo } from 'src/common/decorators';
@@ -15,4 +15,9 @@ export class RestaurantController {
   ) {
     return this.restaurantService.createRestaurant(dto, userInfo);
   }
+
+  // @Get('info')
+  // getRestaurantInfo(@GetCurrentUser() userInfo: UserInfo) {
+  //   return this.restaurantService.getRestaurantInfo(userInfo);
+  // }
 }

@@ -16,8 +16,14 @@ export class RestaurantService {
         ownerId: userInfo.id,
       },
     });
-    console.log(restaurantCreated);
 
-    return 'Hello Algaday restaurant owner';
+    return restaurantCreated;
+  }
+
+  async getRestaurantInfo(userInfo: UserInfo) {
+    const restaurantInfo = await this.prisma.restaurant.findUnique({
+      where: { ownerId: userInfo.id },
+    });
+    return restaurantInfo;
   }
 }
