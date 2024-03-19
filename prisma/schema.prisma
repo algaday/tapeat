@@ -50,8 +50,8 @@ model Restaurant{
   name String
   address String
   ownerId Int @unique
-  orderId Int @unique
-  owner RestaurantOwner @relation(fields: [ownerId], references: [id])
+  orderId Int? @unique
+  owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
   orders Order[]
   menu MenuItem[]
 }
