@@ -9,7 +9,7 @@ export class RestaurantService {
   async createRestaurant(dto: RestaurantDto, userInfo: UserInfo) {
     const { name, address } = dto;
 
-    const restaurantCreated = await this.prisma.restaurant.create({
+    const restaurant = await this.prisma.restaurant.create({
       data: {
         name,
         address,
@@ -17,13 +17,13 @@ export class RestaurantService {
       },
     });
 
-    return restaurantCreated;
+    return restaurant;
   }
 
-  async getRestaurantInfo(userInfo: UserInfo) {
-    const restaurantInfo = await this.prisma.restaurant.findUnique({
+  async getRestaurantByOwnerId(userInfo: UserInfo) {
+    const restaurant = await this.prisma.restaurant.findUnique({
       where: { ownerId: userInfo.id },
     });
-    return restaurantInfo;
+    return restaurant;
   }
 }
