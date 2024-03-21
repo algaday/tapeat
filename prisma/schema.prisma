@@ -71,18 +71,22 @@ model MenuItem{
 
 model Variation {
   id Int @id @default(autoincrement())
-  name String
+  name String 
   menuItemId Int
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
   variationChoice VariationChoice[]  
+  @@unique([name, menuItemId])
+
 }
 
 model VariationChoice {
   id Int @id @default(autoincrement())
   variationId Int
-  name String
+  name String 
   price Decimal @db.Decimal(12,2)
   variation Variation @relation(fields: [variationId], references: [id])
+  @@unique([variationId, name])
+
 }
 
 model Order{

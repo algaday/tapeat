@@ -3,11 +3,12 @@ import {
   IsArray,
   IsDefined,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 
-class Variation {
+export class Variation {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -50,6 +51,7 @@ export class MenuDto {
   @IsNotEmpty()
   price: string;
 
+  @IsOptional()
   @IsArray()
   @ValidateNested()
   @Type(() => Variation)
