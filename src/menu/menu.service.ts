@@ -12,8 +12,8 @@ export class MenuService {
   ) {}
   async createMenuItem(dto: MenuDto, userInfo: UserInfo) {
     const { name, category, description, image, price } = dto;
-    const restaurantInfo =
-      await this.restaurantService.getRestaurantInfo(userInfo);
+    const restaurant =
+      await this.restaurantService.getRestaurantByOwnerId(userInfo);
 
     const createMenuItem = await this.prisma.menuItem.create({
       data: {
@@ -22,7 +22,7 @@ export class MenuService {
         description,
         image,
         price,
-        restaurantId: restaurantInfo.id,
+        restaurantId: restaurant.id,
       },
     });
     return createMenuItem;
