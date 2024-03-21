@@ -33,9 +33,9 @@ export class MenuService {
       return createMenuItem;
     }
 
-    const createVariation = await this.addVariationToMenuItem(variation);
+    const menuItem = await this.addVariationToMenuItem(variation);
 
-    return createVariation;
+    return menuItem;
   }
 
   async addVariationToMenuItem(data: Variation[]) {
