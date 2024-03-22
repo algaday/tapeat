@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class Variation {
+export class Modification {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -16,11 +16,11 @@ export class Variation {
   @IsDefined()
   @IsArray()
   @ValidateNested()
-  @Type(() => VariationOptions)
-  options: VariationOptions[];
+  @Type(() => ModificationGroup)
+  options: ModificationGroup[];
 }
 
-class VariationOptions {
+class ModificationGroup {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -54,6 +54,6 @@ export class MenuDto {
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => Variation)
-  variation?: Variation[];
+  @Type(() => Modification)
+  modifications?: Modification[];
 }

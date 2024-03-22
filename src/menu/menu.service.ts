@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MenuDto, Variation } from './dto/menu.dto';
+import { MenuDto, Modification } from './dto/menu.dto';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { UserInfo } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,11 +12,11 @@ export class MenuService {
     private prisma: PrismaService,
   ) {}
   async createMenuItem(dto: MenuDto, userInfo: UserInfo) {
-    const { name, category, description, image, price, variation } = dto;
+    const { name, category, description, image, price, modifications } = dto;
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(userInfo);
 
-    const createMenuItem = await this.prisma.menuItem.create({
+    const menuItem = await this.prisma.menuItem.create({
       data: {
         nameOfDish: name,
         category,
@@ -27,31 +27,32 @@ export class MenuService {
       },
     });
 
-    this.menuId = createMenuItem.id;
+    this.menuId = menuItem.id;
 
-    if (!variation || variation.length === 0) {
-      return createMenuItem;
+    if (!modifications || modifications?.length === 0) {
+      return menuItem;
     }
 
-    const menuItem = await this.addVariationToMenuItem(variation);
+    const menuItemWithModifications =
+      await this.addModificationsToMenuItem(modifications);
 
-    return menuItem;
+    return menuItemWithModifications;
   }
 
-  async addVariationToMenuItem(data: Variation[]) {
-    for (let i = 0; i < data.length; i++) {
-      const variant = await this.prisma.variation.create({
+  async addModificationsToMenuItem(modifications: Modification[]) {
+    for (const modification of modifications) {
+      const modificationItem = await this.prisma.modification.create({
         data: {
-          name: data[i].name,
+          name: modification.name,
           menuItemId: this.menuId,
         },
       });
 
-      await this.prisma.variationChoice.createMany({
-        data: data[i].options.map((item) => ({
-          name: item.name,
-          price: item.price,
-          variationId: variant.id,
+      await this.prisma.modificationGroup.createMany({
+        data: modification.options.map((modificationOptionItem) => ({
+          name: modificationOptionItem.name,
+          price: modificationOptionItem.price,
+          modificationId: modificationItem.id,
         })),
         skipDuplicates: true,
       });
