@@ -29,7 +29,7 @@ export class MenuService {
 
     this.menuId = menuItem.id;
 
-    if (!modifications || modifications?.length === 0) {
+    if (modifications?.length === 0) {
       return menuItem;
     }
 
