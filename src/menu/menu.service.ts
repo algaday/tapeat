@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MenuDto, Modification } from './dto/menu.dto';
+import { MenuDto, ModificationGroup } from './dto/menu.dto';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { UserInfo } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,7 +12,8 @@ export class MenuService {
     private prisma: PrismaService,
   ) {}
   async createMenuItem(dto: MenuDto, userInfo: UserInfo) {
-    const { name, category, description, image, price, modifications } = dto;
+    const { name, category, description, image, price, modificationGroups } =
+      dto;
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(userInfo);
 
@@ -29,30 +30,30 @@ export class MenuService {
 
     this.menuId = menuItem.id;
 
-    if (modifications?.length === 0) {
+    if (modificationGroups?.length === 0) {
       return menuItem;
     }
 
     const menuItemWithModifications =
-      await this.addModificationsToMenuItem(modifications);
+      await this.addMenuItemModificationGroups(modificationGroups);
 
     return menuItemWithModifications;
   }
 
-  async addModificationsToMenuItem(modifications: Modification[]) {
-    for (const modification of modifications) {
-      const modificationItem = await this.prisma.modification.create({
+  async addMenuItemModificationGroups(modificationGroups: ModificationGroup[]) {
+    for (const modification of modificationGroups) {
+      const modificationItem = await this.prisma.modificationGroup.create({
         data: {
           name: modification.name,
           menuItemId: this.menuId,
         },
       });
 
-      await this.prisma.modificationGroup.createMany({
+      await this.prisma.modification.createMany({
         data: modification.options.map((modificationOptionItem) => ({
           name: modificationOptionItem.name,
           price: modificationOptionItem.price,
-          modificationId: modificationItem.id,
+          modificationGroupId: modificationItem.id,
         })),
         skipDuplicates: true,
       });

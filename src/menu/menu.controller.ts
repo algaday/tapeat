@@ -8,7 +8,7 @@ import { JwtGuard } from 'src/common/guards/jwt-guard';
 @Controller('menu')
 export class MenuController {
   constructor(private menuService: MenuService) {}
-  @Post('create-menu')
+  @Post('create-menu-item')
   createMenuItem(@Body() dto: MenuDto, @GetCurrentUser() userInfo: UserInfo) {
     return this.menuService.createMenuItem(dto, userInfo);
   }

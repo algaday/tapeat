@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class Modification {
+export class ModificationGroup {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -16,11 +16,11 @@ export class Modification {
   @IsDefined()
   @IsArray()
   @ValidateNested()
-  @Type(() => ModificationGroup)
-  options: ModificationGroup[];
+  @Type(() => Modification)
+  options: Modification[];
 }
 
-class ModificationGroup {
+class Modification {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -54,6 +54,6 @@ export class MenuDto {
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => Modification)
-  modifications?: Modification[];
+  @Type(() => ModificationGroup)
+  modificationGroups?: ModificationGroup[];
 }
