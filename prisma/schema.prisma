@@ -46,7 +46,7 @@ model Customer{
 }
 
 model Restaurant{
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String
   address String
   ownerId Int @unique
@@ -61,12 +61,23 @@ model MenuItem{
   nameOfDish String
   category String
   description String
-  image String
   price Decimal @db.Decimal(12,2)
-  restaurantId Int 
+  restaurantId String 
+  imageId Int @unique
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
   modificationGroups ModificationGroup[]   
   orderLines OrderLine[]
+  image MenuItemImage @relation(fields: [imageId], references: [id])
+}
+
+model MenuItemImage{
+  id Int @id @default(autoincrement())
+  originalPath String
+  thumbnailPath String?
+  isAssigned Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  menuItem MenuItem?
 }
 
 model ModificationGroup {

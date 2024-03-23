@@ -45,10 +45,6 @@ export class CreateMenuItemDto {
 
   @IsString()
   @IsNotEmpty()
-  image: string;
-
-  @IsString()
-  @IsNotEmpty()
   price: string;
 
   @IsOptional()
