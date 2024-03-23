@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { MenuDto, ModificationGroup } from './dto/menu.dto';
+
 import { RestaurantService } from 'src/restaurant/restaurant.service';
-import { UserInfo } from 'src/common/decorators';
+import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateMenuItemDto, ModificationGroupDto } from './dto';
 
 @Injectable()
 export class MenuService {
@@ -11,7 +12,7 @@ export class MenuService {
     private restaurantService: RestaurantService,
     private prisma: PrismaService,
   ) {}
-  async createMenuItem(dto: MenuDto, userInfo: UserInfo) {
+  async createMenuItem(dto: CreateMenuItemDto, userInfo: AuthUser) {
     const { name, category, description, image, price, modificationGroups } =
       dto;
     const restaurant =
@@ -40,7 +41,9 @@ export class MenuService {
     return menuItemWithModifications;
   }
 
-  async addMenuItemModificationGroups(modificationGroups: ModificationGroup[]) {
+  async addMenuItemModificationGroups(
+    modificationGroups: ModificationGroupDto[],
+  ) {
     for (const modification of modificationGroups) {
       const modificationItem = await this.prisma.modificationGroup.create({
         data: {
