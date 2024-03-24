@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { RestaurantDto } from './dto';
-import { GetCurrentUser, UserInfo } from 'src/common/decorators';
+import { GetCurrentUser, AuthUser } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
 
 @UseGuards(JwtGuard)
@@ -11,7 +11,7 @@ export class RestaurantController {
   @Post('create')
   createRestaurant(
     @Body() dto: RestaurantDto,
-    @GetCurrentUser() userInfo: UserInfo,
+    @GetCurrentUser() userInfo: AuthUser,
   ) {
     return this.restaurantService.createRestaurant(dto, userInfo);
   }

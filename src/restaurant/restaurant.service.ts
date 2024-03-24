@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { RestaurantDto } from './dto';
-import { UserInfo } from 'src/common/decorators';
+import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class RestaurantService {
   constructor(private prisma: PrismaService) {}
-  async createRestaurant(dto: RestaurantDto, userInfo: UserInfo) {
+  async createRestaurant(dto: RestaurantDto, userInfo: AuthUser) {
     const { name, address } = dto;
 
     const restaurant = await this.prisma.restaurant.create({
@@ -20,7 +20,7 @@ export class RestaurantService {
     return restaurant;
   }
 
-  async getRestaurantByOwnerId(userInfo: UserInfo) {
+  async getRestaurantByOwnerId(userInfo: AuthUser) {
     const restaurant = await this.prisma.restaurant.findUnique({
       where: { ownerId: userInfo.id },
     });

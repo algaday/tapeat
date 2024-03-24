@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserInfo } from 'src/common/decorators';
+import { AuthUser } from 'src/common/decorators';
 
 @Injectable()
 export class UserService {
@@ -29,7 +29,7 @@ export class UserService {
     return user;
   }
 
-  async getUserInfo(user: UserInfo) {
+  async getUserInfo(user: AuthUser) {
     const userInfo = await this.prisma.user.findFirst({
       where: {
         id: user.id,

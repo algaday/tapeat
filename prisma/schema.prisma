@@ -42,18 +42,18 @@ model Customer{
   address String
   userId Int @unique
   user User @relation(fields: [userId], references: [id])
-  order Order[]
+  orders Order[]
 }
 
 model Restaurant{
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   name String
   address String
   ownerId Int @unique
   orderId Int? @unique
   owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
   orders Order[]
-  menu MenuItem[]
+  menus MenuItem[]
 }
 
 model MenuItem{
@@ -61,32 +61,41 @@ model MenuItem{
   nameOfDish String
   category String
   description String
-  image String
   price Decimal @db.Decimal(12,2)
-  restaurantId Int 
+  restaurantId String 
+  imageId Int @unique
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
-  modification Modification[]   
-  menu OrderLine[]
+  modificationGroups ModificationGroup[]   
+  orderLines OrderLine[]
+  image MenuItemImage @relation(fields: [imageId], references: [id])
 }
 
-model Modification {
+model MenuItemImage{
   id Int @id @default(autoincrement())
-  name String 
-  menuItemId Int
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-  modificationGroup ModificationGroup[]  
-  @@unique([name, menuItemId])
-
+  originalPath String
+  thumbnailPath String?
+  isAssigned Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  menuItem MenuItem?
 }
 
 model ModificationGroup {
   id Int @id @default(autoincrement())
-  modificationId Int
-  name String 
-  price Decimal @db.Decimal(12,2)
-  modification Modification @relation(fields: [modificationId], references: [id])
-  @@unique([modificationId, name])
+  name String
+  menuItemId Int
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+  modifications Modification[]
+  @@unique([name, menuItemId])
+}
 
+model Modification {
+  id Int @id @default(autoincrement())
+  modificationGroupId Int
+  name String
+  price Decimal @db.Decimal(12,2) @default(0)
+  modificationGroup ModificationGroup @relation(fields: [modificationGroupId], references: [id])
+  @@unique([modificationGroupId, name])
 }
 
 model Order{
@@ -100,15 +109,15 @@ model Order{
   address String
   restaurant Restaurant @relation(fields: [id], references: [orderId])
   customer Customer @relation(fields: [customerId],references: [id])
-  orders OrderLine[]
+  orderLines OrderLine[]
 }
 
 model OrderLine{
   id Int @id @default(autoincrement())
-  menuId Int 
+  menuItemId Int 
   orderId Int 
   quantity Int
   totalPrice Int
-  menu MenuItem @relation(fields: [menuId],references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId],references: [id])
   order Order @relation(fields: [orderId],references: [id])
 }
