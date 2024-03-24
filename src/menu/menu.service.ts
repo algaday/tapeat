@@ -18,25 +18,26 @@ export class MenuService {
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(userInfo);
 
-    const menuItem = await this.prisma.menuItem.create({
-      data: {
-        nameOfDish: name,
-        category,
-        description,
-        price,
-        imageId,
-        restaurantId: restaurant.id,
-      },
-    });
-
-    await this.prisma.image.update({
-      where: {
-        id: imageId,
-      },
-      data: {
-        isAssigned: true,
-      },
-    });
+    const [menuItem] = await this.prisma.$transaction([
+      this.prisma.menuItem.create({
+        data: {
+          nameOfDish: name,
+          category,
+          description,
+          price,
+          imageId,
+          restaurantId: restaurant.id,
+        },
+      }),
+      this.prisma.image.update({
+        where: {
+          id: imageId,
+        },
+        data: {
+          isAssigned: true,
+        },
+      }),
+    ]);
 
     if (modificationGroups?.length === 0) {
       return menuItem;
