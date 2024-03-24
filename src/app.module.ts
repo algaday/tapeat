@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { RestaurantOwnerModule } from './restaurant-owner/restaurant-owner.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { MenuModule } from './menu/menu.module';
+import { MediaModule } from './media/media.module';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { MenuModule } from './menu/menu.module';
     RestaurantOwnerModule,
     RestaurantModule,
     MenuModule,
+    MediaModule,
+    S3Module,
   ],
 })
 export class AppModule {}

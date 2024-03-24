@@ -26,21 +26,4 @@ export class MenuController {
   ) {
     return this.menuService.createMenuItem(dto, userInfo);
   }
-
-  @Post('upload-image')
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadMenuItemImage(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1000000 }),
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-        ],
-      }),
-    )
-    image: Express.Multer.File,
-    @GetCurrentUser() currentUser: AuthUser,
-  ) {
-    return await this.menuService.uploadMenuItemImage(image, currentUser);
-  }
 }
