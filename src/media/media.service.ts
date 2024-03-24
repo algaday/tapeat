@@ -25,6 +25,7 @@ export class MediaService {
     return await this.prisma.image.create({
       data: {
         originalPath: `/${imageSlug}`,
+        restaurantId: restaurant.id,
       },
     });
   }
