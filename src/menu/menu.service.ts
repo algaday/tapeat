@@ -52,13 +52,13 @@ export class MenuService {
 
   async addMenuItemModificationGroups(
     modificationGroups: ModificationGroupDto[],
-    menuId: number,
+    menuItemId: string,
   ) {
     for (const modification of modificationGroups) {
       const modificationItem = await this.prisma.modificationGroup.create({
         data: {
           name: modification.name,
-          menuItemId: menuId,
+          menuItemId,
         },
       });
 
@@ -73,7 +73,7 @@ export class MenuService {
     }
     return await this.prisma.menuItem.findUnique({
       where: {
-        id: menuId,
+        id: menuItemId,
       },
     });
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
-import { S3Service } from 'src/s3/s3.service';
+import { S3Service } from 'src/common/services/s3/s3.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()

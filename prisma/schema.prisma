@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -31,39 +31,39 @@ model User {
 }
 
 model RestaurantOwner {
-  id Int @id @default(autoincrement())
-  userId Int @unique
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId String @unique @db.Uuid
   user   User @relation(fields: [userId], references: [id])
   restaurant Restaurant?
 }
 
 model Customer{
-  id Int @id @default(autoincrement())
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   address String
-  userId Int @unique
+  userId String @unique @db.Uuid
   user User @relation(fields: [userId], references: [id])
   orders Order[]
 }
 
 model Restaurant{
-  id String @id @default(uuid())
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name String
   address String
-  ownerId Int @unique
-  orderId Int? @unique
+  ownerId String @unique @db.Uuid
+  orderId String? @unique @db.Uuid
   owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
   orders Order[]
   menus MenuItem[]
 }
 
 model MenuItem{
-  id Int @id @default(autoincrement())
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   nameOfDish String
   category String
   description String
   price Decimal @db.Decimal(12,2)
-  restaurantId String 
-  imageId String
+  restaurantId String @db.Uuid
+  imageId String @db.Uuid
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
   modificationGroups ModificationGroup[]   
   orderLines OrderLine[]
@@ -71,8 +71,8 @@ model MenuItem{
 }
 
 model Image{
-  id String @id @default(uuid())
-  restaurantId String?
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  restaurantId String? @db.Uuid
   originalPath String
   thumbnailPath String?
   isAssigned Boolean @default(false)
@@ -82,17 +82,17 @@ model Image{
 }
 
 model ModificationGroup {
-  id Int @id @default(autoincrement())
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name String
-  menuItemId Int
+  menuItemId String @db.Uuid
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
   modifications Modification[]
   @@unique([name, menuItemId])
 }
 
 model Modification {
-  id Int @id @default(autoincrement())
-  modificationGroupId Int
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  modificationGroupId String @db.Uuid
   name String
   price Decimal @db.Decimal(12,2) @default(0)
   modificationGroup ModificationGroup @relation(fields: [modificationGroupId], references: [id])
@@ -100,9 +100,9 @@ model Modification {
 }
 
 model Order{
-  id Int @id @default(autoincrement())
-  customerId Int 
-  restaurantId Int
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  customerId String @db.Uuid 
+  restaurantId String @db.Uuid
   orderDate DateTime @default(now())
   status String
   totalAmount Int
@@ -114,9 +114,9 @@ model Order{
 }
 
 model OrderLine{
-  id Int @id @default(autoincrement())
-  menuItemId Int 
-  orderId Int 
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuItemId String @db.Uuid
+  orderId String @db.Uuid 
   quantity Int
   totalPrice Int
   menuItem MenuItem @relation(fields: [menuItemId],references: [id])

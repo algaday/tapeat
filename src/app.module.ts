@@ -7,7 +7,7 @@ import { RestaurantOwnerModule } from './restaurant-owner/restaurant-owner.modul
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { MenuModule } from './menu/menu.module';
 import { MediaModule } from './media/media.module';
-import { S3Module } from './s3/s3.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { S3Module } from './s3/s3.module';
     RestaurantModule,
     MenuModule,
     MediaModule,
-    S3Module,
+    CommonModule,
   ],
 })
 export class AppModule {}
