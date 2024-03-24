@@ -51,7 +51,7 @@ model Restaurant{
   address String
   ownerId String @unique @db.Uuid
   orderId String? @unique @db.Uuid
-  owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
+  owner RestaurantOwner @relation(fields: [ownerId], references: [id])
   orders Order[]
   menus MenuItem[]
 }
