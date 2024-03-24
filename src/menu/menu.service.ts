@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateMenuItemDto, ModificationGroupDto } from './dto';
+import { CreateMenuItemDto, ModificationDto } from './dto';
 
 @Injectable()
 export class MenuService {
@@ -13,8 +13,7 @@ export class MenuService {
   ) {}
 
   async createMenuItem(dto: CreateMenuItemDto, userInfo: AuthUser) {
-    const { name, category, description, price, imageId, modificationGroups } =
-      dto;
+    const { name, category, description, price, imageId, modifications } = dto;
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(userInfo);
 
@@ -39,43 +38,34 @@ export class MenuService {
       }),
     ]);
 
-    if (modificationGroups?.length === 0) {
+    if (!modifications || modifications?.length === 0) {
       return menuItem;
     }
 
-    const menuItemWithModifications = await this.addMenuItemModificationGroups(
-      modificationGroups,
-      menuItem.id,
-    );
+    const modificationWithMenu =
+      await this.prisma.menuItemWithModification.createMany({
+        data: modifications.map((modification) => ({
+          menuItemId: menuItem.id,
+          modificationId: modification.modificationId,
+          price: modification.price,
+        })),
+      });
 
-    return menuItemWithModifications;
+    return modificationWithMenu;
   }
 
-  async addMenuItemModificationGroups(
-    modificationGroups: ModificationGroupDto[],
-    menuItemId: string,
-  ) {
-    for (const modification of modificationGroups) {
-      const modificationItem = await this.prisma.modificationGroup.create({
-        data: {
-          name: modification.name,
-          menuItemId,
-        },
-      });
-
-      await this.prisma.modification.createMany({
-        data: modification.options.map((modificationOptionItem) => ({
-          name: modificationOptionItem.name,
-          price: modificationOptionItem.price,
-          modificationGroupId: modificationItem.id,
-        })),
-        skipDuplicates: true,
-      });
-    }
-    return await this.prisma.menuItem.findUnique({
-      where: {
-        id: menuItemId,
+  async createModification(dto: ModificationDto) {
+    const modification = await this.prisma.modification.create({
+      data: {
+        name: dto.name,
+        price: dto.price,
+        groupName: dto.group,
       },
     });
+    return modification;
+  }
+
+  async getModifications() {
+    return await this.prisma.modification.findMany();
   }
 }

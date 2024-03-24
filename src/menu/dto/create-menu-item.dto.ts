@@ -1,29 +1,16 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
-  IsDefined,
   IsNotEmpty,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 
-export class ModificationGroupDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-
-  @IsDefined()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => Modification)
-  options: Modification[];
-}
-
 class Modification {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  modificationId: string;
 
   @IsNotEmpty()
   @IsString()
@@ -54,6 +41,20 @@ export class CreateMenuItemDto {
   @IsOptional()
   @IsArray()
   @ValidateNested()
-  @Type(() => ModificationGroupDto)
-  modificationGroups?: ModificationGroupDto[];
+  @Type(() => Modification)
+  modifications?: Modification[];
+}
+
+export class ModificationDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  price: number;
+
+  @IsString()
+  @IsNotEmpty()
+  group: string;
 }
