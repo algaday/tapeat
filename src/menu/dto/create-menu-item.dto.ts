@@ -44,17 +44,3 @@ export class CreateMenuItemDto {
   @Type(() => Modification)
   modifications?: Modification[];
 }
-
-export class ModificationDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  price: number;
-
-  @IsString()
-  @IsNotEmpty()
-  group: string;
-}

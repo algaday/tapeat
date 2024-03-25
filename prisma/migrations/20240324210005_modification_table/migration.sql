@@ -36,7 +36,7 @@ CREATE TABLE "MenuItemWithModification" (
 CREATE UNIQUE INDEX "Modification_name_key" ON "Modification"("name");
 
 -- AddForeignKey
-ALTER TABLE "MenuItemWithModification" ADD CONSTRAINT "MenuItemWithModification_menuItemId_fkey" FOREIGN KEY ("menuItemId") REFERENCES "MenuItem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "MenuItemWithModification" ADD CONSTRAINT "MenuItemWithModification_menuItemId_fkey" FOREIGN KEY ("menuItemId") REFERENCES "MenuItem"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MenuItemWithModification" ADD CONSTRAINT "MenuItemWithModification_modificationId_fkey" FOREIGN KEY ("modificationId") REFERENCES "Modification"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "MenuItemWithModification" ADD CONSTRAINT "MenuItemWithModification_modificationId_fkey" FOREIGN KEY ("modificationId") REFERENCES "Modification"("id") ON DELETE CASCADE ON UPDATE CASCADE;

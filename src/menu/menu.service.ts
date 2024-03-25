@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateMenuItemDto, ModificationDto } from './dto';
+import { CreateMenuItemDto } from './dto';
+import { CreateModificationDto } from './dto/create-modification.dto';
 
 @Injectable()
 export class MenuService {
@@ -43,7 +44,7 @@ export class MenuService {
     }
 
     const modificationWithMenu =
-      await this.prisma.menuItemWithModification.createMany({
+      await this.prisma.menuItemModification.createMany({
         data: modifications.map((modification) => ({
           menuItemId: menuItem.id,
           modificationId: modification.modificationId,
@@ -54,18 +55,30 @@ export class MenuService {
     return modificationWithMenu;
   }
 
-  async createModification(dto: ModificationDto) {
-    const modification = await this.prisma.modification.create({
-      data: {
-        name: dto.name,
-        price: dto.price,
-        groupName: dto.group,
-      },
-    });
-    return modification;
+  async createModification(dto: CreateModificationDto) {
+    const { modificationGroups } = dto;
+
+    for (const modificationGroup of modificationGroups) {
+      const modification = await this.prisma.modificationGroup.create({
+        data: {
+          name: modificationGroup.name,
+        },
+      });
+
+      await this.prisma.modification.createMany({
+        data: modificationGroup.options.map((modificationOptionItem) => ({
+          name: modificationOptionItem.name,
+          price: modificationOptionItem.price,
+          groupId: modification.id,
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    return 'Modification Group Created';
   }
 
   async getModifications() {
-    return await this.prisma.modification.findMany();
+    return await this.prisma.modificationGroup.findMany();
   }
 }
