@@ -43,39 +43,33 @@ export class MenuService {
       return menuItem;
     }
 
-    const menuItemWithModifications = await this.addMenuItemModificationGroups(
-      modificationGroups,
-      menuItem.id,
-    );
+    await this.prisma.menuItemModificationGroup.createMany({
+      data: modificationGroups.map((modification) => ({
+        menuItemId: menuItem.id,
+        modificationId: modification,
+      })),
+    });
 
-    return menuItemWithModifications;
+    return 'created menu with modification';
   }
 
-  async addMenuItemModificationGroups(
-    modificationGroups: ModificationGroupDto[],
-    menuItemId: string,
-  ) {
-    for (const modification of modificationGroups) {
-      const modificationItem = await this.prisma.modificationGroup.create({
+  async createModificationGroup(modificationGroups: ModificationGroupDto[]) {
+    for (const modificationGroup of modificationGroups) {
+      const modificationGroupItem = await this.prisma.modificationGroup.create({
         data: {
-          name: modification.name,
-          menuItemId,
+          name: modificationGroup.name,
         },
       });
 
       await this.prisma.modification.createMany({
-        data: modification.options.map((modificationOptionItem) => ({
+        data: modificationGroup.options.map((modificationOptionItem) => ({
           name: modificationOptionItem.name,
           price: modificationOptionItem.price,
-          modificationGroupId: modificationItem.id,
+          modificationGroupId: modificationGroupItem.id,
         })),
         skipDuplicates: true,
       });
     }
-    return await this.prisma.menuItem.findUnique({
-      where: {
-        id: menuItemId,
-      },
-    });
+    return await this.prisma.modificationGroup.findMany();
   }
 }

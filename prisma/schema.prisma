@@ -65,8 +65,8 @@ model MenuItem{
   restaurantId String @db.Uuid
   imageId String @db.Uuid
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
-  modificationGroups ModificationGroup[]   
   orderLines OrderLine[]
+  modificationGroup MenuItemModificationGroup[]
   image Image @relation(fields: [imageId], references: [id])
 }
 
@@ -81,13 +81,18 @@ model Image{
   menuItems MenuItem[]
 }
 
+model MenuItemModificationGroup{
+  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuItemId String @db.Uuid
+  modificationId String @db.Uuid
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+  modificationGroup ModificationGroup @relation(fields: [modificationId], references: [id])
+}
 model ModificationGroup {
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name String
-  menuItemId String @db.Uuid
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+  menuItem MenuItemModificationGroup[]
   modifications Modification[]
-  @@unique([name, menuItemId])
 }
 
 model Modification {
