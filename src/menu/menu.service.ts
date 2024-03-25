@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateMenuItemDto } from './dto';
-import { CreateModificationDto } from './dto/create-modification.dto';
+import { CreateMenuItemDto, ModificationGroupDto } from './dto';
 
 @Injectable()
 export class MenuService {
@@ -14,7 +13,8 @@ export class MenuService {
   ) {}
 
   async createMenuItem(dto: CreateMenuItemDto, userInfo: AuthUser) {
-    const { name, category, description, price, imageId, modifications } = dto;
+    const { name, category, description, price, imageId, modificationGroups } =
+      dto;
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(userInfo);
 
@@ -39,27 +39,23 @@ export class MenuService {
       }),
     ]);
 
-    if (!modifications || modifications?.length === 0) {
+    if (modificationGroups?.length === 0) {
       return menuItem;
     }
 
-    const modificationWithMenu =
-      await this.prisma.menuItemModification.createMany({
-        data: modifications.map((modification) => ({
-          menuItemId: menuItem.id,
-          modificationId: modification.modificationId,
-          price: modification.price,
-        })),
-      });
+    await this.prisma.menuItemModificationGroup.createMany({
+      data: modificationGroups.map((modification) => ({
+        menuItemId: menuItem.id,
+        modificationId: modification,
+      })),
+    });
 
-    return modificationWithMenu;
+    return 'created menu with modification';
   }
 
-  async createModification(dto: CreateModificationDto) {
-    const { modificationGroups } = dto;
-
+  async createModificationGroup(modificationGroups: ModificationGroupDto[]) {
     for (const modificationGroup of modificationGroups) {
-      const modification = await this.prisma.modificationGroup.create({
+      const modificationGroupItem = await this.prisma.modificationGroup.create({
         data: {
           name: modificationGroup.name,
         },
@@ -69,16 +65,11 @@ export class MenuService {
         data: modificationGroup.options.map((modificationOptionItem) => ({
           name: modificationOptionItem.name,
           price: modificationOptionItem.price,
-          groupId: modification.id,
+          modificationGroupId: modificationGroupItem.id,
         })),
         skipDuplicates: true,
       });
     }
-
-    return 'Modification Group Created';
-  }
-
-  async getModifications() {
     return await this.prisma.modificationGroup.findMany();
   }
 }

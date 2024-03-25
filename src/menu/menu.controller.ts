@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { MenuService } from './menu.service';
-import { CreateMenuItemDto } from './dto/create-menu-item.dto';
+import {
+  CreateMenuItemDto,
+  ModificationGroupDto,
+} from './dto/create-menu-item.dto';
 import { GetCurrentUser, AuthUser } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
-import { CreateModificationDto } from './dto/create-modification.dto';
 
 @UseGuards(JwtGuard)
 @Controller('menu')
@@ -18,12 +20,7 @@ export class MenuController {
   }
 
   @Post('modifications')
-  createModification(@Body() dto: CreateModificationDto) {
-    return this.menuService.createModification(dto);
-  }
-
-  @Get('modifications')
-  getModifications() {
-    return this.menuService.getModifications();
+  createModificationGroup(@Body() dto: ModificationGroupDto[]) {
+    return this.menuService.createModificationGroup(dto);
   }
 }
