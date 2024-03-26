@@ -53,5 +53,5 @@ export class CreateMenuItemDto {
 
   @IsOptional()
   @IsArray()
-  modificationGroups?: string[];
+  modificationGroupIds?: string[];
 }

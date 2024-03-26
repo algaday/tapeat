@@ -13,8 +13,14 @@ export class MenuService {
   ) {}
 
   async createMenuItem(dto: CreateMenuItemDto, userInfo: AuthUser) {
-    const { name, category, description, price, imageId, modificationGroups } =
-      dto;
+    const {
+      name,
+      category,
+      description,
+      price,
+      imageId,
+      modificationGroupIds,
+    } = dto;
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(userInfo);
 
@@ -39,37 +45,36 @@ export class MenuService {
       }),
     ]);
 
-    if (modificationGroups?.length === 0) {
+    if (modificationGroupIds?.length === 0) {
       return menuItem;
     }
 
     await this.prisma.menuItemModificationGroup.createMany({
-      data: modificationGroups.map((modification) => ({
+      data: modificationGroupIds.map((modification) => ({
         menuItemId: menuItem.id,
         modificationId: modification,
       })),
     });
 
-    return 'created menu with modification';
+    return menuItem;
   }
 
-  async createModificationGroup(modificationGroups: ModificationGroupDto[]) {
-    for (const modificationGroup of modificationGroups) {
-      const modificationGroupItem = await this.prisma.modificationGroup.create({
-        data: {
-          name: modificationGroup.name,
-        },
-      });
+  async createModificationGroup(modificationGroupDto: ModificationGroupDto) {
+    const modificationGroup = await this.prisma.modificationGroup.create({
+      data: {
+        name: modificationGroupDto.name,
+      },
+    });
 
-      await this.prisma.modification.createMany({
-        data: modificationGroup.options.map((modificationOptionItem) => ({
-          name: modificationOptionItem.name,
-          price: modificationOptionItem.price,
-          modificationGroupId: modificationGroupItem.id,
-        })),
-        skipDuplicates: true,
-      });
-    }
-    return await this.prisma.modificationGroup.findMany();
+    await this.prisma.modification.createMany({
+      data: modificationGroupDto.options.map((modification) => ({
+        name: modification.name,
+        price: modification.price,
+        modificationGroupId: modificationGroup.id,
+      })),
+      skipDuplicates: true,
+    });
+
+    return modificationGroup;
   }
 }

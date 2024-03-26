@@ -19,8 +19,8 @@ export class MenuController {
     return this.menuService.createMenuItem(dto, userInfo);
   }
 
-  @Post('modifications')
-  createModificationGroup(@Body() dto: ModificationGroupDto[]) {
+  @Post('modification')
+  createModificationGroup(@Body() dto: ModificationGroupDto) {
     return this.menuService.createModificationGroup(dto);
   }
 }

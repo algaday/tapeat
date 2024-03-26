@@ -16,7 +16,6 @@ export class MediaService {
   async uploadMenuItemImage(image: Express.Multer.File, currentUser: AuthUser) {
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(currentUser);
-
     const imageExtension = this.getMimeTypeExtension(image.mimetype);
     const imageSlug = `restaurants/${restaurant.id}/menu/${uuidv4()}.${imageExtension}`;
 
