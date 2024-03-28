@@ -18,7 +18,6 @@ export class MediaService {
       await this.restaurantService.getRestaurantByOwnerId(currentUser);
     const imageExtension = this.getMimeTypeExtension(image.mimetype);
     const imageSlug = `restaurants/${restaurant.id}/menu/${uuidv4()}.${imageExtension}`;
-
     await this.s3Service.uploadFile(imageSlug, image.buffer);
 
     return await this.prisma.image.create({
