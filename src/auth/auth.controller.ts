@@ -14,14 +14,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.signup(dto);
-    const { access_token } = await this.authService.signToken(
+    const { accessToken } = await this.authService.signToken(
       user.id,
       user.email,
     );
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 1);
 
-    res.cookie('token', access_token, {
+    res.cookie('token', accessToken, {
       httpOnly: true,
       expires: expirationDate,
     });
@@ -32,12 +32,12 @@ export class AuthController {
     @Body() dto: AuthDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { access_token } = await this.authService.signin(dto);
+    const { accessToken } = await this.authService.signin(dto);
     const expirationDate = new Date();
 
     expirationDate.setDate(expirationDate.getDate() + 1);
 
-    res.cookie('token', access_token, {
+    res.cookie('token', accessToken, {
       httpOnly: true,
       expires: expirationDate,
     });
