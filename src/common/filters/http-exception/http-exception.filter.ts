@@ -34,7 +34,7 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
     if (exception instanceof PrismaClientKnownRequestError) {
       return response.status(400).json({
         statusCode: 400,
-        message: 'Email or Username already exists',
+        message: exception.message,
         timestamp: new Date().toISOString(),
       });
     }
