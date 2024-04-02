@@ -12,7 +12,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthUser, GetCurrentUser } from 'src/common/decorators';
 import { MediaService } from './media.service';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
-import { SharpPipe } from 'src/common/pipes/sharp.pipe';
 
 @Controller('media')
 @UseGuards(JwtGuard)
@@ -28,7 +27,6 @@ export class MediaController {
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
         ],
       }),
-      new SharpPipe(),
     )
     image: Express.Multer.File,
     @GetCurrentUser() currentUser: AuthUser,
