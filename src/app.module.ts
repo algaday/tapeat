@@ -8,6 +8,7 @@ import { RestaurantModule } from './restaurant/restaurant.module';
 import { MenuModule } from './menu/menu.module';
 import { MediaModule } from './media/media.module';
 import { CommonModule } from './common/common.module';
+import { RestaurantBranchModule } from './restaurant-branch/restaurant-branch.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CommonModule } from './common/common.module';
     MenuModule,
     MediaModule,
     CommonModule,
+    RestaurantBranchModule,
   ],
 })
 export class AppModule {}
