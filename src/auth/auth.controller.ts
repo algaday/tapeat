@@ -32,7 +32,8 @@ export class AuthController {
     @Body() dto: AuthDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken } = await this.authService.signin(dto);
+    const { accessToken, user } = await this.authService.signin(dto);
+    const { id, email, firstName, lastName } = user;
     const expirationDate = new Date();
 
     expirationDate.setDate(expirationDate.getDate() + 1);
@@ -41,6 +42,8 @@ export class AuthController {
       httpOnly: true,
       expires: expirationDate,
     });
+
+    return { id, email, firstName, lastName };
   }
 
   @Get('logout')

@@ -1,7 +1,8 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { RestaurantOwnerService } from './restaurant-owner.service';
-import { UserDto } from 'src/user/dto';
 import { Response } from 'express';
+import { SignUpRestaurantOwnerDto } from './dto';
+import { RestaurantOwnerMapper } from './restaurant-owner.mapper';
 
 @Controller('restaurant-owner')
 export class RestaurantOwnerController {
@@ -9,10 +10,10 @@ export class RestaurantOwnerController {
 
   @Post('signup')
   async restaurantOwnerSignup(
-    @Body() dto: UserDto,
+    @Body() dto: SignUpRestaurantOwnerDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken } =
+    const { accessToken, user } =
       await this.restaurantOwnerService.restaurantOwnerSignup(dto);
 
     const expirationDate = new Date();
@@ -22,5 +23,7 @@ export class RestaurantOwnerController {
       httpOnly: true,
       expires: expirationDate,
     });
+
+    return RestaurantOwnerMapper.toDto(user);
   }
 }

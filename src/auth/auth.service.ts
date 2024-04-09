@@ -21,6 +21,7 @@ export class AuthService {
   async signin(dto: AuthDto) {
     //find the user by email}
     const user = await this.user.findUser(dto.email);
+
     //if user does not exist throw exception
     if (!user) throw new ForbiddenException('Credentials incorrect');
     //compare password
@@ -28,7 +29,11 @@ export class AuthService {
     //if password is incorrect throw an exception
     if (!pwMatches) throw new ForbiddenException('Wrong password');
     //send back the user
-    return this.signToken(user.id, user.email);
+    const accessToken = await this.signToken(user.id, user.email);
+    return {
+      accessToken,
+      user,
+    };
   }
   async signToken(
     userId: string,

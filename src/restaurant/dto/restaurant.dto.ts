@@ -4,8 +4,4 @@ export class RestaurantDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  address: string;
 }
