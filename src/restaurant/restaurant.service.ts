@@ -6,22 +6,22 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class RestaurantService {
   constructor(private prisma: PrismaService) {}
-  async createRestaurant(dto: RestaurantDto, userInfo: AuthUser) {
+  async createRestaurant(dto: RestaurantDto, user: AuthUser) {
     const { name } = dto;
 
     const restaurant = await this.prisma.restaurant.create({
       data: {
         name,
-        ownerId: userInfo.id,
+        ownerId: user.id,
       },
     });
 
     return restaurant;
   }
 
-  async getRestaurantByOwnerId(userInfo: AuthUser) {
+  async getRestaurantByOwnerId(user: AuthUser) {
     const restaurant = await this.prisma.restaurant.findUnique({
-      where: { ownerId: userInfo.id },
+      where: { ownerId: user.id },
     });
     return restaurant;
   }
