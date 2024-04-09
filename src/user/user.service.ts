@@ -7,14 +7,13 @@ import { AuthUser } from 'src/common/decorators';
 export class UserService {
   constructor(private prisma: PrismaService) {}
   async createUser(dto: UserDto) {
-    const { email, password, lastName, firstName, username } = dto;
+    const { email, password, lastName, firstName } = dto;
     const user = await this.prisma.user.create({
       data: {
         email,
         password,
         lastName,
         firstName,
-        username,
       },
     });
     return user;
@@ -33,6 +32,12 @@ export class UserService {
     const userInfo = await this.prisma.user.findFirst({
       where: {
         id: user.id,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
       },
     });
     return userInfo;
