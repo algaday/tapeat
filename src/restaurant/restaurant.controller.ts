@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { RestaurantDto } from './dto';
 import { GetCurrentUser, AuthUser } from 'src/common/decorators';
@@ -11,13 +11,13 @@ export class RestaurantController {
   @Post('create')
   createRestaurant(
     @Body() dto: RestaurantDto,
-    @GetCurrentUser() userInfo: AuthUser,
+    @GetCurrentUser() user: AuthUser,
   ) {
-    return this.restaurantService.createRestaurant(dto, userInfo);
+    return this.restaurantService.createRestaurant(dto, user);
   }
 
-  // @Get('info')
-  // getRestaurantInfo(@GetCurrentUser() userInfo: UserInfo) {
-  //   return this.restaurantService.getRestaurantInfo(userInfo);
-  // }
+  @Get('info')
+  getRestaurantByOwnerId(@GetCurrentUser() user: AuthUser) {
+    return this.restaurantService.getRestaurantByOwnerId(user);
+  }
 }
