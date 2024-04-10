@@ -1,9 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AuthDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserDto } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
+import { ApplicationError } from 'src/errors';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -13,9 +15,8 @@ export class AuthService {
   async signup(dto: UserDto) {
     // generate the password hash
     const hash = await bcrypt.hash(dto.password, 10);
-    //save the new user in the db
+
     const user = await this.user.createUser({ ...dto, password: hash });
-    //return the saved user
     return user;
   }
   async signin(dto: AuthDto) {
@@ -23,11 +24,11 @@ export class AuthService {
     const user = await this.user.findUser(dto.email);
 
     //if user does not exist throw exception
-    if (!user) throw new ForbiddenException('Credentials incorrect');
+    if (!user) throw new ApplicationError('Credentials incorrect');
     //compare password
     const pwMatches = await bcrypt.compare(dto.password, user.password);
     //if password is incorrect throw an exception
-    if (!pwMatches) throw new ForbiddenException('Wrong password');
+    if (!pwMatches) throw new ApplicationError('Wrong password');
     //send back the user
     const accessToken = await this.signToken(user.id, user.email);
     return {

@@ -17,6 +17,7 @@ import { JwtGuard } from 'src/common/guards/jwt-guard';
 @UseGuards(JwtGuard)
 export class MediaController {
   constructor(private mediaService: MediaService) {}
+
   @Post('upload-image')
   @UseInterceptors(FileInterceptor('image'))
   async uploadMenuItemImage(
