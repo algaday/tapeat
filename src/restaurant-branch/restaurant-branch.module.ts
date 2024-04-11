@@ -2,10 +2,9 @@ import { Module } from '@nestjs/common';
 import { RestaurantBranchController } from './restaurant-branch.controller';
 import { RestaurantBranchService } from './restaurant-branch.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { RestaurantModule } from 'src/restaurant/restaurant.module';
 
 @Module({
-  imports: [PrismaModule, RestaurantModule],
+  imports: [PrismaModule],
   controllers: [RestaurantBranchController],
   providers: [RestaurantBranchService],
 })
