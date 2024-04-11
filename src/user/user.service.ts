@@ -39,6 +39,15 @@ export class UserService {
     return user;
   }
 
+  async getRestaurantByOwner(userId: string) {
+    const restaurant = await this.prisma.restaurant.findUnique({
+      where: {
+        ownerId: userId,
+      },
+    });
+    return restaurant;
+  }
+
   async getUserInfo(user: AuthUser) {
     const userInfo = await this.prisma.user.findFirst({
       where: {

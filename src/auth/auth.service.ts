@@ -20,17 +20,20 @@ export class AuthService {
     return user;
   }
   async signin(dto: AuthDto) {
-    //find the user by email}
     const user = await this.user.findUser(dto.email);
 
-    //if user does not exist throw exception
     if (!user) throw new ApplicationError('Credentials incorrect');
-    //compare password
+
     const pwMatches = await bcrypt.compare(dto.password, user.password);
-    //if password is incorrect throw an exception
+
     if (!pwMatches) throw new ApplicationError('Wrong password');
-    //send back the user
-    const accessToken = await this.signToken(user.id, user.email);
+
+    const restaurant = await this.user.getRestaurantByOwner(user.id);
+
+    const accessToken = restaurant
+      ? await this.signToken(user.id, user.email, restaurant.id)
+      : await this.signToken(user.id, user.email);
+
     return {
       accessToken,
       user,
@@ -39,8 +42,10 @@ export class AuthService {
   async signToken(
     userId: string,
     email: string,
+    restaurantId?: string,
   ): Promise<{ accessToken: string }> {
-    const payload = { sub: userId, email };
+    const payload = { sub: userId, email, restaurantId };
+
     const token = await this.jwt.signAsync(payload);
     return { accessToken: token };
   }

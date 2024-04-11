@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { RestaurantBranchService } from './restaurant-branch.service';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
 import { AuthUser, GetCurrentUser } from 'src/common/decorators';
@@ -11,5 +11,15 @@ export class RestaurantBranchController {
   @Post('create')
   createBranch(@Body() dto: CreateBranchDto, @GetCurrentUser() user: AuthUser) {
     return this.restaurantBranchService.createBranch(dto, user);
+  }
+
+  @Get('branches')
+  getBranches(@GetCurrentUser() user: AuthUser) {
+    return this.restaurantBranchService.getBranches(user);
+  }
+
+  @Delete('branches')
+  deleteBranch(@Body() body: { branchId: string }) {
+    return this.restaurantBranchService.deleteBranch(body);
   }
 }
