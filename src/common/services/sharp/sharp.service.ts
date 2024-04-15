@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 import * as sharp from 'sharp';
 @Injectable()
 export class SharpService {
-  constructor() {}
-  async formatImage(image: Express.Multer.File, resize: number) {
-    const formattedImg = await sharp(image.buffer)
-      .resize(resize)
+  async resize(image: Express.Multer.File, size: number) {
+    const resizedImage = await sharp(image.buffer)
+      .resize({ width: size, height: size })
       .webp()
       .toBuffer();
 
-    return formattedImg;
+    return resizedImage;
   }
 }

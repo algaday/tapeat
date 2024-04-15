@@ -13,6 +13,19 @@ export class MenuService {
     private prisma: PrismaService,
   ) {}
 
+  async getMenuItem(params: { id: string }) {
+    const menuItem = await this.prisma.menuItem.findUnique({
+      where: {
+        id: params.id,
+      },
+      include: {
+        image: true,
+      },
+    });
+
+    return MenuItemMapper.toDto(menuItem);
+  }
+
   async getAllMenuItems(user: AuthUser) {
     const menuItems = await this.prisma.menuItem.findMany({
       where: {

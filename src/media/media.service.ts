@@ -22,17 +22,17 @@ export class MediaService {
   ) {}
 
   async uploadMenuItemImage(image: Express.Multer.File, user: AuthUser) {
-    const originalImage = await this.sharpService.formatImage(
+    const originalImage = await this.sharpService.resize(
       image,
       this.ORIGINAL_IMAGE_RESOLUTION,
     );
 
-    const mediumThumbnailImage = await this.sharpService.formatImage(
+    const mediumThumbnailImage = await this.sharpService.resize(
       image,
       this.MEDIUM_THUMBNAIL_IMAGE_RESOLUTION,
     );
 
-    const smallThumbnailImage = await this.sharpService.formatImage(
+    const smallThumbnailImage = await this.sharpService.resize(
       image,
       this.SMALL_THUMBNAIL_IMAGE_RESOLUTION,
     );
