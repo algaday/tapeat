@@ -103,7 +103,8 @@ model Image{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   restaurantId String? @db.Uuid
   originalPath String
-  thumbnailPath String?
+  mediumThumbnailPath String?
+  smallThumbnailPath String?
   isAssigned Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

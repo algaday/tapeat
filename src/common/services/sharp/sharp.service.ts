@@ -3,12 +3,12 @@ import * as sharp from 'sharp';
 @Injectable()
 export class SharpService {
   constructor() {}
-  async formatImage(image: Express.Multer.File) {
+  async formatImage(image: Express.Multer.File, resize: number) {
     const formattedImg = await sharp(image.buffer)
-      .resize(1024)
+      .resize(resize)
       .webp()
       .toBuffer();
-    console.log(formattedImg);
+
     return formattedImg;
   }
 }
