@@ -8,6 +8,12 @@ import { SharpService } from 'src/common/services/sharp';
 
 @Injectable()
 export class MediaService {
+  private ORIGINAL_IMAGE_RESOLUTION = 1024;
+
+  private MEDIUM_THUMBNAIL_IMAGE_RESOLUTION = 256;
+
+  private SMALL_THUMBNAIL_IMAGE_RESOLUTION = 128;
+
   constructor(
     private prisma: PrismaService,
     private restaurantService: RestaurantService,
@@ -15,17 +21,40 @@ export class MediaService {
     private sharpService: SharpService,
   ) {}
 
-  async uploadMenuItemImage(image: Express.Multer.File, currentUser: AuthUser) {
-    const restaurant =
-      await this.restaurantService.getRestaurantByOwnerId(currentUser);
-    const formatImage = await this.sharpService.formatImage(image);
-    const imageSlug = `restaurants/${restaurant.id}/menu/${uuidv4()}.webp`;
-    await this.s3Service.uploadFile(imageSlug, formatImage);
+  async uploadMenuItemImage(image: Express.Multer.File, user: AuthUser) {
+    const originalImage = await this.sharpService.formatImage(
+      image,
+      this.ORIGINAL_IMAGE_RESOLUTION,
+    );
+
+    const mediumThumbnailImage = await this.sharpService.formatImage(
+      image,
+      this.MEDIUM_THUMBNAIL_IMAGE_RESOLUTION,
+    );
+
+    const smallThumbnailImage = await this.sharpService.formatImage(
+      image,
+      this.SMALL_THUMBNAIL_IMAGE_RESOLUTION,
+    );
+
+    const originalImageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
+
+    const mediumThumbnailImageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
+
+    const smallThumbnailImageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
+
+    await Promise.all([
+      this.s3Service.uploadFile(originalImageSlug, originalImage),
+      this.s3Service.uploadFile(mediumThumbnailImageSlug, mediumThumbnailImage),
+      this.s3Service.uploadFile(smallThumbnailImageSlug, smallThumbnailImage),
+    ]);
 
     return await this.prisma.image.create({
       data: {
-        originalPath: `/${imageSlug}`,
-        restaurantId: restaurant.id,
+        originalPath: `/${originalImageSlug}`,
+        mediumThumbnailPath: `/${mediumThumbnailImageSlug}`,
+        smallThumbnailPath: `/${smallThumbnailImageSlug}`,
+        restaurantId: user.restaurantId,
       },
     });
   }

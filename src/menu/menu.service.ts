@@ -4,6 +4,7 @@ import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMenuItemDto, ModificationGroupDto } from './dto';
+import { MenuItemMapper } from './menu-item.mapper';
 
 @Injectable()
 export class MenuService {
@@ -11,6 +12,19 @@ export class MenuService {
     private restaurantService: RestaurantService,
     private prisma: PrismaService,
   ) {}
+
+  async getAllMenuItems(user: AuthUser) {
+    const menuItems = await this.prisma.menuItem.findMany({
+      where: {
+        restaurantId: user.restaurantId,
+      },
+      include: {
+        image: true,
+      },
+    });
+
+    return menuItems.map((menuItem) => MenuItemMapper.toDto(menuItem));
+  }
 
   async createMenuItem(dto: CreateMenuItemDto, userInfo: AuthUser) {
     const {

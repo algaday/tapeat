@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import {
   CreateMenuItemDto,
@@ -11,12 +11,18 @@ import { JwtGuard } from 'src/common/guards/jwt-guard';
 @Controller('menu')
 export class MenuController {
   constructor(private menuService: MenuService) {}
+
+  @Get('menu-items')
+  getAllMenuItems(@GetCurrentUser() user: AuthUser) {
+    return this.menuService.getAllMenuItems(user);
+  }
+
   @Post('create-menu-item')
   createMenuItem(
     @Body() dto: CreateMenuItemDto,
-    @GetCurrentUser() userInfo: AuthUser,
+    @GetCurrentUser() user: AuthUser,
   ) {
-    return this.menuService.createMenuItem(dto, userInfo);
+    return this.menuService.createMenuItem(dto, user);
   }
 
   @Post('modification')
