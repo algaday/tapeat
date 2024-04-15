@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import {
   CreateMenuItemDto,
@@ -11,6 +11,11 @@ import { JwtGuard } from 'src/common/guards/jwt-guard';
 @Controller('menu')
 export class MenuController {
   constructor(private menuService: MenuService) {}
+
+  @Get('menu-item-info/:id')
+  getMenuItem(@Param() params: { id: string }) {
+    return this.menuService.getMenuItem(params);
+  }
 
   @Get('menu-items')
   getAllMenuItems(@GetCurrentUser() user: AuthUser) {
