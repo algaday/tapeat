@@ -11,7 +11,12 @@ export class MenuItemMapper {
       restaurantId,
       createdAt,
       updatedAt,
-      image: { originalPath, mediumThumbnailPath, smallThumbnailPath },
+      image: {
+        id: imageId,
+        originalPath,
+        mediumThumbnailPath,
+        smallThumbnailPath,
+      },
     } = entity;
 
     return {
@@ -24,6 +29,7 @@ export class MenuItemMapper {
       createdAt: String(createdAt),
       updatedAt: String(updatedAt),
       image: {
+        imageId,
         restaurantId,
         originalPath,
         mediumThumbnailPath,

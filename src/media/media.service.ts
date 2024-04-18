@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { S3Service } from 'src/common/services/s3/s3.service';
 import { v4 as uuidv4 } from 'uuid';
 import { SharpService } from 'src/common/services/sharp';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MediaService {
@@ -16,7 +16,6 @@ export class MediaService {
 
   constructor(
     private prisma: PrismaService,
-    private restaurantService: RestaurantService,
     private s3Service: S3Service,
     private sharpService: SharpService,
   ) {}
@@ -56,6 +55,23 @@ export class MediaService {
         smallThumbnailPath: `/${smallThumbnailImageSlug}`,
         restaurantId: user.restaurantId,
       },
+    });
+  }
+
+  async markImageAssigned(imageId: string) {
+    return this.updateImage(imageId, { isAssigned: true });
+  }
+
+  async markImageUnassigned(imageId: string) {
+    return this.updateImage(imageId, { isAssigned: false });
+  }
+
+  private async updateImage(imageId: string, data: Prisma.ImageUpdateInput) {
+    return this.prisma.image.update({
+      where: {
+        id: imageId,
+      },
+      data,
     });
   }
 }
