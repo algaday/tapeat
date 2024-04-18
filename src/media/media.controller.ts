@@ -30,8 +30,8 @@ export class MediaController {
       }),
     )
     image: Express.Multer.File,
-    @GetCurrentUser() currentUser: AuthUser,
+    @GetCurrentUser() user: AuthUser,
   ) {
-    return this.mediaService.uploadMenuItemImage(image, currentUser);
+    return this.mediaService.uploadMenuItemImage(image, user);
   }
 }

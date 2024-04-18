@@ -19,6 +19,11 @@ class ImageDto {
   @IsNotEmpty()
   @IsString()
   @Expose()
+  imageId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
   originalPath: string;
 
   @IsNotEmpty()

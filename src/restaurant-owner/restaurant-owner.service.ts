@@ -15,19 +15,20 @@ export class RestaurantOwnerService {
 
     const user = await this.authService.signup(userDto);
 
-    const [, restaurant] = await this.prisma.$transaction([
-      this.prisma.restaurantOwner.create({
+    const restaurant = await this.prisma.$transaction(async () => {
+      await this.prisma.restaurantOwner.create({
         data: {
           userId: user.id,
         },
-      }),
-      this.prisma.restaurant.create({
+      });
+
+      return this.prisma.restaurant.create({
         data: {
           name: restaurantName,
           ownerId: user.id,
         },
-      }),
-    ]);
+      });
+    });
 
     const accessToken = await this.authService.signToken(
       user.id,

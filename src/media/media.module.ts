@@ -8,5 +8,6 @@ import { CommonModule } from 'src/common/common.module';
   imports: [CommonModule, RestaurantModule],
   controllers: [MediaController],
   providers: [MediaService],
+  exports: [MediaService],
 })
 export class MediaModule {}
