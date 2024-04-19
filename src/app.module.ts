@@ -9,6 +9,7 @@ import { MenuModule } from './menu/menu.module';
 import { MediaModule } from './media/media.module';
 import { CommonModule } from './common/common.module';
 import { RestaurantBranchModule } from './restaurant-branch/restaurant-branch.module';
+import { ModificationModule } from './modification/modification.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RestaurantBranchModule } from './restaurant-branch/restaurant-branch.mo
     MediaModule,
     CommonModule,
     RestaurantBranchModule,
+    ModificationModule,
   ],
 })
 export class AppModule {}

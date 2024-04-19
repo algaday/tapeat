@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateMenuItemDto, ModificationGroupDto } from './dto';
+import { CreateMenuItemDto } from './dto';
 import { MenuItemMapper } from './menu-item.mapper';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
 import { MenuItemDoesNotExist } from './errors/menu-item-does-not-exist.error';
@@ -61,7 +61,7 @@ export class MenuService {
         data: {
           isAssigned: true,
         },
-      }); //todo: use mediaservice
+      });
 
       const menuItem = await this.prisma.menuItem.create({
         data: {
@@ -159,25 +159,6 @@ export class MenuService {
     });
 
     return deletedMenuItem;
-  }
-
-  async createModificationGroup(modificationGroupDto: ModificationGroupDto) {
-    const modificationGroup = await this.prisma.modificationGroup.create({
-      data: {
-        name: modificationGroupDto.name,
-      },
-    });
-
-    await this.prisma.modification.createMany({
-      data: modificationGroupDto.options.map((modification) => ({
-        name: modification.name,
-        price: modification.price,
-        modificationGroupId: modificationGroup.id,
-      })),
-      skipDuplicates: true,
-    });
-
-    return modificationGroup;
   }
 
   updateMenuItemData(id: string, data: Prisma.MenuItemUncheckedUpdateInput) {

@@ -56,9 +56,11 @@ model Restaurant{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
+
   branches RestaurantBranch[]
   orders Order[]
   menus MenuItem[]
+  modificationGroupds ModificationGroup[]
 }
 
 model RestaurantBranch{
@@ -125,6 +127,11 @@ model ModificationGroup {
   name String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  restaurantId String @db.Uuid
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+
   menuItem MenuItemModificationGroup[]
   modifications Modification[]
 }
