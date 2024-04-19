@@ -27,6 +27,10 @@ export class MenuService {
       },
     });
 
+    if (!menuItem) {
+      throw new MenuItemDoesNotExist();
+    }
+
     return MenuItemMapper.toDto(menuItem);
   }
 
