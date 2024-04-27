@@ -3,6 +3,7 @@ import { CreateModificationGroupDto } from './dto/create-modification-group.dto'
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ModificationMapper } from './modification.mapper';
+import { DeleteModificationGroupDto } from './dto/delete-modification.dto';
 
 @Injectable()
 export class ModificationService {
@@ -21,6 +22,29 @@ export class ModificationService {
     return modificationGroups.map((modificationGroup) =>
       ModificationMapper.toDto(modificationGroup),
     );
+  }
+
+  getModificationGroup(params: { id: string }) {
+    const modificationGroup = this.prisma.modificationGroup.findUnique({
+      where: {
+        id: params.id,
+      },
+      include: {
+        modifications: true,
+      },
+    });
+
+    return modificationGroup;
+  }
+
+  async deleteModificationGroup(dto: DeleteModificationGroupDto) {
+    const deletedModificationGroup = await this.prisma.modificationGroup.delete(
+      {
+        where: { id: dto.id },
+      },
+    );
+
+    return deletedModificationGroup;
   }
 
   async createModificationGroup(

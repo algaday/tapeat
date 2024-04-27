@@ -8,4 +8,4 @@
 ALTER TABLE "ModificationGroup" ADD COLUMN     "restaurantId" UUID NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE "ModificationGroup" ADD CONSTRAINT "ModificationGroup_restaurantId_fkey" FOREIGN KEY ("restaurantId") REFERENCES "Restaurant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ModificationGroup" ADD CONSTRAINT "ModificationGroup_restaurantId_fkey" FOREIGN KEY ("restaurantId") REFERENCES "Restaurant"("id") ON DELETE CASCADE ON UPDATE CASCADE;

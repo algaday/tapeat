@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsArray,
   IsDefined,
   IsNotEmpty,
@@ -14,7 +15,8 @@ export class CreateModificationGroupDto {
 
   @IsDefined()
   @IsArray()
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @ArrayNotEmpty()
   @Type(() => Modification)
   modifications: Modification[];
 }
