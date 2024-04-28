@@ -12,6 +12,7 @@ import { CreateModificationGroupDto } from './dto/create-modification-group.dto'
 import { ModificationService } from './modification.service';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
 import { DeleteModificationGroupDto } from './dto/delete-modification.dto';
+import { AddModificationDto } from './dto/update-modification-group.dto';
 
 @UseGuards(JwtGuard)
 @Controller('modification')
@@ -36,8 +37,18 @@ export class ModificationController {
     return this.modificationService.createModificationGroup(dto, user);
   }
 
+  @Post('add')
+  addModification(@Body() dto: AddModificationDto) {
+    return this.modificationService.addModification(dto);
+  }
+
   @Delete('delete')
   deleteModificationGroup(@Body() dto: DeleteModificationGroupDto) {
     return this.modificationService.deleteModificationGroup(dto);
+  }
+
+  @Delete('delete-modification')
+  deleteModification(@Body() dto: DeleteModificationGroupDto) {
+    return this.modificationService.deleteModification(dto);
   }
 }

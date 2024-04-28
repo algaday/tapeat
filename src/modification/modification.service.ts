@@ -4,6 +4,7 @@ import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ModificationMapper } from './modification.mapper';
 import { DeleteModificationGroupDto } from './dto/delete-modification.dto';
+import { AddModificationDto } from './dto/update-modification-group.dto';
 
 @Injectable()
 export class ModificationService {
@@ -68,5 +69,23 @@ export class ModificationService {
     });
 
     return modificationGroup;
+  }
+
+  addModification(dto: AddModificationDto) {
+    return this.prisma.modification.create({
+      data: {
+        modificationGroupId: dto.modificationGroupId,
+        name: dto.name,
+        price: dto.price,
+      },
+    });
+  }
+
+  deleteModification(dto: DeleteModificationGroupDto) {
+    return this.prisma.modification.delete({
+      where: {
+        id: dto.id,
+      },
+    });
   }
 }
