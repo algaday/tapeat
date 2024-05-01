@@ -1,4 +1,4 @@
-import { Image, MenuItem } from '@prisma/client';
+import { Image, MenuItem, MenuItemModificationGroup } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
 import {
   IsDefined,
@@ -8,7 +8,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export type MenuItemWithImage = MenuItem & { image: Image };
+export type MenuItemWithImage = MenuItem & {
+  image: Image;
+  modificationGroups?: MenuItemModificationGroup[];
+};
 
 class ImageDto {
   @IsNotEmpty()
@@ -83,4 +86,6 @@ export class MenuItemWithImageDto {
   @Type(() => ImageDto)
   @ValidateNested()
   image: ImageDto;
+
+  modificationGroups?: MenuItemModificationGroup[];
 }

@@ -1,4 +1,11 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsDefined,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateMenuItemDto {
   @IsString()
@@ -21,7 +28,9 @@ export class CreateMenuItemDto {
   @IsString()
   imageId: string;
 
-  @IsOptional()
   @IsArray()
+  @IsDefined()
+  @IsOptional()
+  @Type(() => String)
   modificationGroupIds?: string[];
 }

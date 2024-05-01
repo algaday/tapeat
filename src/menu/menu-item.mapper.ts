@@ -17,6 +17,7 @@ export class MenuItemMapper {
         mediumThumbnailPath,
         smallThumbnailPath,
       },
+      modificationGroups,
     } = entity;
 
     return {
@@ -35,6 +36,7 @@ export class MenuItemMapper {
         mediumThumbnailPath,
         smallThumbnailPath,
       },
+      modificationGroups,
     };
   }
 }

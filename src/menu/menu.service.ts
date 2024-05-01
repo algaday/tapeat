@@ -22,15 +22,24 @@ export class MenuService {
       where: {
         id: params.id,
       },
+
       include: {
         image: true,
+        modificationGroups: {
+          include: {
+            modificationGroup: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (!menuItem) {
       throw new MenuItemDoesNotExist();
     }
-
     return MenuItemMapper.toDto(menuItem);
   }
 
@@ -79,12 +88,10 @@ export class MenuService {
       });
 
       if (modificationGroupIds.length) {
-        await this.prisma.menuItemModificationGroup.createMany({
-          data: modificationGroupIds.map((modification) => ({
-            menuItemId: menuItem.id,
-            modificationId: modification,
-          })),
-        });
+        await this.createManyMenuItemModifications(
+          menuItem.id,
+          modificationGroupIds,
+        );
       }
     });
 
@@ -104,6 +111,7 @@ export class MenuService {
       category,
       description,
       price,
+      modificationGroupIds,
     } = dto;
 
     const menuItem = await this.prisma.menuItem.findUnique({
@@ -124,7 +132,19 @@ export class MenuService {
     };
 
     if (newImageId === menuItem.imageId) {
-      return this.updateMenuItemData(menuItemId, updateData);
+      return this.prisma.$transaction(async () => {
+        const updatedMenuItem = await this.updateMenuItemData(
+          menuItemId,
+          updateData,
+        );
+
+        await this.updateMenuItemModificationGroup(
+          updatedMenuItem.id,
+          modificationGroupIds,
+        );
+
+        return updatedMenuItem;
+      });
     }
 
     return await this.prisma.$transaction(async () => {
@@ -136,6 +156,11 @@ export class MenuService {
       await this.mediaService.markImageAssigned(newImageId);
 
       await this.mediaService.markImageUnassigned(menuItem.imageId);
+
+      await this.updateMenuItemModificationGroup(
+        updatedMenuItem.id,
+        modificationGroupIds,
+      );
 
       return updatedMenuItem;
     });
@@ -171,6 +196,33 @@ export class MenuService {
         id,
       },
       data,
+    });
+  }
+
+  updateMenuItemModificationGroup(id: string, modificationGroupIds: string[]) {
+    const menuItemModificationGroups = this.prisma.$transaction(async () => {
+      await this.deleteManyMenuItemModifications(id);
+
+      return this.createManyMenuItemModifications(id, modificationGroupIds);
+    });
+
+    return menuItemModificationGroups;
+  }
+
+  deleteManyMenuItemModifications(id: string) {
+    return this.prisma.menuItemModificationGroup.deleteMany({
+      where: {
+        menuItemId: id,
+      },
+    });
+  }
+
+  createManyMenuItemModifications(id: string, modificationGroupIds: string[]) {
+    return this.prisma.menuItemModificationGroup.createMany({
+      data: modificationGroupIds.map((modification) => ({
+        menuItemId: id,
+        modificationId: modification,
+      })),
     });
   }
 }
