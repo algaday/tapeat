@@ -10,6 +10,8 @@ import { MediaModule } from './media/media.module';
 import { CommonModule } from './common/common.module';
 import { RestaurantBranchModule } from './restaurant-branch/restaurant-branch.module';
 import { ModificationModule } from './modification/modification.module';
+import { OrderModule } from './order/order.module';
+import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { ModificationModule } from './modification/modification.module';
     CommonModule,
     RestaurantBranchModule,
     ModificationModule,
+    OrderModule,
+    CustomerModule,
   ],
 })
 export class AppModule {}

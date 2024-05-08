@@ -13,6 +13,7 @@ import { ModificationService } from './modification.service';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
 import { DeleteModificationGroupDto } from './dto/delete-modification.dto';
 import { AddModificationDto } from './dto/update-modification-group.dto';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtGuard)
 @Controller('modification')
@@ -50,5 +51,12 @@ export class ModificationController {
   @Delete('delete-modification')
   deleteModification(@Body() dto: DeleteModificationGroupDto) {
     return this.modificationService.deleteModification(dto);
+  }
+
+  @Post('update-modification-group')
+  updateModificationGroup(
+    @Body() dto: Prisma.ModificationGroupUncheckedCreateInput,
+  ) {
+    return this.modificationService.updateModificationGroup(dto.id, dto);
   }
 }

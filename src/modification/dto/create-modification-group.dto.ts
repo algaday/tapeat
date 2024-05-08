@@ -2,8 +2,10 @@ import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
+  IsBoolean,
   IsDefined,
   IsNotEmpty,
+  IsNumber,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -12,6 +14,14 @@ export class CreateModificationGroupDto {
   @IsNotEmpty()
   @IsString()
   modificationGroupName: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  minimunModifierSelection: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  maximumModifierSelection: number;
 
   @IsDefined()
   @IsArray()
@@ -29,4 +39,8 @@ class Modification {
   @IsNotEmpty()
   @IsString()
   price: number;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isMandatory: boolean;
 }

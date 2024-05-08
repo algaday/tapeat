@@ -53,7 +53,6 @@ model Restaurant{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name String
   ownerId String @unique @db.Uuid
-  orderId String? @unique @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
@@ -84,10 +83,12 @@ model MenuItem{
   imageId String @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
-  orderLines OrderLine[]
-  modificationGroups MenuItemModificationGroup[]
   image Image @relation(fields: [imageId], references: [id])
+
+  orderItems OrderItem[]
+  modificationGroups MenuItemModificationGroup[]
   branchMenuItems BranchMenuItem[]
 }
 
@@ -129,6 +130,8 @@ model ModificationGroup {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   restaurantId String @db.Uuid
+  minimunModifierSelection Int @default(0)
+  maximumModifierSelection Int @default(0)
 
   menuItem MenuItemModificationGroup[]
   modifications Modification[]
@@ -141,8 +144,12 @@ model Modification {
   modificationGroupId String @db.Uuid
   name String
   price Decimal @db.Decimal(12,2) @default(0)
+  isMandatory Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  orderItemModifications OrderItemModification[]
+
   modificationGroup ModificationGroup @relation(fields: [modificationGroupId], references: [id], onDelete: Cascade)
   @@unique([modificationGroupId, name])
 }
@@ -152,25 +159,41 @@ model Order{
   customerId String @db.Uuid 
   restaurantId String @db.Uuid
   orderDate DateTime @default(now())
-  status String
+  status String @default("pending")
   totalAmount Int
   freeDelivery Boolean    @default(false)
   address String
+  phoneNumber String
+  comments String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  restaurant Restaurant @relation(fields: [id], references: [orderId])
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
   customer Customer @relation(fields: [customerId],references: [id])
-  orderLines OrderLine[]
+  orderItems OrderItem[]
 }
 
-model OrderLine{
+model OrderItem{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   menuItemId String @db.Uuid
   orderId String @db.Uuid 
   quantity Int
-  totalPrice Int
+  price Decimal @db.Decimal(12,2) @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  orderItemModifications OrderItemModification[]
+
   menuItem MenuItem @relation(fields: [menuItemId],references: [id])
   order Order @relation(fields: [orderId],references: [id])
+}
+
+model OrderItemModification{
+  id String @id @default(uuid()) @db.Uuid
+  orderItemId String @db.Uuid
+  modificationId String @db.Uuid
+  quantity Int
+  price Decimal @db.Decimal(12,2) @default(0)
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  modification Modification @relation(fields: [modificationId], references: [id])
 }

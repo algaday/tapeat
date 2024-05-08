@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ModificationMapper } from './modification.mapper';
 import { DeleteModificationGroupDto } from './dto/delete-modification.dto';
 import { AddModificationDto } from './dto/update-modification-group.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ModificationService {
@@ -56,6 +57,8 @@ export class ModificationService {
       data: {
         name: modificationGroupDto.modificationGroupName,
         restaurantId: user.restaurantId,
+        minimunModifierSelection: modificationGroupDto.minimunModifierSelection,
+        maximumModifierSelection: modificationGroupDto.maximumModifierSelection,
       },
     });
 
@@ -63,6 +66,7 @@ export class ModificationService {
       data: modificationGroupDto.modifications.map((modification) => ({
         name: modification.name,
         price: modification.price,
+        isMandatory: modification.isMandatory,
         modificationGroupId: modificationGroup.id,
       })),
       skipDuplicates: true,
@@ -77,6 +81,7 @@ export class ModificationService {
         modificationGroupId: dto.modificationGroupId,
         name: dto.name,
         price: dto.price,
+        isMandatory: dto.isMandatory,
       },
     });
   }
@@ -86,6 +91,18 @@ export class ModificationService {
       where: {
         id: dto.id,
       },
+    });
+  }
+
+  updateModificationGroup(
+    id: string,
+    data: Prisma.ModificationGroupUncheckedCreateInput,
+  ) {
+    return this.prisma.modificationGroup.update({
+      where: {
+        id,
+      },
+      data,
     });
   }
 }

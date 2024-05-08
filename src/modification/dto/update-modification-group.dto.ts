@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class AddModificationDto {
   @IsString()
@@ -12,4 +12,8 @@ export class AddModificationDto {
   @IsNotEmpty()
   @IsString()
   price: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isMandatory: boolean;
 }
