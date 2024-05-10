@@ -1,5 +1,5 @@
 import { ApplicationError } from 'src/errors';
 
-export class TotalAmountNotMatch extends ApplicationError {
+export class TotalAmountMismatch extends ApplicationError {
   message = 'Сумма заказа неправильная!';
 }

@@ -1,3 +1,3 @@
-export class ModificationsListNotFoundError {
+export class ModificationsNotFoundError {
   message = 'Список модификации не найден!';
 }

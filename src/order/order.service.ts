@@ -1,85 +1,77 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from 'src/common/decorators';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { InitiateOrderDto, ModificationGroups } from './dto/create-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MenuModificationNotFound } from './errors/menu-not-found.error';
 import { PriceNotMatchError } from './errors/price-not-match.error';
-import { MenuItem, Modification, Prisma } from '@prisma/client';
-import { MenuItemsListError } from './errors/menu-items-list.error';
-import { ModificationsListNotFoundError } from './errors/modifications-list-not-found.error';
-import { TotalAmountNotMatch } from './errors/total-amount-not-match.error';
+import { Modification, Prisma } from '@prisma/client';
+import { TotalAmountMismatch } from './errors/total-amount-mismatch.error';
+import { ModificationGroupNotFoundError } from './errors/modification-group-not-found.error';
+import {
+  MenuItemModificationGroupWithPayload,
+  MenuItemWithPayload,
+} from './types';
 
 @Injectable()
 export class OrderService {
   constructor(private prisma: PrismaService) {}
 
-  async createOrder(user: AuthUser, dto: CreateOrderDto) {
-    const { restaurantId, totalAmount, address, phoneNumber, comments } = dto;
+  async initiateOrder(user: AuthUser, dto: InitiateOrderDto) {
+    const orderMenuItemIds = dto.menuItems.map((menuItem) => menuItem.id);
 
-    const menuItemsList = await this.prisma.menuItem.findMany();
+    const menuItems = await this.findMenuItemByIds(orderMenuItemIds);
 
-    const modificationsList = await this.prisma.modification.findMany();
+    this.validateMenuItems(dto, menuItems);
 
-    if (!menuItemsList) throw new MenuItemsListError();
+    const calculatedTotalAmount = this.calculateTotalAmount(dto);
 
-    if (!modificationsList) throw new ModificationsListNotFoundError();
+    if (dto.totalAmount !== calculatedTotalAmount)
+      throw new TotalAmountMismatch();
 
-    const calculatedTotalAmount = this.checkPriceAndTotalAmount(
-      dto,
-      menuItemsList,
-      modificationsList,
+    const order = await this.prisma.$transaction(async () =>
+      this.createOrder(dto, user),
     );
 
-    if (totalAmount !== calculatedTotalAmount) throw new TotalAmountNotMatch();
+    return order;
+  }
 
-    const order = await this.prisma.$transaction(async () => {
-      const order = await this.createSingleOrder({
+  async createOrder(dto: InitiateOrderDto, user: AuthUser) {
+    const { restaurantId, totalAmount, address, phoneNumber, comments } = dto;
+
+    const order = await this.prisma.order.create({
+      data: {
         restaurantId,
         customerId: user.id,
         totalAmount,
         address,
         phoneNumber,
         comments,
-      });
-
-      const orderMenuItems = dto.order.map(async (menuItem) => {
-        const { id, quantity, price } = menuItem;
-
-        const orderItem = await this.createOrderItem({
-          menuItemId: id,
-          orderId: order.id,
-          quantity,
-          price,
-        });
-
-        const createOrderItemModification = menuItem.modifications.map(
-          async (modification) => {
-            const { id, price, quantity } = modification;
-
-            return this.createOrderItemModification({
-              orderItemId: orderItem.id,
-              modificationId: id,
-              quantity,
-              price,
-            });
-          },
-        );
-
-        await Promise.all(createOrderItemModification);
-
-        return orderItem;
-      });
-
-      await Promise.all(orderMenuItems);
-
-      return order;
+      },
     });
 
-    return order;
-  }
+    const orderMenuItems = dto.menuItems.map(async (menuItem) => {
+      const { id, quantity, price, modificationGroups } = menuItem;
 
-  createSingleOrder(data: Prisma.OrderUncheckedCreateInput) {
-    return this.prisma.order.create({ data });
+      const orderItem = await this.createOrderItem({
+        menuItemId: id,
+        orderId: order.id,
+        quantity,
+        price,
+      });
+
+      const createOrderItemModification = this.createOrderItemModification(
+        orderItem.id,
+        modificationGroups,
+      );
+
+      await Promise.all(createOrderItemModification);
+
+      return orderItem;
+    });
+
+    await Promise.all(orderMenuItems);
+
+    return order;
   }
 
   createOrderItem(data: Prisma.OrderItemUncheckedCreateInput) {
@@ -87,55 +79,140 @@ export class OrderService {
   }
 
   createOrderItemModification(
-    data: Prisma.OrderItemModificationUncheckedCreateInput,
+    orderItemId: string,
+    modificationGroups: ModificationGroups[],
   ) {
-    return this.prisma.orderItemModification.create({ data });
-  }
-
-  getItemFromList<T extends { id: string }>(itemId: string, list: T[]): T {
-    const item = list.filter((menuItem) => menuItem.id === itemId);
-
-    if (!item.length) throw new MenuModificationNotFound();
-
-    return item[0];
-  }
-
-  checkPriceAndTotalAmount(
-    { order }: CreateOrderDto,
-    menuItemsList: MenuItem[],
-    modificationsList: Modification[],
-  ) {
-    order.forEach((menuItem) => {
-      const menuItemFromDb = this.getItemFromList<MenuItem>(
-        menuItem.id,
-        menuItemsList,
-      );
-
-      if (Number(menuItemFromDb.price) !== menuItem.price)
-        throw new PriceNotMatchError();
-
-      menuItem.modifications.forEach((modification) => {
-        const { id, price } = modification;
-
-        const modificationFromDb = this.getItemFromList<Modification>(
-          id,
-          modificationsList,
+    const createOrderItemModification = modificationGroups.map(
+      async ({ modifications }) => {
+        const orderItemModifications = modifications.map(
+          async (modification) => {
+            return this.prisma.orderItemModification.create({
+              data: {
+                orderItemId,
+                modificationId: modification.id,
+                quantity: modification.quantity,
+                price: modification.price,
+              },
+            });
+          },
         );
 
-        if (price !== Number(modificationFromDb.price))
+        await Promise.all(orderItemModifications);
+
+        return orderItemModifications;
+      },
+    );
+    return createOrderItemModification;
+  }
+
+  calculateTotalAmount(dto: InitiateOrderDto) {
+    const menuItemTotalPrice = dto.menuItems.reduce((acc, current) => {
+      acc += current.price * current.quantity;
+
+      current.modificationGroups.forEach((modificationGroup) => {
+        const modificationsTotalPrice = modificationGroup.modifications.reduce(
+          (acc, curr) => (acc += curr.price * curr.quantity),
+          0,
+        );
+        acc += modificationsTotalPrice;
+      });
+
+      return acc;
+    }, 0);
+
+    return menuItemTotalPrice;
+  }
+
+  validateMenuItems(dto: InitiateOrderDto, menuItems: MenuItemWithPayload[]) {
+    dto.menuItems.map((menuItemDto) => {
+      const menuItem = this.getMenuItem(menuItemDto.id, menuItems);
+
+      if (!menuItem.price.equals(menuItemDto.price)) {
+        throw new PriceNotMatchError();
+      }
+
+      this.validateModificationGroups(menuItemDto.modificationGroups, menuItem);
+    });
+  }
+
+  getMenuItem(menuItemId: string, menuItems: MenuItemWithPayload[]) {
+    const menuItem = menuItems.filter(
+      (menuItem) => menuItem.id === menuItemId,
+    )[0];
+
+    if (!menuItem) throw new MenuModificationNotFound();
+
+    return menuItem;
+  }
+
+  getModificationGroup(
+    id: string,
+    menuItemModificationGroups: MenuItemModificationGroupWithPayload[],
+  ) {
+    const modificationGroup = menuItemModificationGroups.filter(
+      (modificationGroup) => modificationGroup.modificationId === id,
+    )[0];
+
+    if (!modificationGroup) throw new ModificationGroupNotFoundError();
+
+    return modificationGroup;
+  }
+
+  getModification(modificationId: string, modifications: Modification[]) {
+    const modification = modifications.filter(
+      (modification) => modification.id === modificationId,
+    )[0];
+
+    if (!modification) throw new MenuModificationNotFound();
+
+    return modification;
+  }
+
+  validateModificationGroups(
+    modificationGroupsDto: ModificationGroups[],
+    menuItem: MenuItemWithPayload,
+  ) {
+    modificationGroupsDto.map((modificationGroupDto) => {
+      const { modificationGroup } = this.getModificationGroup(
+        modificationGroupDto.id,
+        menuItem.modificationGroups,
+      );
+
+      modificationGroup.modifications.map((modificationDto) => {
+        const modifications = modificationGroup.modifications;
+
+        const modification = this.getModification(
+          modificationDto.id,
+          modifications,
+        );
+
+        if (!modification.price.equals(modification.price))
           throw new PriceNotMatchError();
       });
     });
+  }
 
-    const totalMenuItemsPrice = order.reduce((prev, next) => {
-      const totalModificationsPrice = next.modifications.reduce(
-        (prev, next) => prev + next.price * next.quantity,
-        0,
-      );
+  async findMenuItemByIds(menuItemIds: string[]) {
+    const menuItemsWithModifications = await this.prisma.menuItem.findMany({
+      where: {
+        id: {
+          in: menuItemIds,
+        },
+      },
 
-      return prev + (next.price * next.quantity + totalModificationsPrice);
-    }, 0);
+      include: {
+        modificationGroups: {
+          include: {
+            modificationGroup: {
+              include: {
+                modifications: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    return totalMenuItemsPrice;
+    return menuItemsWithModifications;
   }
 }

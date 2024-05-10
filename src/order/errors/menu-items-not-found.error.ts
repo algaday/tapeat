@@ -1,5 +1,5 @@
 import { ApplicationError } from 'src/errors';
 
-export class MenuItemsListError extends ApplicationError {
+export class MenuItemsNotFoundError extends ApplicationError {
   message = 'Не удалось получить список блюд!';
 }
