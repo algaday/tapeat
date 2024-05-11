@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as sharp from 'sharp';
+
 @Injectable()
 export class SharpService {
   constructor() {}
@@ -8,7 +9,7 @@ export class SharpService {
       .resize(1024)
       .webp()
       .toBuffer();
-    console.log(formattedImg);
+
     return formattedImg;
   }
 }
