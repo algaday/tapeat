@@ -12,6 +12,7 @@ import { RestaurantBranchModule } from './restaurant-branch/restaurant-branch.mo
 import { ModificationModule } from './modification/modification.module';
 import { OrderModule } from './order/order.module';
 import { CustomerModule } from './customer/customer.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CustomerModule } from './customer/customer.module';
     ModificationModule,
     OrderModule,
     CustomerModule,
+    DeliveryModule,
   ],
 })
 export class AppModule {}
