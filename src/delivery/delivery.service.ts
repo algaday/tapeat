@@ -41,4 +41,22 @@ export class DeliveryService {
       where: { restaurantId: user.restaurantId },
     });
   }
+
+  async calculateDeliveryPrice(orderTotal: number) {
+    const fee = await this.prisma.deliveryFee.findFirst({
+      where: {
+        AND: [
+          { minTotalPrice: { lte: orderTotal } },
+          { maxTotalPrice: { gt: orderTotal } },
+        ],
+      },
+    });
+
+    if (!fee) {
+      console.log('Calculate by Delivery Partner and return it');
+      return 3500;
+    }
+
+    return fee.fee;
+  }
 }

@@ -19,6 +19,10 @@ export class InitiateOrderDto {
   @IsNotEmpty()
   totalAmount: number;
 
+  @IsNumber()
+  @IsNumber()
+  orderFee: number;
+
   @IsString()
   @IsNotEmpty()
   address: string;

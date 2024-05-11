@@ -11,10 +11,15 @@ import {
   MenuItemModificationGroupWithPayload,
   MenuItemWithPayload,
 } from './types';
+import { DeliveryService } from 'src/delivery/delivery.service';
+import { DeliveryFeeMismatchError } from './errors/delivery-fee-mismatch.error';
 
 @Injectable()
 export class OrderService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private deliveryService: DeliveryService,
+  ) {}
 
   async initiateOrder(user: AuthUser, dto: InitiateOrderDto) {
     const orderMenuItemIds = dto.menuItems.map((menuItem) => menuItem.id);
@@ -28,6 +33,13 @@ export class OrderService {
     if (dto.totalAmount !== calculatedTotalAmount)
       throw new TotalAmountMismatch();
 
+    const calculatedOrderFee =
+      await this.deliveryService.calculateDeliveryPrice(dto.totalAmount);
+
+    if (dto.orderFee !== Number(calculatedOrderFee)) {
+      throw new DeliveryFeeMismatchError();
+    }
+
     const order = await this.prisma.$transaction(async () =>
       this.createOrder(dto, user),
     );
@@ -36,7 +48,14 @@ export class OrderService {
   }
 
   async createOrder(dto: InitiateOrderDto, user: AuthUser) {
-    const { restaurantId, totalAmount, address, phoneNumber, comments } = dto;
+    const {
+      restaurantId,
+      totalAmount,
+      address,
+      phoneNumber,
+      comments,
+      orderFee,
+    } = dto;
 
     const order = await this.prisma.order.create({
       data: {
@@ -46,6 +65,7 @@ export class OrderService {
         address,
         phoneNumber,
         comments,
+        orderFee,
       },
     });
 
