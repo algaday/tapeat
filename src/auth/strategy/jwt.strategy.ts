@@ -8,7 +8,11 @@ import { AuthUser } from 'src/common/decorators';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(config: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request) => {
+          return request?.cookies?.token;
+        },
+      ]),
       secretOrKey: config.get('JWT_SECRET'),
     });
   }

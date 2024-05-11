@@ -1,23 +1,50 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { UserDto } from 'src/user/dto';
-import { Public } from 'src/common/decorators';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
   @Post('signup')
-  async signup(@Body() dto: UserDto) {
+  async signup(
+    @Body() dto: UserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const user = await this.authService.signup(dto);
-    return this.authService.signToken(user.id, user.email);
+    const { accessToken } = await this.authService.signToken(
+      user.id,
+      user.email,
+    );
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 1);
+
+    res.cookie('token', accessToken, {
+      httpOnly: true,
+      expires: expirationDate,
+    });
   }
 
-  @Public()
   @Post('signin')
-  signin(@Body() dto: AuthDto) {
-    return this.authService.signin(dto);
+  async signin(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken } = await this.authService.signin(dto);
+    const expirationDate = new Date();
+
+    expirationDate.setDate(expirationDate.getDate() + 1);
+
+    res.cookie('token', accessToken, {
+      httpOnly: true,
+      expires: expirationDate,
+    });
+  }
+
+  @Get('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.cookie('token', '', { expires: new Date() });
   }
 }

@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { S3Service } from 'src/common/services/s3/s3.service';
 import { v4 as uuidv4 } from 'uuid';
+import { SharpService } from 'src/common/services/sharp';
 
 @Injectable()
 export class MediaService {
@@ -11,16 +12,15 @@ export class MediaService {
     private prisma: PrismaService,
     private restaurantService: RestaurantService,
     private s3Service: S3Service,
+    private sharpService: SharpService,
   ) {}
 
   async uploadMenuItemImage(image: Express.Multer.File, currentUser: AuthUser) {
     const restaurant =
       await this.restaurantService.getRestaurantByOwnerId(currentUser);
-
-    const imageExtension = this.getMimeTypeExtension(image.mimetype);
-    const imageSlug = `restaurants/${restaurant.id}/menu/${uuidv4()}.${imageExtension}`;
-
-    await this.s3Service.uploadFile(imageSlug, image.buffer);
+    const formatImage = await this.sharpService.formatImage(image);
+    const imageSlug = `restaurants/${restaurant.id}/menu/${uuidv4()}.webp`;
+    await this.s3Service.uploadFile(imageSlug, formatImage);
 
     return await this.prisma.image.create({
       data: {
@@ -28,15 +28,5 @@ export class MediaService {
         restaurantId: restaurant.id,
       },
     });
-  }
-
-  getMimeTypeExtension(mimetype: string) {
-    const extensions = {
-      'image/jpeg': 'jpeg',
-      'image/jpg': 'jpg',
-      'image/png': 'png',
-    };
-
-    return extensions[mimetype];
   }
 }

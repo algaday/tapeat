@@ -53,7 +53,5 @@ export class CreateMenuItemDto {
 
   @IsOptional()
   @IsArray()
-  @ValidateNested()
-  @Type(() => ModificationGroupDto)
-  modificationGroups?: ModificationGroupDto[];
+  modificationGroupIds?: string[];
 }

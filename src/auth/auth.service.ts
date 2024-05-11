@@ -1,7 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { AuthDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { UserDto } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -9,7 +8,6 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(
     private jwt: JwtService,
-    private config: ConfigService,
     private user: UserService,
   ) {}
   async signup(dto: UserDto) {
@@ -35,13 +33,9 @@ export class AuthService {
   async signToken(
     userId: string,
     email: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ accessToken: string }> {
     const payload = { sub: userId, email };
-    const secret = this.config.get('JWT_SECRET');
-    const token = await this.jwt.signAsync(payload, {
-      secret,
-      expiresIn: '15m',
-    });
-    return { access_token: token };
+    const token = await this.jwt.signAsync(payload);
+    return { accessToken: token };
   }
 }
