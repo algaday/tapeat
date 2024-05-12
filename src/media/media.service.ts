@@ -21,41 +21,46 @@ export class MediaService {
   ) {}
 
   async uploadMenuItemImage(image: Express.Multer.File, user: AuthUser) {
-    const originalImage = await this.sharpService.resize(
+    const originalImage = await this.uploadImageToCloud(
       image,
       this.ORIGINAL_IMAGE_RESOLUTION,
+      user,
     );
 
-    const mediumThumbnailImage = await this.sharpService.resize(
+    const mediumThumbnailImage = await this.uploadImageToCloud(
       image,
       this.MEDIUM_THUMBNAIL_IMAGE_RESOLUTION,
+      user,
     );
 
-    const smallThumbnailImage = await this.sharpService.resize(
+    const smallThumbnailImage = await this.uploadImageToCloud(
       image,
       this.SMALL_THUMBNAIL_IMAGE_RESOLUTION,
+      user,
     );
-
-    const originalImageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
-
-    const mediumThumbnailImageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
-
-    const smallThumbnailImageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
-
-    await Promise.all([
-      this.s3Service.uploadFile(originalImageSlug, originalImage),
-      this.s3Service.uploadFile(mediumThumbnailImageSlug, mediumThumbnailImage),
-      this.s3Service.uploadFile(smallThumbnailImageSlug, smallThumbnailImage),
-    ]);
 
     return await this.prisma.image.create({
       data: {
-        originalPath: `/${originalImageSlug}`,
-        mediumThumbnailPath: `/${mediumThumbnailImageSlug}`,
-        smallThumbnailPath: `/${smallThumbnailImageSlug}`,
+        originalPath: `/${originalImage}`,
+        mediumThumbnailPath: `/${mediumThumbnailImage}`,
+        smallThumbnailPath: `/${smallThumbnailImage}`,
         restaurantId: user.restaurantId,
       },
     });
+  }
+
+  async uploadImageToCloud(
+    image: Express.Multer.File,
+    resolution: number,
+    user: AuthUser,
+  ) {
+    const resizedImage = await this.sharpService.resize(image, resolution);
+
+    const imageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
+
+    await this.s3Service.uploadFile(imageSlug, resizedImage);
+
+    return imageSlug;
   }
 
   async markImageAssigned(imageId: string) {
