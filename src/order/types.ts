@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
+import { MenuItem, Modification, Prisma } from '@prisma/client';
 
-export type MenuItemWithPayload = Prisma.MenuItemGetPayload<{
+export type MenuItemWithModificationGroups = Prisma.MenuItemGetPayload<{
   include: {
     modificationGroups: {
       include: {
@@ -9,6 +9,8 @@ export type MenuItemWithPayload = Prisma.MenuItemGetPayload<{
     };
   };
 }>;
+
+export type ModifiedMenuItem = MenuItem & { modifications: Modification[] };
 
 export type MenuItemModificationGroupWithPayload =
   Prisma.MenuItemModificationGroupGetPayload<{

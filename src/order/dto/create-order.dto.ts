@@ -10,10 +10,14 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class InitiateOrderDto {
+export class CreateOrderDto {
   @IsNotEmpty()
   @IsString()
   restaurantId: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  subtotal: number;
 
   @IsNumber()
   @IsNotEmpty()
@@ -39,11 +43,11 @@ export class InitiateOrderDto {
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayNotEmpty()
-  @Type(() => MenuItem)
-  menuItems: MenuItem[];
+  @Type(() => MenuItemDto)
+  menuItems: MenuItemDto[];
 }
 
-export class MenuItem {
+export class MenuItemDto {
   @IsString()
   @IsNotEmpty()
   id: string;
@@ -60,24 +64,11 @@ export class MenuItem {
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => ModificationGroups)
-  modificationGroups: ModificationGroups[];
+  @Type(() => ModificationDto)
+  modifications: ModificationDto[];
 }
 
-export class ModificationGroups {
-  @IsString()
-  @IsNotEmpty()
-  id: string;
-
-  @IsDefined()
-  @IsArray()
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => Modification)
-  modifications: Modification[];
-}
-
-class Modification {
+export class ModificationDto {
   @IsString()
   @IsNotEmpty()
   id: string;

@@ -1,5 +1,5 @@
 import { ApplicationError } from 'src/errors';
 
-export class PriceNotMatchError extends ApplicationError {
+export class MenuItemPriceMismatchError extends ApplicationError {
   message = 'Цены не совпадают!';
 }

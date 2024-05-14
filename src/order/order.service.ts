@@ -1,53 +1,58 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from 'src/common/decorators';
-import { InitiateOrderDto, ModificationGroups } from './dto/create-order.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { MenuModificationNotFound } from './errors/menu-not-found.error';
-import { PriceNotMatchError } from './errors/price-not-match.error';
-import { Modification, Prisma } from '@prisma/client';
-import { TotalAmountMismatch } from './errors/total-amount-mismatch.error';
-import { ModificationGroupNotFoundError } from './errors/modification-group-not-found.error';
 import {
-  MenuItemModificationGroupWithPayload,
-  MenuItemWithPayload,
-} from './types';
-import { DeliveryService } from 'src/delivery/delivery.service';
-import { DeliveryFeeMismatchError } from './errors/delivery-fee-mismatch.error';
+  CreateOrderDto,
+  MenuItemDto,
+  ModificationDto,
+} from './dto/create-order.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Modification, Prisma } from '@prisma/client';
+import { MenuItemWithModificationGroups, ModifiedMenuItem } from './types';
+import { DeliveryTemplateFeeService } from 'src/delivery-fee-template/delivery-fee-template.service';
+import * as _ from 'lodash';
+import {
+  DeliveryFeeMismatchError,
+  MenuItemMissingError,
+  MenuItemPriceMismatchError,
+  MenuItemsMissingError,
+  ModificationMissingError,
+  ModificationPriceMismatchError,
+  TotalAmountMismatch,
+} from './errors';
 
 @Injectable()
 export class OrderService {
   constructor(
     private prisma: PrismaService,
-    private deliveryService: DeliveryService,
+    private deliveryTemplateFeeService: DeliveryTemplateFeeService,
   ) {}
 
-  async initiateOrder(user: AuthUser, dto: InitiateOrderDto) {
+  async create(user: AuthUser, dto: CreateOrderDto) {
     const orderMenuItemIds = dto.menuItems.map((menuItem) => menuItem.id);
 
     const menuItems = await this.findMenuItemByIds(orderMenuItemIds);
 
     this.validateMenuItems(dto, menuItems);
 
+    const calculatedOrderFee =
+      await this.deliveryTemplateFeeService.calculateDeliveryFee(
+        dto.subtotal,
+        user,
+      );
+
+    if (dto.orderFee !== calculatedOrderFee) {
+      throw new DeliveryFeeMismatchError();
+    }
+
     const calculatedTotalAmount = this.calculateTotalAmount(dto);
 
     if (dto.totalAmount !== calculatedTotalAmount)
       throw new TotalAmountMismatch();
 
-    const calculatedOrderFee =
-      await this.deliveryService.calculateDeliveryPrice(dto.totalAmount);
-
-    if (dto.orderFee !== Number(calculatedOrderFee)) {
-      throw new DeliveryFeeMismatchError();
-    }
-
-    const order = await this.prisma.$transaction(async () =>
-      this.createOrder(dto, user),
-    );
-
-    return order;
+    return this.prisma.$transaction(async () => this.persistOrder(dto, user));
   }
 
-  async createOrder(dto: InitiateOrderDto, user: AuthUser) {
+  async persistOrder(dto: CreateOrderDto, user: AuthUser) {
     const {
       restaurantId,
       totalAmount,
@@ -55,6 +60,7 @@ export class OrderService {
       phoneNumber,
       comments,
       orderFee,
+      subtotal,
     } = dto;
 
     const order = await this.prisma.order.create({
@@ -66,11 +72,12 @@ export class OrderService {
         phoneNumber,
         comments,
         orderFee,
+        subtotal,
       },
     });
 
     const orderMenuItems = dto.menuItems.map(async (menuItem) => {
-      const { id, quantity, price, modificationGroups } = menuItem;
+      const { id, quantity, price, modifications } = menuItem;
 
       const orderItem = await this.createOrderItem({
         menuItemId: id,
@@ -81,7 +88,7 @@ export class OrderService {
 
       const createOrderItemModification = this.createOrderItemModification(
         orderItem.id,
-        modificationGroups,
+        modifications,
       );
 
       await Promise.all(createOrderItemModification);
@@ -100,139 +107,142 @@ export class OrderService {
 
   createOrderItemModification(
     orderItemId: string,
-    modificationGroups: ModificationGroups[],
+    modifications: ModificationDto[],
   ) {
-    const createOrderItemModification = modificationGroups.map(
-      async ({ modifications }) => {
-        const orderItemModifications = modifications.map(
-          async (modification) => {
-            return this.prisma.orderItemModification.create({
-              data: {
-                orderItemId,
-                modificationId: modification.id,
-                quantity: modification.quantity,
-                price: modification.price,
-              },
-            });
-          },
-        );
+    const createOrderItemModification = modifications.map((modification) => {
+      return this.prisma.orderItemModification.create({
+        data: {
+          orderItemId,
+          modificationId: modification.id,
+          quantity: modification.quantity,
+          price: modification.price,
+        },
+      });
+    });
 
-        await Promise.all(orderItemModifications);
-
-        return orderItemModifications;
-      },
-    );
     return createOrderItemModification;
   }
 
-  calculateTotalAmount(dto: InitiateOrderDto) {
-    const menuItemTotalPrice = dto.menuItems.reduce((acc, current) => {
-      acc += current.price * current.quantity;
-
-      current.modificationGroups.forEach((modificationGroup) => {
-        const modificationsTotalPrice = modificationGroup.modifications.reduce(
-          (acc, curr) => (acc += curr.price * curr.quantity),
-          0,
-        );
-        acc += modificationsTotalPrice;
-      });
-
-      return acc;
-    }, 0);
-
-    return menuItemTotalPrice;
+  calculateTotalAmount(dto: CreateOrderDto) {
+    return this.calculateMenuItemsTotal(dto.menuItems) + dto.orderFee;
   }
 
-  validateMenuItems(dto: InitiateOrderDto, menuItems: MenuItemWithPayload[]) {
+  calculateMenuItemsTotal(menuItems: MenuItemDto[]) {
+    return _.sumBy(menuItems, (menuItem) => {
+      const modificationsTotal = this.calculateModificationsTotal(
+        menuItem.modifications,
+      );
+      return menuItem.price * menuItem.quantity + modificationsTotal;
+    });
+  }
+
+  calculateModificationsTotal(modifications: ModificationDto[]) {
+    return _.sumBy(
+      modifications,
+      (modification) => modification.price * modification.quantity,
+    );
+  }
+
+  validateMenuItems(dto: CreateOrderDto, menuItems: ModifiedMenuItem[]) {
     dto.menuItems.map((menuItemDto) => {
       const menuItem = this.getMenuItem(menuItemDto.id, menuItems);
 
       if (!menuItem.price.equals(menuItemDto.price)) {
-        throw new PriceNotMatchError();
+        throw new MenuItemPriceMismatchError();
       }
 
-      this.validateModificationGroups(menuItemDto.modificationGroups, menuItem);
+      this.validateModifications(
+        menuItemDto.modifications,
+        menuItem.modifications,
+      );
     });
   }
 
-  getMenuItem(menuItemId: string, menuItems: MenuItemWithPayload[]) {
-    const menuItem = menuItems.filter(
-      (menuItem) => menuItem.id === menuItemId,
-    )[0];
+  validateModifications(
+    modificationDtos: ModificationDto[],
+    modifications: Modification[],
+  ) {
+    modificationDtos.map((modificationDto) => {
+      const modification = this.getModification(
+        modificationDto.id,
+        modifications,
+      );
 
-    if (!menuItem) throw new MenuModificationNotFound();
+      if (!modification.price.equals(modificationDto.price)) {
+        throw new ModificationPriceMismatchError();
+      }
+    });
+  }
+
+  getMenuItem(menuItemId: string, menuItems: ModifiedMenuItem[]) {
+    const menuItem = menuItems.find((menuItem) => menuItem.id === menuItemId);
+
+    if (!menuItem) {
+      throw new MenuItemMissingError();
+    }
 
     return menuItem;
   }
 
-  getModificationGroup(
-    id: string,
-    menuItemModificationGroups: MenuItemModificationGroupWithPayload[],
-  ) {
-    const modificationGroup = menuItemModificationGroups.filter(
-      (modificationGroup) => modificationGroup.modificationId === id,
-    )[0];
-
-    if (!modificationGroup) throw new ModificationGroupNotFoundError();
-
-    return modificationGroup;
-  }
-
   getModification(modificationId: string, modifications: Modification[]) {
-    const modification = modifications.filter(
+    const modification = modifications.find(
       (modification) => modification.id === modificationId,
-    )[0];
+    );
 
-    if (!modification) throw new MenuModificationNotFound();
+    if (!modification) {
+      throw new ModificationMissingError();
+    }
 
     return modification;
   }
 
-  validateModificationGroups(
-    modificationGroupsDto: ModificationGroups[],
-    menuItem: MenuItemWithPayload,
-  ) {
-    modificationGroupsDto.map((modificationGroupDto) => {
-      const { modificationGroup } = this.getModificationGroup(
-        modificationGroupDto.id,
-        menuItem.modificationGroups,
-      );
-
-      modificationGroup.modifications.map((modificationDto) => {
-        const modifications = modificationGroup.modifications;
-
-        const modification = this.getModification(
-          modificationDto.id,
-          modifications,
-        );
-
-        if (!modification.price.equals(modification.price))
-          throw new PriceNotMatchError();
-      });
-    });
-  }
-
   async findMenuItemByIds(menuItemIds: string[]) {
-    const menuItemsWithModifications = await this.prisma.menuItem.findMany({
-      where: {
-        id: {
-          in: menuItemIds,
+    const menuItemsWithModificationGroups = await this.prisma.menuItem.findMany(
+      {
+        where: {
+          id: {
+            in: menuItemIds,
+          },
         },
-      },
-
-      include: {
-        modificationGroups: {
-          include: {
-            modificationGroup: {
-              include: {
-                modifications: true,
+        include: {
+          modificationGroups: {
+            include: {
+              modificationGroup: {
+                include: {
+                  modifications: true,
+                },
               },
             },
           },
         },
       },
-    });
+    );
+
+    if (!menuItemsWithModificationGroups.length) {
+      throw new MenuItemsMissingError();
+    }
+    const menuItemsWithModifications = menuItemsWithModificationGroups.map(
+      (menuItemWithModificationGroup) =>
+        this.mapToMenuItemWithModification(menuItemWithModificationGroup),
+    );
 
     return menuItemsWithModifications;
+  }
+
+  mapToMenuItemWithModification(menuItem: MenuItemWithModificationGroups) {
+    const modifications = _.flatten(
+      menuItem.modificationGroups.map((modificationGroups) => {
+        return modificationGroups.modificationGroup.modifications;
+      }),
+    );
+
+    const menuItemWithoutModificationGroups = _.omit(menuItem, [
+      'modificationGroups',
+    ]);
+
+    return {
+      ...menuItemWithoutModificationGroups,
+      modifications,
+    };
   }
 }
