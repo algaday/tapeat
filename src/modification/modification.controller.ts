@@ -26,7 +26,7 @@ export class ModificationController {
 
   @Get('/:id')
   getModificationGroup(@Param() params: { id: string }) {
-    return this.modificationService.getModificationGroup(params);
+    return this.modificationService.findModificationGroup(params);
   }
 
   @Post('create')

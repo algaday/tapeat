@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMenuItemDto } from './dto';
 import { MenuItemMapper } from './menu-item.mapper';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
-import { MenuItemDoesNotExist } from './errors/menu-item-does-not-exist.error';
+import { MenuItemDoesNotExist as MenuItemNotFound } from './errors/menu-item-not-found.error';
 import { MediaService } from 'src/media/media.service';
 import { Prisma } from '@prisma/client';
 import { DeleteMenuItemDto } from './dto/delete-menu-item.dto';
@@ -22,7 +22,6 @@ export class MenuService {
       where: {
         id: params.id,
       },
-
       include: {
         image: true,
         modificationGroups: {
@@ -38,12 +37,13 @@ export class MenuService {
     });
 
     if (!menuItem) {
-      throw new MenuItemDoesNotExist();
+      throw new MenuItemNotFound();
     }
+
     return MenuItemMapper.toDto(menuItem);
   }
 
-  async getAllMenuItems(user: AuthUser) {
+  async findMenuItems(user: AuthUser) {
     const menuItems = await this.prisma.menuItem.findMany({
       where: {
         restaurantId: user.restaurantId,
@@ -67,14 +67,7 @@ export class MenuService {
     } = dto;
 
     const menuItem = await this.prisma.$transaction(async () => {
-      await this.prisma.image.update({
-        where: {
-          id: imageId,
-        },
-        data: {
-          isAssigned: true,
-        },
-      });
+      await this.mediaService.updateImage(imageId, { isAssigned: true });
 
       const menuItem = await this.prisma.menuItem.create({
         data: {
@@ -121,7 +114,7 @@ export class MenuService {
     });
 
     if (!menuItem) {
-      throw new MenuItemDoesNotExist();
+      throw new MenuItemNotFound();
     }
 
     const updateData = {
@@ -174,7 +167,7 @@ export class MenuService {
     });
 
     if (!menuItem) {
-      throw new MenuItemDoesNotExist();
+      throw new MenuItemNotFound();
     }
 
     const deletedMenuItem = this.prisma.$transaction(async () => {
