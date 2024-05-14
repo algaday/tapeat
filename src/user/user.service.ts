@@ -10,13 +10,13 @@ export class UserService {
   async createUser(dto: UserDto) {
     const { email, password, lastName, firstName } = dto;
 
-    const userFromDb = await this.prisma.user.findUnique({
+    const userCount = await this.prisma.user.count({
       where: {
         email,
       },
     });
 
-    if (userFromDb) {
+    if (userCount) {
       throw new UserAlreadyExistsError('Пользователь уже существует');
     }
 
