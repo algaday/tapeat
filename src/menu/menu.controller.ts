@@ -26,7 +26,7 @@ export class MenuController {
 
   @Get('menu-items')
   getAllMenuItems(@GetCurrentUser() user: AuthUser) {
-    return this.menuService.getAllMenuItems(user);
+    return this.menuService.findMenuItems(user);
   }
 
   @Post('create-menu-item')

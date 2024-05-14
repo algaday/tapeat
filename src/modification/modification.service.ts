@@ -26,7 +26,7 @@ export class ModificationService {
     );
   }
 
-  getModificationGroup(params: { id: string }) {
+  findModificationGroup(params: { id: string }) {
     const modificationGroup = this.prisma.modificationGroup.findUnique({
       where: {
         id: params.id,
