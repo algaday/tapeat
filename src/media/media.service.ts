@@ -15,7 +15,7 @@ export class MediaService {
 
   private SMALL_THUMBNAIL_IMAGE_RESOLUTION = 128;
 
-  private resolutions = [
+  private RESOLUTIONS = [
     this.ORIGINAL_IMAGE_RESOLUTION,
     this.MEDIUM_THUMBNAIL_IMAGE_RESOLUTION,
     this.SMALL_THUMBNAIL_IMAGE_RESOLUTION,
@@ -30,8 +30,8 @@ export class MediaService {
   async uploadMenuItemImage(image: Express.Multer.File, user: AuthUser) {
     const uuid = uuidv4();
 
-    const uploadImages = this.resolutions.map(async (resolution) => {
-      const imageSlug = this.generateImageSlug({
+    const uploadImages = this.RESOLUTIONS.map(async (resolution) => {
+      const imagePath = this.generateImagePath({
         resolution,
         uuid,
         restaurantId: user.restaurantId,
@@ -39,9 +39,9 @@ export class MediaService {
 
       const resizedImage = await this.sharpService.resize(image, resolution);
 
-      await this.uploadImage(resizedImage, imageSlug);
+      await this.uploadImage(resizedImage, imagePath);
 
-      return imageSlug;
+      return imagePath;
     });
 
     const [originalPath, mediumThumbnailPath, smallThumbnailPath] =
@@ -61,8 +61,8 @@ export class MediaService {
     return this.s3Service.uploadFile(imageSlug, image);
   }
 
-  generateImageSlug(data: ImageSlugData) {
-    return `restaurants/${data.restaurantId}/menu/${data.uuid}/${data.resolution}.webp`;
+  generateImagePath(data: ImageSlugData) {
+    return `restaurants/${data.restaurantId}/menu/${data.uuid}_${data.resolution}.webp`;
   }
 
   async markImageAssigned(imageId: string) {
