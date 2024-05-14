@@ -5,6 +5,7 @@ import { S3Service } from 'src/common/services/s3/s3.service';
 import { v4 as uuidv4 } from 'uuid';
 import { SharpService } from 'src/common/services/sharp';
 import { Prisma } from '@prisma/client';
+import { GenerateImageSlugData as ImageSlugData } from './types';
 
 @Injectable()
 export class MediaService {
@@ -14,6 +15,12 @@ export class MediaService {
 
   private SMALL_THUMBNAIL_IMAGE_RESOLUTION = 128;
 
+  private resolutions = [
+    this.ORIGINAL_IMAGE_RESOLUTION,
+    this.MEDIUM_THUMBNAIL_IMAGE_RESOLUTION,
+    this.SMALL_THUMBNAIL_IMAGE_RESOLUTION,
+  ];
+
   constructor(
     private prisma: PrismaService,
     private s3Service: S3Service,
@@ -21,46 +28,41 @@ export class MediaService {
   ) {}
 
   async uploadMenuItemImage(image: Express.Multer.File, user: AuthUser) {
-    const originalImage = await this.uploadImageToCloud(
-      image,
-      this.ORIGINAL_IMAGE_RESOLUTION,
-      user,
-    );
+    const uuid = uuidv4();
 
-    const mediumThumbnailImage = await this.uploadImageToCloud(
-      image,
-      this.MEDIUM_THUMBNAIL_IMAGE_RESOLUTION,
-      user,
-    );
+    const uploadImages = this.resolutions.map(async (resolution) => {
+      const imageSlug = this.generateImageSlug({
+        resolution,
+        uuid,
+        restaurantId: user.restaurantId,
+      });
 
-    const smallThumbnailImage = await this.uploadImageToCloud(
-      image,
-      this.SMALL_THUMBNAIL_IMAGE_RESOLUTION,
-      user,
-    );
+      const resizedImage = await this.sharpService.resize(image, resolution);
+
+      await this.uploadImage(resizedImage, imageSlug);
+
+      return imageSlug;
+    });
+
+    const [originalPath, mediumThumbnailPath, smallThumbnailPath] =
+      await Promise.all(uploadImages);
 
     return await this.prisma.image.create({
       data: {
-        originalPath: `/${originalImage}`,
-        mediumThumbnailPath: `/${mediumThumbnailImage}`,
-        smallThumbnailPath: `/${smallThumbnailImage}`,
+        originalPath,
+        mediumThumbnailPath,
+        smallThumbnailPath,
         restaurantId: user.restaurantId,
       },
     });
   }
 
-  async uploadImageToCloud(
-    image: Express.Multer.File,
-    resolution: number,
-    user: AuthUser,
-  ) {
-    const resizedImage = await this.sharpService.resize(image, resolution);
+  async uploadImage(image: Buffer, imageSlug: string) {
+    return this.s3Service.uploadFile(imageSlug, image);
+  }
 
-    const imageSlug = `restaurants/${user.restaurantId}/menu/${uuidv4()}.webp`;
-
-    await this.s3Service.uploadFile(imageSlug, resizedImage);
-
-    return imageSlug;
+  generateImageSlug(data: ImageSlugData) {
+    return `restaurants/${data.restaurantId}/menu/${data.uuid}/${data.resolution}.webp`;
   }
 
   async markImageAssigned(imageId: string) {
