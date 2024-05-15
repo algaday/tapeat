@@ -66,7 +66,7 @@ export class MediaService {
     return this.updateImage(imageId, { isAssigned: false });
   }
 
-  async updateImage(imageId: string, data: Prisma.ImageUpdateInput) {
+  private async updateImage(imageId: string, data: Prisma.ImageUpdateInput) {
     return this.prisma.image.update({
       where: {
         id: imageId,
