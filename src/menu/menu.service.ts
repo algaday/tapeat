@@ -76,14 +76,7 @@ export class MenuService {
     } = dto;
 
     const menuItem = await this.prisma.$transaction(async () => {
-      await this.prisma.image.update({
-        where: {
-          id: imageId,
-        },
-        data: {
-          isAssigned: true,
-        },
-      });
+      await this.mediaService.markImageAssigned(imageId);
 
       const menuItem = await this.prisma.menuItem.create({
         data: {
