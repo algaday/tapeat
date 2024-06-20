@@ -1,4 +1,4 @@
-import { Image, MenuItem, MenuItemModificationGroup } from '@prisma/client';
+import { Image, Modification, Prisma } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
 import {
   IsDefined,
@@ -8,9 +8,22 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+type MenuItem = Prisma.MenuItemGetPayload<{
+  include: {
+    modificationGroups: {
+      include: {
+        modificationGroup: {
+          include: {
+            modifications: true;
+          };
+        };
+      };
+    };
+  };
+}>;
+
 export type MenuItemWithImage = MenuItem & {
   image: Image;
-  modificationGroups?: MenuItemModificationGroup[];
 };
 
 class ImageDto {
@@ -87,5 +100,25 @@ export class MenuItemWithImageDto {
   @ValidateNested()
   image: ImageDto;
 
-  modificationGroups?: MenuItemModificationGroup[];
+  @Type(() => ModificationGroup)
+  modificationGroups?: ModificationGroup[];
+}
+
+class ModificationGroup {
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  id: string;
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  name: string;
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  isMultipleChoice: boolean;
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  modifications: Modification[];
 }

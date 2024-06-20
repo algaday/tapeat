@@ -5,7 +5,6 @@ import {
   IsBoolean,
   IsDefined,
   IsNotEmpty,
-  IsNumber,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -16,12 +15,8 @@ export class CreateModificationGroupDto {
   modificationGroupName: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  minimunModifierSelection: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  maximumModifierSelection: number;
+  @IsBoolean()
+  isMultipleChoice: boolean;
 
   @IsDefined()
   @IsArray()

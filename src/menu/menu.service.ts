@@ -28,8 +28,8 @@ export class MenuService {
         modificationGroups: {
           include: {
             modificationGroup: {
-              select: {
-                name: true,
+              include: {
+                modifications: true,
               },
             },
           },
@@ -53,7 +53,9 @@ export class MenuService {
       },
     });
 
-    return menuItems.map((menuItem) => MenuItemMapper.toDto(menuItem));
+    return menuItems;
+
+    // return menuItems.map((menuItem) => MenuItemMapper.toDto(menuItem));
   }
 
   async createMenuItem(dto: CreateMenuItemDto, user: AuthUser) {

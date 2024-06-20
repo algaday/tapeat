@@ -131,8 +131,7 @@ model ModificationGroup {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   restaurantId String @db.Uuid
-  minimunModifierSelection Int @default(0)
-  maximumModifierSelection Int @default(0)
+  isMultipleChoice Boolean @default(false)
 
   menuItem MenuItemModificationGroup[]
   modifications Modification[]

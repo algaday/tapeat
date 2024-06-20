@@ -20,6 +20,19 @@ export class MenuItemMapper {
       modificationGroups,
     } = entity;
 
+    const formattedModificationGroups = modificationGroups.map(
+      (modificationGroup) => {
+        const modifications = modificationGroup.modificationGroup.modifications;
+        return {
+          id: modificationGroup.modificationGroup.id,
+          isMultipleChoice:
+            modificationGroup.modificationGroup.isMultipleChoice,
+          name: modificationGroup.modificationGroup.name,
+          modifications,
+        };
+      },
+    );
+
     return {
       id,
       category,
@@ -36,7 +49,7 @@ export class MenuItemMapper {
         mediumThumbnailPath,
         smallThumbnailPath,
       },
-      modificationGroups,
+      modificationGroups: formattedModificationGroups,
     };
   }
 }

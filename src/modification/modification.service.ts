@@ -57,8 +57,7 @@ export class ModificationService {
       data: {
         name: modificationGroupDto.modificationGroupName,
         restaurantId: user.restaurantId,
-        minimunModifierSelection: modificationGroupDto.minimunModifierSelection,
-        maximumModifierSelection: modificationGroupDto.maximumModifierSelection,
+        isMultipleChoice: modificationGroupDto.isMultipleChoice,
       },
     });
 
