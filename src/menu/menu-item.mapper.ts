@@ -4,13 +4,14 @@ export class MenuItemMapper {
   static toDto(entity: MenuItemWithImage): MenuItemWithImageDto {
     const {
       id,
-      category,
+      categoryId,
       description,
       nameOfDish,
       price,
       restaurantId,
       createdAt,
       updatedAt,
+      category,
       image: {
         id: imageId,
         originalPath,
@@ -35,7 +36,7 @@ export class MenuItemMapper {
 
     return {
       id,
-      category,
+      categoryId,
       description,
       nameOfDish,
       price: String(price),
@@ -49,6 +50,7 @@ export class MenuItemMapper {
         mediumThumbnailPath,
         smallThumbnailPath,
       },
+      category,
       modificationGroups: formattedModificationGroups,
     };
   }

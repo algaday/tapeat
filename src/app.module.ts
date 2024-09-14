@@ -13,6 +13,7 @@ import { ModificationModule } from './modification/modification.module';
 import { OrderModule } from './order/order.module';
 import { CustomerModule } from './customer/customer.module';
 import { DeliveryFeeTemplateModule } from './delivery-fee-template/delivery-fee-template.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DeliveryFeeTemplateModule } from './delivery-fee-template/delivery-fee-
     OrderModule,
     CustomerModule,
     DeliveryFeeTemplateModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}

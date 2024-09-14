@@ -62,6 +62,7 @@ model Restaurant{
   menus MenuItem[]
   modificationGroupds ModificationGroup[]
   deliveryFee DeliveryTemplateFee[]
+  categories MenuItemCategory[]
 }
 
 model RestaurantBranch{
@@ -77,7 +78,7 @@ model RestaurantBranch{
 model MenuItem{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   nameOfDish String
-  category String
+  categoryId String @db.Uuid
   description String
   price Decimal @db.Decimal(12,2)
   restaurantId String @db.Uuid
@@ -87,6 +88,7 @@ model MenuItem{
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
   image Image @relation(fields: [imageId], references: [id])
+  category MenuItemCategory @relation(fields: [categoryId],  references: [id], onDelete: Cascade)
 
   orderItems OrderItem[]
   modificationGroups MenuItemModificationGroup[]
@@ -122,8 +124,8 @@ model MenuItemModificationGroup{
   modificationId String @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-  modificationGroup ModificationGroup @relation(fields: [modificationId], references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  modificationGroup ModificationGroup @relation(fields: [modificationId], references: [id], onDelete: Cascade)
 }
 model ModificationGroup {
   id String @id @default(uuid()) @db.Uuid
@@ -209,4 +211,17 @@ model DeliveryTemplateFee{
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
   @@unique([restaurantId, minOrderAmount])
+}
+
+model MenuItemCategory{
+  id String @id @default(uuid()) @db.Uuid
+  name String 
+  restaurantId String @db.Uuid
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  menuItems MenuItem[]
+
+  @@unique([restaurantId, name])
+
 }

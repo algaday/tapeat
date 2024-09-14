@@ -25,6 +25,7 @@ export class MenuService {
 
       include: {
         image: true,
+        category: true,
         modificationGroups: {
           include: {
             modificationGroup: {
@@ -49,7 +50,13 @@ export class MenuService {
         restaurantId: user.restaurantId,
       },
       include: {
+        category: true,
         image: true,
+      },
+      orderBy: {
+        category: {
+          name: 'asc',
+        },
       },
     });
 
@@ -61,7 +68,7 @@ export class MenuService {
   async createMenuItem(dto: CreateMenuItemDto, user: AuthUser) {
     const {
       name,
-      category,
+      categoryId,
       description,
       price,
       imageId,
@@ -81,7 +88,7 @@ export class MenuService {
       const menuItem = await this.prisma.menuItem.create({
         data: {
           nameOfDish: name,
-          category,
+          categoryId,
           description,
           price,
           imageId,
@@ -110,7 +117,7 @@ export class MenuService {
       name,
       menuItemId,
       imageId: newImageId,
-      category,
+      categoryId,
       description,
       price,
       modificationGroupIds,
@@ -128,7 +135,7 @@ export class MenuService {
 
     const updateData = {
       nameOfDish: name,
-      category,
+      categoryId,
       description,
       price,
     };

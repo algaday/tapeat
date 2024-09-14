@@ -8,7 +8,7 @@ export class CreateMenuItemDto {
 
   @IsString()
   @IsNotEmpty()
-  category: string;
+  categoryId: string;
 
   @IsString()
   @IsNotEmpty()

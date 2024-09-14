@@ -10,6 +10,7 @@ import {
 
 type MenuItem = Prisma.MenuItemGetPayload<{
   include: {
+    category: true;
     modificationGroups: {
       include: {
         modificationGroup: {
@@ -67,7 +68,7 @@ export class MenuItemWithImageDto {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  category: string;
+  categoryId: string;
 
   @IsNotEmpty()
   @IsString()
@@ -100,6 +101,9 @@ export class MenuItemWithImageDto {
   @ValidateNested()
   image: ImageDto;
 
+  @Type(() => Category)
+  category: Category;
+
   @Type(() => ModificationGroup)
   modificationGroups?: ModificationGroup[];
 }
@@ -121,4 +125,21 @@ class ModificationGroup {
   @IsString()
   @Expose()
   modifications: Modification[];
+}
+
+class Category {
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  restaurantId: string;
 }
