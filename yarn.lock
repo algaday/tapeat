@@ -2932,6 +2932,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4":
+  version: 4.17.1
+  resolution: "@types/lodash@npm:4.17.1"
+  checksum: 10c0/af2ad8a3c8d7deb170a7ec6e18afc5ae8980576e5f7fe798d8a95a1df7222c15bdf967a25a35879f575a3b64743de00145710ee461a0051e055e94e4fe253f45
+  languageName: node
+  linkType: hard
+
 "@types/methods@npm:^1.1.4":
   version: 1.1.4
   resolution: "@types/methods@npm:1.1.4"
@@ -8103,6 +8110,7 @@ __metadata:
     "@types/cookie-parser": "npm:^1.4.7"
     "@types/express": "npm:^4.17.17"
     "@types/jest": "npm:^29.5.2"
+    "@types/lodash": "npm:^4"
     "@types/multer": "npm:^1.4.11"
     "@types/node": "npm:^20.3.1"
     "@types/passport-jwt": "npm:^4.0.1"
@@ -8118,6 +8126,7 @@ __metadata:
     eslint-config-prettier: "npm:^9.0.0"
     eslint-plugin-prettier: "npm:^5.0.0"
     jest: "npm:^29.5.0"
+    lodash: "npm:^4.17.21"
     node-addon-api: "npm:^8.0.0"
     node-gyp: "npm:^10.1.0"
     passport: "npm:^0.7.0"

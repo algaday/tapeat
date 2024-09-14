@@ -1,6 +1,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -47,15 +48,16 @@ model Restaurant{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name String
   ownerId String @unique @db.Uuid
-  orderId String? @unique @db.Uuid
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
 
   branches RestaurantBranch[]
   orders Order[]
   menus MenuItem[]
-
-  owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
+  modificationGroupds ModificationGroup[]
+  deliveryFee DeliveryTemplateFee[]
+  categories MenuItemCategory[]
 }
 
 model RestaurantBranch{
@@ -73,20 +75,21 @@ model RestaurantBranch{
 model MenuItem{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   nameOfDish String
-  category String
+  categoryId String @db.Uuid
   description String
   price Decimal @db.Decimal(12,2)
   restaurantId String @db.Uuid
   imageId String @db.Uuid
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  
-  orderLines OrderLine[]
-  modificationGroups MenuItemModificationGroup[]
-  branchMenuItems BranchMenuItem[]
+  updatedAt DateTime @updatedAt
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
   image Image @relation(fields: [imageId], references: [id])
+  category MenuItemCategory @relation(fields: [categoryId],  references: [id], onDelete: Cascade)
+
+  orderItems OrderItem[]
+  modificationGroups MenuItemModificationGroup[]
+  branchMenuItems BranchMenuItem[]
 }
 
 model BranchMenuItem{
@@ -119,19 +122,22 @@ model MenuItemModificationGroup{
   menuItemId String @db.Uuid
   modificationId String @db.Uuid
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-  modificationGroup ModificationGroup @relation(fields: [modificationId], references: [id])
+  updatedAt DateTime @updatedAt
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  modificationGroup ModificationGroup @relation(fields: [modificationId], references: [id], onDelete: Cascade)
 }
 model ModificationGroup {
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id String @id @default(uuid()) @db.Uuid
   name String
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  restaurantId String @db.Uuid
+  isMultipleChoice Boolean @default(false)
 
   menuItem MenuItemModificationGroup[]
   modifications Modification[]
+
+  restaurant Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model Modification {
@@ -139,11 +145,13 @@ model Modification {
   modificationGroupId String @db.Uuid
   name String
   price Decimal @db.Decimal(12,2) @default(0)
+  isMandatory Boolean @default(false)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  modificationGroup ModificationGroup @relation(fields: [modificationGroupId], references: [id])
+  orderItemModifications OrderItemModification[]
 
+  modificationGroup ModificationGroup @relation(fields: [modificationGroupId], references: [id], onDelete: Cascade)
   @@unique([modificationGroupId, name])
 }
 
@@ -152,28 +160,67 @@ model Order{
   customerId String @db.Uuid 
   restaurantId String @db.Uuid
   orderDate DateTime @default(now())
-  status String
-  totalAmount Int
+  status String @default("pending")
+  subtotal Decimal @db.Decimal(12,2) 
+  totalAmount Decimal @db.Decimal(12,2) 
+  orderFee Decimal @db.Decimal(12,2) 
   freeDelivery Boolean    @default(false)
   address String
+  phoneNumber String
+  comments String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  orderLines OrderLine[]
-
-  restaurant Restaurant @relation(fields: [id], references: [orderId])
+  updatedAt DateTime @updatedAt
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
   customer Customer @relation(fields: [customerId],references: [id])
+  orderItems OrderItem[]
 }
 
-model OrderLine{
+model OrderItem{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   menuItemId String @db.Uuid
   orderId String @db.Uuid 
   quantity Int
-  totalPrice Int
+  price Decimal @db.Decimal(12,2) @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  
+  updatedAt DateTime @updatedAt
+
+  orderItemModifications OrderItemModification[]
+
   menuItem MenuItem @relation(fields: [menuItemId],references: [id])
   order Order @relation(fields: [orderId],references: [id])
+}
+
+model OrderItemModification{
+  id String @id @default(uuid()) @db.Uuid
+  orderItemId String @db.Uuid
+  modificationId String @db.Uuid
+  quantity Int
+  price Decimal @db.Decimal(12,2) @default(0)
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  modification Modification @relation(fields: [modificationId], references: [id])
+}
+
+model DeliveryTemplateFee{
+  id String @id @default(uuid()) @db.Uuid
+  restaurantId String @db.Uuid
+  minOrderAmount Decimal @db.Decimal(12,2) @default(0)
+  deliveryFee Decimal @db.Decimal(12,2) @default(0)
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@unique([restaurantId, minOrderAmount])
+}
+
+model MenuItemCategory{
+  id String @id @default(uuid()) @db.Uuid
+  name String 
+  restaurantId String @db.Uuid
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  menuItems MenuItem[]
+
+  @@unique([restaurantId, name])
+
 }
