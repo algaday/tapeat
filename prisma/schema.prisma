@@ -189,7 +189,7 @@ model Supplier {
 model Ingredient {
   id    String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name  String
-  yield Decimal @db.Decimal(4, 2)
+  yield Decimal @db.Decimal(5, 4)
   unit  String
 
   recipeIngredients         RecipeIngredient[]
