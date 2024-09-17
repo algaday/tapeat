@@ -198,10 +198,12 @@ model Ingredient {
 }
 
 model Recipe {
-  id                   String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name                 String
-  unit                 String
-  yield                Decimal            @db.Decimal(5, 4)
+  id                     String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                   String
+  unit                   String
+  yield                  Decimal @db.Decimal(5, 4)
+  isAvailableInInventory Boolean @default(false)
+
   recipeIngredients    RecipeIngredient[] @relation("Recipe")
   subRecipeIngredients RecipeIngredient[] @relation("SubRecipe")
 
