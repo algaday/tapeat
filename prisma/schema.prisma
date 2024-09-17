@@ -91,13 +91,13 @@ model MenuItem {
 
 model BranchMenuItem {
   id                 String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  branchRestaurantId String   @db.Uuid
+  restaurantBranchId String   @db.Uuid
   menuItemId         String   @db.Uuid
   isAvailable        Boolean  @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @default(now())
 
-  branchRestaurant RestaurantBranch @relation(fields: [branchRestaurantId], references: [id])
+  restaurantBranch RestaurantBranch @relation(fields: [restaurantBranchId], references: [id])
   menuItem         MenuItem         @relation(fields: [menuItemId], references: [id])
 }
 
