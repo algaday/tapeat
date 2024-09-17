@@ -180,41 +180,32 @@ model OrderLine {
 }
 
 model Supplier {
-  id         String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name       String
-  contacts   String
-  bin        String
-  Ingredient Ingredient[]
-}
-
-enum Unit {
-  LITRES
-  KG
-  G
+  id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name     String
+  contacts String
+  bin      String
 }
 
 model Ingredient {
-  id         String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  supplierId String  @db.Uuid
-  name       String
-  yield      Decimal @db.Decimal(4, 2)
-  unit       Unit    @default(G)
+  id    String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name  String
+  yield Decimal @db.Decimal(4, 2)
+  unit  String
 
-  supplier                 Supplier                   @relation(fields: [supplierId], references: [id])
-  RecipeIngredient         RecipeIngredient[]
-  InventoryCountIngredient InventoryCountIngredient[]
-  StorageIngredient        StorageIngredient[]
+  recipeIngredients         RecipeIngredient[]
+  inventoryCountIngredients InventoryCountIngredient[]
+  storageIngredients        StorageIngredient[]
 }
 
 model Recipe {
-  id                  String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name                String
-  unit                Unit               @default(G)
-  yield               Decimal            @db.Decimal(4, 2)
-  RecipeIngredient    RecipeIngredient[] @relation("Recipe")
-  SubRecipeIngredient RecipeIngredient[] @relation("SubRecipe")
+  id                   String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                 String
+  unit                 String
+  yield                Decimal            @db.Decimal(5, 4)
+  recipeIngredients    RecipeIngredient[] @relation("Recipe")
+  subRecipeIngredients RecipeIngredient[] @relation("SubRecipe")
 
-  StorageIngredient StorageIngredient[]
+  storageIngredients StorageIngredient[]
 }
 
 model RecipeIngredient {
@@ -223,16 +214,16 @@ model RecipeIngredient {
   ingredientId String?     @db.Uuid
   subRecipeId  String?     @db.Uuid
   quantity     Int
-  Ingredient   Ingredient? @relation(fields: [ingredientId], references: [id])
-  Recipe       Recipe      @relation("Recipe", fields: [recipeId], references: [id])
-  SubRecipe    Recipe?     @relation("SubRecipe", fields: [subRecipeId], references: [id])
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id])
+  recipe       Recipe      @relation("Recipe", fields: [recipeId], references: [id])
+  subRecipe    Recipe?     @relation("SubRecipe", fields: [subRecipeId], references: [id])
 }
 
 model InventoryCount {
   id   String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   date DateTime
 
-  InventoryCountIngredient InventoryCountIngredient[]
+  inventoryCountIngredient InventoryCountIngredient[]
 }
 
 model InventoryCountIngredient {
@@ -242,8 +233,8 @@ model InventoryCountIngredient {
   ingredientId     String @db.Uuid
   inventoryCountId String @db.Uuid
 
-  Ingredient     Ingredient     @relation(fields: [ingredientId], references: [id])
-  InventoryCount InventoryCount @relation(fields: [inventoryCountId], references: [id])
+  ingredient     Ingredient     @relation(fields: [ingredientId], references: [id])
+  inventoryCount InventoryCount @relation(fields: [inventoryCountId], references: [id])
 }
 
 model Storage {
@@ -251,10 +242,10 @@ model Storage {
   name               String
   restaurantBranchId String @db.Uuid
 
-  RestaurantBranch RestaurantBranch @relation(fields: [restaurantBranchId], references: [id])
+  restaurantBranch RestaurantBranch @relation(fields: [restaurantBranchId], references: [id])
 
-  StorageIngredient      StorageIngredient[]
-  InventoryCountTemplate InventoryCountTemplate[]
+  storageIngredients      StorageIngredient[]
+  inventoryCountTemplates InventoryCountTemplate[]
 }
 
 model StorageIngredient {
@@ -263,22 +254,15 @@ model StorageIngredient {
   ingredientId String? @db.Uuid
   recipeId     String? @db.Uuid
 
-  Storage    Storage     @relation(fields: [storageId], references: [id])
-  Ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
-  Recipe     Recipe?     @relation(fields: [recipeId], references: [id])
-}
-
-enum TemplateType {
-  nightly
-  daily
-  weekly
-  monthly
+  storages   Storage     @relation(fields: [storageId], references: [id])
+  ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
+  recipe     Recipe?     @relation(fields: [recipeId], references: [id])
 }
 
 model InventoryCountTemplate {
-  id        String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  type      TemplateType
-  storegeId String       @db.Uuid
+  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type      String
+  storegeId String @db.Uuid
 
-  Storage Storage @relation(fields: [storegeId], references: [id])
+  storage Storage @relation(fields: [storegeId], references: [id])
 }
