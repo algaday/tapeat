@@ -1,42 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { IngredientDto } from './dto';
+import { IngredientRepository } from './ingredient.repository';
 
 @Injectable()
 export class IngredientService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly ingredientRepository: IngredientRepository) {}
 
   async createIngredient(dto: IngredientDto) {
-    return await this.prismaService.ingredient.create({ data: { ...dto } });
+    return this.ingredientRepository.create(dto);
   }
 
   async getIngredient(id: string) {
-    return await this.prismaService.ingredient.findFirst({
-      where: { id },
-    });
+    return this.ingredientRepository.findById(id);
   }
+
   async getIngredients(ids?: string[]) {
-    if (ids) {
-      return this.prismaService.ingredient.findMany({
-        where: {
-          id: {
-            in: ids,
-          },
-        },
-      });
-    } else {
-      return this.prismaService.ingredient.findMany();
-    }
+    return this.ingredientRepository.findAll(ids);
   }
 
   async deleteIngredient(id: string) {
-    return await this.prismaService.ingredient.delete({ where: { id } });
+    return this.ingredientRepository.delete(id);
   }
 
   async updateIngredient(id: string, dto: IngredientDto) {
-    return await this.prismaService.ingredient.update({
-      where: { id },
-      data: dto,
-    });
+    return this.ingredientRepository.update(id, dto);
   }
 }
