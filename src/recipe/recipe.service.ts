@@ -18,8 +18,8 @@ export class RecipeService {
     return this.recipeRepository.findById(id);
   }
 
-  async getRecipes(ids?: string[]) {
-    return this.recipeRepository.findAll(ids);
+  async getRecipes() {
+    return this.recipeRepository.findAll();
   }
 
   async deleteRecipe(id: string) {

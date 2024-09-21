@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { CreateRecipeBodyDto } from './dto';
 import { RecipeService } from './recipe.service';
@@ -35,13 +34,8 @@ export class RecipeController {
   }
 
   @Get()
-  async getRecipes(@Query('ids') ids?: string) {
-    if (ids) {
-      const idsArray = ids.split(',');
-      return this.recipeService.getRecipes(idsArray);
-    } else {
-      return this.recipeService.getRecipes();
-    }
+  async getRecipes() {
+    return this.recipeService.getRecipes();
   }
 
   @Get(':id')
