@@ -16,6 +16,7 @@ import { DeliveryFeeTemplateModule } from './delivery-fee-template/delivery-fee-
 import { CategoryModule } from './category/category.module';
 import { IngredientModule } from './ingredient/ingredient.module';
 import { RecipeModule } from './recipe/recipe.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { RecipeModule } from './recipe/recipe.module';
     CategoryModule,
     IngredientModule,
     RecipeModule,
+    StorageModule,
   ],
 })
 export class AppModule {}
