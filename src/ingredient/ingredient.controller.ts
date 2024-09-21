@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { IngredientService } from './ingredient.service';
 import { CreateIngredientBody } from './dto';
@@ -38,13 +37,8 @@ export class IngredientController {
   }
 
   @Get()
-  async getIngredients(@Query('ids') ids?: string) {
-    if (ids) {
-      const idsArray = ids.split(',');
-      return this.ingredientService.getIngredients(idsArray);
-    } else {
-      return this.ingredientService.getIngredients();
-    }
+  async getIngredients() {
+    return this.ingredientService.getIngredients();
   }
 
   @Get(':id')

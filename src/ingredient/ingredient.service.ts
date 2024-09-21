@@ -18,8 +18,8 @@ export class IngredientService {
     return this.ingredientRepository.findById(id);
   }
 
-  async getIngredients(ids?: string[]) {
-    return this.ingredientRepository.findAll(ids);
+  async getIngredients() {
+    return this.ingredientRepository.findAll();
   }
 
   async deleteIngredient(id: string) {

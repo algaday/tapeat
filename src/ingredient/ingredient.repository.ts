@@ -17,12 +17,7 @@ export class IngredientRepository {
     return this.prismaService.ingredient.findFirst({ where: { id } });
   }
 
-  async findAll(ids?: string[]) {
-    if (ids) {
-      return this.prismaService.ingredient.findMany({
-        where: { id: { in: ids } },
-      });
-    }
+  async findAll() {
     return this.prismaService.ingredient.findMany();
   }
 
