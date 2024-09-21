@@ -1,1 +1,1 @@
-export * from './ingredient.dto';
+export * from './create-ingredient.body.dto';

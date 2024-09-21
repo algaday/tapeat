@@ -1,7 +1,7 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { IngredientUnit } from 'src/constants/enums/ingredient-unit.enum';
 
-export class IngredientDto {
+export class CreateIngredientBody {
   @IsString()
   @IsNotEmpty()
   name: string;
