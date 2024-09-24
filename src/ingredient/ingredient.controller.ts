@@ -8,18 +8,18 @@ import {
   Put,
 } from '@nestjs/common';
 import { IngredientService } from './ingredient.service';
-import { CreateIngredientBody } from './dto';
+import { CreateIngredientBodyDto } from './dto';
 
 @Controller('ingredients')
 export class IngredientController {
   constructor(private ingredientService: IngredientService) {}
   @Post()
-  async createIngredient(@Body() data: CreateIngredientBody) {
+  async createIngredient(@Body() data: CreateIngredientBodyDto) {
     return this.ingredientService.createIngredient(data);
   }
 
   @Post('bulk')
-  async createIngredients(@Body() data: CreateIngredientBody[]) {
+  async createIngredients(@Body() data: CreateIngredientBodyDto[]) {
     return this.ingredientService.createIngredients(data);
   }
 
@@ -31,7 +31,7 @@ export class IngredientController {
   @Put(':id')
   async updateIngredient(
     @Param() id: string,
-    @Body() data: CreateIngredientBody,
+    @Body() data: CreateIngredientBodyDto,
   ) {
     return this.ingredientService.updateIngredient(id, data);
   }

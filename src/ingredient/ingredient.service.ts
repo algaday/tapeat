@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateIngredientBody } from './dto';
+import { CreateIngredientBodyDto } from './dto';
 import { IngredientRepository } from './ingredient.repository';
 
 @Injectable()
 export class IngredientService {
   constructor(private readonly ingredientRepository: IngredientRepository) {}
 
-  async createIngredient(data: CreateIngredientBody) {
+  async createIngredient(data: CreateIngredientBodyDto) {
     return this.ingredientRepository.createOne(data);
   }
 
-  async createIngredients(data: CreateIngredientBody[]) {
+  async createIngredients(data: CreateIngredientBodyDto[]) {
     return this.ingredientRepository.createMany(data);
   }
 
@@ -26,7 +26,7 @@ export class IngredientService {
     return this.ingredientRepository.delete(id);
   }
 
-  async updateIngredient(id: string, data: CreateIngredientBody) {
+  async updateIngredient(id: string, data: CreateIngredientBodyDto) {
     return this.ingredientRepository.update(id, data);
   }
 }

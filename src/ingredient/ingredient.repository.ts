@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateIngredientBody } from './dto';
+import { CreateIngredientBodyDto } from './dto';
 
 @Injectable()
 export class IngredientRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createOne(data: CreateIngredientBody) {
+  async createOne(data: CreateIngredientBodyDto) {
     return this.prismaService.ingredient.create({ data });
   }
-  async createMany(data: CreateIngredientBody[]) {
+  async createMany(data: CreateIngredientBodyDto[]) {
     return this.prismaService.ingredient.createMany({ data });
   }
 
@@ -21,7 +21,7 @@ export class IngredientRepository {
     return this.prismaService.ingredient.findMany();
   }
 
-  async update(id: string, data: CreateIngredientBody) {
+  async update(id: string, data: CreateIngredientBodyDto) {
     return this.prismaService.ingredient.update({
       where: { id },
       data,
