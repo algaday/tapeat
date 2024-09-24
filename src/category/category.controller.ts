@@ -10,7 +10,7 @@ import {
 import { CategoryService } from './category.service';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { AuthUser, GetCurrentUser } from 'src/common/decorators';
+import { AuthUser, GetCurrentUser, Public } from 'src/common/decorators';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @UseGuards(JwtGuard)
@@ -18,14 +18,16 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  @Get('all')
-  getCategories(@GetCurrentUser() user: AuthUser) {
-    return this.categoryService.getCategories(user);
+  @Public()
+  @Get('all/:restaurantId')
+  getCategories(@Param('restaurantId') restaurantId: string) {
+    return this.categoryService.getCategories(restaurantId);
   }
 
-  @Get('menu-items')
-  getCategoriesWithMenuItems(@GetCurrentUser() user: AuthUser) {
-    return this.categoryService.getCategoriesWithMenuItems(user);
+  @Public()
+  @Get('menu-items/:restaurantId')
+  getCategoriesWithMenuItems(@Param('restaurantId') restaurantId: string) {
+    return this.categoryService.getCategoriesWithMenuItems(restaurantId);
   }
   @Post()
   create(@GetCurrentUser() user: AuthUser, @Body() dto: CreateCategoryDto) {

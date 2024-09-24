@@ -58,6 +58,7 @@ export class ModificationService {
         name: modificationGroupDto.modificationGroupName,
         restaurantId: user.restaurantId,
         isMultipleChoice: modificationGroupDto.isMultipleChoice,
+        isMandatory: modificationGroupDto.isMandatory,
       },
     });
 
@@ -65,7 +66,6 @@ export class ModificationService {
       data: modificationGroupDto.modifications.map((modification) => ({
         name: modification.name,
         price: modification.price,
-        isMandatory: modification.isMandatory,
         modificationGroupId: modificationGroup.id,
       })),
       skipDuplicates: true,
@@ -80,7 +80,6 @@ export class ModificationService {
         modificationGroupId: dto.modificationGroupId,
         name: dto.name,
         price: dto.price,
-        isMandatory: dto.isMandatory,
       },
     });
   }
