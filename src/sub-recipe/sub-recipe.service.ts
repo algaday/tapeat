@@ -6,23 +6,23 @@ import { SubRecipeRepository } from './sub-recipe.repository';
 export class SubRecipeService {
   constructor(private readonly subRecipeRepository: SubRecipeRepository) {}
 
-  async createSubRecipe(data: CreateSubRecipeBodyDto) {
+  async create(data: CreateSubRecipeBodyDto) {
     return this.subRecipeRepository.create(data);
   }
 
-  async getSubRecipe(id: string) {
+  async findById(id: string) {
     return this.subRecipeRepository.findById(id);
   }
 
-  async getSubRecipes() {
+  async findAll() {
     return this.subRecipeRepository.findAll();
   }
 
-  async deleteSubRecipe(id: string) {
+  async delete(id: string) {
     return this.subRecipeRepository.delete(id);
   }
 
-  async updateSubRecipe(id: string, data: Partial<CreateSubRecipeBodyDto>) {
+  async update(id: string, data: Partial<CreateSubRecipeBodyDto>) {
     return this.subRecipeRepository.update(id, data);
   }
 }

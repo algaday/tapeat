@@ -14,30 +14,30 @@ import { SubRecipeService } from './sub-recipe.service';
 export class SubRecipeController {
   constructor(private subRecipeService: SubRecipeService) {}
   @Post()
-  async createSubRecipe(@Body() data: CreateSubRecipeBodyDto) {
-    return this.subRecipeService.createSubRecipe(data);
+  async create(@Body() data: CreateSubRecipeBodyDto) {
+    return this.subRecipeService.create(data);
   }
 
   @Delete(':id')
-  async deleteSubRecipe(@Param('id') id: string) {
-    return this.subRecipeService.deleteSubRecipe(id);
+  async delete(@Param('id') id: string) {
+    return this.subRecipeService.delete(id);
   }
 
   @Put(':id')
-  async updateSubRecipe(
+  async update(
     @Param() id: string,
     @Body() data: Partial<CreateSubRecipeBodyDto>,
   ) {
-    return this.subRecipeService.updateSubRecipe(id, data);
+    return this.subRecipeService.update(id, data);
   }
 
   @Get()
-  async getSubRecipes() {
-    return this.subRecipeService.getSubRecipes();
+  async getAll() {
+    return this.subRecipeService.findAll();
   }
 
   @Get(':id')
-  async getSubRecipe(@Param('id') id: string) {
-    return this.subRecipeService.getSubRecipe(id);
+  async getById(@Param('id') id: string) {
+    return this.subRecipeService.findById(id);
   }
 }
