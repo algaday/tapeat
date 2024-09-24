@@ -6,7 +6,7 @@ import { CreateRecipeBodyDto } from './dto';
 export class RecipeRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createOne(data: CreateRecipeBodyDto) {
+  async create(data: CreateRecipeBodyDto) {
     return this.prismaService.recipe.create({ data });
   }
 

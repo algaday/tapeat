@@ -6,27 +6,27 @@ import { RecipeRepository } from './recipe.repository';
 export class RecipeService {
   constructor(private readonly recipeRepository: RecipeRepository) {}
 
-  async createRecipe(data: CreateRecipeBodyDto) {
-    return this.recipeRepository.createOne(data);
+  async create(data: CreateRecipeBodyDto) {
+    return this.recipeRepository.create(data);
   }
 
-  async createRecipes(data: CreateRecipeBodyDto[]) {
+  async createMany(data: CreateRecipeBodyDto[]) {
     return this.recipeRepository.createMany(data);
   }
 
-  async getRecipe(id: string) {
+  async findById(id: string) {
     return this.recipeRepository.findById(id);
   }
 
-  async getRecipes() {
+  async findAll() {
     return this.recipeRepository.findAll();
   }
 
-  async deleteRecipe(id: string) {
+  async delete(id: string) {
     return this.recipeRepository.delete(id);
   }
 
-  async updateRecipe(id: string, data: CreateRecipeBodyDto) {
+  async update(id: string, data: CreateRecipeBodyDto) {
     return this.recipeRepository.update(id, data);
   }
 }

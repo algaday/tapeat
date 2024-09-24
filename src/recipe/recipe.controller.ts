@@ -14,32 +14,32 @@ import { RecipeService } from './recipe.service';
 export class RecipeController {
   constructor(private recipeService: RecipeService) {}
   @Post()
-  async createRecipe(@Body() data: CreateRecipeBodyDto) {
-    return this.recipeService.createRecipe(data);
+  async create(@Body() data: CreateRecipeBodyDto) {
+    return this.recipeService.create(data);
   }
 
   @Post('bulk')
-  async createRecipes(@Body() data: CreateRecipeBodyDto[]) {
-    return this.recipeService.createRecipes(data);
+  async createMany(@Body() data: CreateRecipeBodyDto[]) {
+    return this.recipeService.createMany(data);
   }
 
   @Delete(':id')
-  async deleteRecipe(@Param('id') id: string) {
-    return this.recipeService.deleteRecipe(id);
+  async delete(@Param('id') id: string) {
+    return this.recipeService.delete(id);
   }
 
   @Put(':id')
-  async updateRecipe(@Param() id: string, @Body() data: CreateRecipeBodyDto) {
-    return this.recipeService.updateRecipe(id, data);
+  async update(@Param() id: string, @Body() data: CreateRecipeBodyDto) {
+    return this.recipeService.update(id, data);
   }
 
   @Get()
-  async getRecipes() {
-    return this.recipeService.getRecipes();
+  async getAll() {
+    return this.recipeService.findAll();
   }
 
   @Get(':id')
-  async getRecipe(@Param('id') id: string) {
-    return this.recipeService.getRecipe(id);
+  async getById(@Param('id') id: string) {
+    return this.recipeService.findById(id);
   }
 }
