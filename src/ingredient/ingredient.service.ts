@@ -6,27 +6,27 @@ import { IngredientRepository } from './ingredient.repository';
 export class IngredientService {
   constructor(private readonly ingredientRepository: IngredientRepository) {}
 
-  async createIngredient(data: CreateIngredientBodyDto) {
-    return this.ingredientRepository.createOne(data);
+  async create(data: CreateIngredientBodyDto) {
+    return this.ingredientRepository.create(data);
   }
 
-  async createIngredients(data: CreateIngredientBodyDto[]) {
+  async createMany(data: CreateIngredientBodyDto[]) {
     return this.ingredientRepository.createMany(data);
   }
 
-  async getIngredient(id: string) {
+  async findById(id: string) {
     return this.ingredientRepository.findById(id);
   }
 
-  async getIngredients() {
+  async findAll() {
     return this.ingredientRepository.findAll();
   }
 
-  async deleteIngredient(id: string) {
+  async delete(id: string) {
     return this.ingredientRepository.delete(id);
   }
 
-  async updateIngredient(id: string, data: CreateIngredientBodyDto) {
+  async update(id: string, data: CreateIngredientBodyDto) {
     return this.ingredientRepository.update(id, data);
   }
 }

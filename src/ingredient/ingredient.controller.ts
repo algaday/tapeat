@@ -14,35 +14,32 @@ import { CreateIngredientBodyDto } from './dto';
 export class IngredientController {
   constructor(private ingredientService: IngredientService) {}
   @Post()
-  async createIngredient(@Body() data: CreateIngredientBodyDto) {
-    return this.ingredientService.createIngredient(data);
+  async create(@Body() data: CreateIngredientBodyDto) {
+    return this.ingredientService.create(data);
   }
 
   @Post('bulk')
-  async createIngredients(@Body() data: CreateIngredientBodyDto[]) {
-    return this.ingredientService.createIngredients(data);
+  async createMany(@Body() data: CreateIngredientBodyDto[]) {
+    return this.ingredientService.createMany(data);
   }
 
   @Delete(':id')
-  async deleteIngredient(@Param('id') id: string) {
-    return this.ingredientService.deleteIngredient(id);
+  async delete(@Param('id') id: string) {
+    return this.ingredientService.delete(id);
   }
 
   @Put(':id')
-  async updateIngredient(
-    @Param() id: string,
-    @Body() data: CreateIngredientBodyDto,
-  ) {
-    return this.ingredientService.updateIngredient(id, data);
+  async update(@Param('id') id: string, @Body() data: CreateIngredientBodyDto) {
+    return this.ingredientService.update(id, data);
   }
 
   @Get()
-  async getIngredients() {
-    return this.ingredientService.getIngredients();
+  async getAll() {
+    return this.ingredientService.findAll();
   }
 
   @Get(':id')
-  async getIngredient(@Param('id') id: string) {
-    return this.ingredientService.getIngredient(id);
+  async getById(@Param('id') id: string) {
+    return this.ingredientService.findById(id);
   }
 }
