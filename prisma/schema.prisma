@@ -1,6 +1,5 @@
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -10,211 +9,214 @@ datasource db {
 }
 
 model User {
-  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  email String @unique
+  id        String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now())
+  email     String           @unique
   password  String
   firstName String
   lastName  String
-  owner RestaurantOwner?
-  customer Customer?
+  owner     RestaurantOwner?
+  customer  Customer?
 }
 
 model RestaurantOwner {
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  userId String @unique @db.Uuid
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId    String   @unique @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
   restaurant Restaurant?
-  
-  user   User @relation(fields: [userId], references: [id])
-}
 
-model Customer{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  address String
-  userId String @unique @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  
-  orders Order[]
-  
   user User @relation(fields: [userId], references: [id])
 }
 
-model Restaurant{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name String
-  ownerId String @unique @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  owner RestaurantOwner @relation(fields: [ownerId], references: [userId])
-
-  branches RestaurantBranch[]
-  orders Order[]
-  menus MenuItem[]
-  modificationGroupds ModificationGroup[]
-  deliveryFee DeliveryTemplateFee[]
-  categories MenuItemCategory[]
-}
-
-model RestaurantBranch{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  address String
-  restaurantId String @db.Uuid
+model Customer {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  address   String
+  userId    String   @unique @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  
-  branchMenuItems BranchMenuItem[]
-  
-  restaurant Restaurant @relation(fields: [restaurantId],  references: [id])
+
+  orders Order[]
+
+  user User @relation(fields: [userId], references: [id])
 }
 
-model MenuItem{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  nameOfDish String
-  categoryId String @db.Uuid
-  description String
-  price Decimal @db.Decimal(12,2)
-  restaurantId String @db.Uuid
-  imageId String @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Restaurant {
+  id        String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String
+  ownerId   String          @unique @db.Uuid
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  owner     RestaurantOwner @relation(fields: [ownerId], references: [userId])
+
+  branches            RestaurantBranch[]
+  orders              Order[]
+  menus               MenuItem[]
+  modificationGroupds ModificationGroup[]
+  deliveryFee         DeliveryTemplateFee[]
+  categories          MenuItemCategory[]
+}
+
+model RestaurantBranch {
+  id           String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  address      String
+  restaurantId String   @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  branchMenuItems BranchMenuItem[]
+  Storage         Storage[]
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
-  image Image @relation(fields: [imageId], references: [id])
-  category MenuItemCategory @relation(fields: [categoryId],  references: [id], onDelete: Cascade)
+}
 
-  orderItems OrderItem[]
+model MenuItem {
+  id           String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nameOfDish   String
+  categoryId   String   @db.Uuid
+  description  String
+  price        Decimal  @db.Decimal(12, 2)
+  restaurantId String   @db.Uuid
+  imageId      String   @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant Restaurant       @relation(fields: [restaurantId], references: [id])
+  image      Image            @relation(fields: [imageId], references: [id])
+  category   MenuItemCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  orderItems         OrderItem[]
   modificationGroups MenuItemModificationGroup[]
-  branchMenuItems BranchMenuItem[]
+  branchMenuItems    BranchMenuItem[]
 }
 
-model BranchMenuItem{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  branchRestaurantId String @db.Uuid
-  menuItemId String @db.Uuid
-  isAvailable Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+model BranchMenuItem {
+  id                 String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  restaurantBranchId String   @db.Uuid
+  menuItemId         String   @db.Uuid
+  isAvailable        Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
 
-  branchRestaurant RestaurantBranch @relation(fields: [branchRestaurantId], references: [id])
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+  restaurantBranch RestaurantBranch @relation(fields: [restaurantBranchId], references: [id])
+  menuItem         MenuItem         @relation(fields: [menuItemId], references: [id])
 }
 
-model Image{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  restaurantId String? @db.Uuid
-  originalPath String
+model Image {
+  id                  String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  restaurantId        String?  @db.Uuid
+  originalPath        String
   mediumThumbnailPath String?
-  smallThumbnailPath String?
-  isAssigned Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  smallThumbnailPath  String?
+  isAssigned          Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now())
 
   menuItems MenuItem[]
 }
 
-model MenuItemModificationGroup{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  menuItemId String @db.Uuid
-  modificationId String @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+model MenuItemModificationGroup {
+  id                String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuItemId        String            @db.Uuid
+  modificationId    String            @db.Uuid
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  menuItem          MenuItem          @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
   modificationGroup ModificationGroup @relation(fields: [modificationId], references: [id], onDelete: Cascade)
 }
-model ModificationGroup {
-  id String @id @default(uuid()) @db.Uuid
-  name String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  restaurantId String @db.Uuid
-  isMultipleChoice Boolean @default(false)
 
-  menuItem MenuItemModificationGroup[]
+model ModificationGroup {
+  id               String   @id @default(uuid()) @db.Uuid
+  name             String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  restaurantId     String   @db.Uuid
+  isMultipleChoice Boolean  @default(false)
+
+  menuItem      MenuItemModificationGroup[]
   modifications Modification[]
 
   restaurant Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model Modification {
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  modificationGroupId String @db.Uuid
-  name String
-  price Decimal @db.Decimal(12,2) @default(0)
-  isMandatory Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  modificationGroupId String   @db.Uuid
+  name                String
+  price               Decimal  @default(0) @db.Decimal(12, 2)
+  isMandatory         Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   orderItemModifications OrderItemModification[]
 
   modificationGroup ModificationGroup @relation(fields: [modificationGroupId], references: [id], onDelete: Cascade)
+
   @@unique([modificationGroupId, name])
 }
 
-model Order{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  customerId String @db.Uuid 
-  restaurantId String @db.Uuid
-  orderDate DateTime @default(now())
-  status String @default("pending")
-  subtotal Decimal @db.Decimal(12,2) 
-  totalAmount Decimal @db.Decimal(12,2) 
-  orderFee Decimal @db.Decimal(12,2) 
-  freeDelivery Boolean    @default(false)
-  address String
-  phoneNumber String
-  comments String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
-  customer Customer @relation(fields: [customerId],references: [id])
-  orderItems OrderItem[]
+model Order {
+  id           String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  customerId   String      @db.Uuid
+  restaurantId String      @db.Uuid
+  orderDate    DateTime    @default(now())
+  status       String      @default("pending")
+  subtotal     Decimal     @db.Decimal(12, 2)
+  totalAmount  Decimal     @db.Decimal(12, 2)
+  orderFee     Decimal     @db.Decimal(12, 2)
+  freeDelivery Boolean     @default(false)
+  address      String
+  phoneNumber  String
+  comments     String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id])
+  customer     Customer    @relation(fields: [customerId], references: [id])
+  orderItems   OrderItem[]
 }
 
-model OrderItem{
-  id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  menuItemId String @db.Uuid
-  orderId String @db.Uuid 
-  quantity Int
-  price Decimal @db.Decimal(12,2) @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model OrderItem {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  menuItemId String   @db.Uuid
+  orderId    String   @db.Uuid
+  quantity   Int
+  price      Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   orderItemModifications OrderItemModification[]
 
-  menuItem MenuItem @relation(fields: [menuItemId],references: [id])
-  order Order @relation(fields: [orderId],references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+  order    Order    @relation(fields: [orderId], references: [id])
 }
 
-model OrderItemModification{
-  id String @id @default(uuid()) @db.Uuid
-  orderItemId String @db.Uuid
-  modificationId String @db.Uuid
-  quantity Int
-  price Decimal @db.Decimal(12,2) @default(0)
+model OrderItemModification {
+  id             String  @id @default(uuid()) @db.Uuid
+  orderItemId    String  @db.Uuid
+  modificationId String  @db.Uuid
+  quantity       Int
+  price          Decimal @default(0) @db.Decimal(12, 2)
 
-  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  orderItem    OrderItem    @relation(fields: [orderItemId], references: [id])
   modification Modification @relation(fields: [modificationId], references: [id])
 }
 
-model DeliveryTemplateFee{
-  id String @id @default(uuid()) @db.Uuid
-  restaurantId String @db.Uuid
-  minOrderAmount Decimal @db.Decimal(12,2) @default(0)
-  deliveryFee Decimal @db.Decimal(12,2) @default(0)
+model DeliveryTemplateFee {
+  id             String  @id @default(uuid()) @db.Uuid
+  restaurantId   String  @db.Uuid
+  minOrderAmount Decimal @default(0) @db.Decimal(12, 2)
+  deliveryFee    Decimal @default(0) @db.Decimal(12, 2)
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
   @@unique([restaurantId, minOrderAmount])
 }
 
-model MenuItemCategory{
-  id String @id @default(uuid()) @db.Uuid
-  name String 
+model MenuItemCategory {
+  id           String @id @default(uuid()) @db.Uuid
+  name         String
   restaurantId String @db.Uuid
 
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
@@ -222,5 +224,94 @@ model MenuItemCategory{
   menuItems MenuItem[]
 
   @@unique([restaurantId, name])
+}
 
+model Supplier {
+  id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name     String
+  contacts String
+  bin      String
+}
+
+model Ingredient {
+  id    String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name  String
+  yield Decimal @db.Decimal(5, 4)
+  unit  String
+
+  recipeIngredients         RecipeIngredient[]
+  inventoryCountIngredients InventoryCountIngredient[]
+  storageIngredients        StorageIngredient[]
+}
+
+model Recipe {
+  id                     String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                   String
+  unit                   String
+  yield                  Decimal @db.Decimal(5, 4)
+  isAvailableInInventory Boolean @default(false)
+
+  recipeIngredients    RecipeIngredient[] @relation("Recipe")
+  subRecipeIngredients RecipeIngredient[] @relation("SubRecipe")
+
+  storageIngredients StorageIngredient[]
+}
+
+model RecipeIngredient {
+  id           String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  recipeId     String      @db.Uuid
+  ingredientId String?     @db.Uuid
+  subRecipeId  String?     @db.Uuid
+  quantity     Int
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id])
+  recipe       Recipe      @relation("Recipe", fields: [recipeId], references: [id])
+  subRecipe    Recipe?     @relation("SubRecipe", fields: [subRecipeId], references: [id])
+}
+
+model InventoryCount {
+  id   String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  date DateTime
+
+  inventoryCountIngredient InventoryCountIngredient[]
+}
+
+model InventoryCountIngredient {
+  id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  quantity Int
+
+  ingredientId     String @db.Uuid
+  inventoryCountId String @db.Uuid
+
+  ingredient     Ingredient     @relation(fields: [ingredientId], references: [id])
+  inventoryCount InventoryCount @relation(fields: [inventoryCountId], references: [id])
+}
+
+model Storage {
+  id                 String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name               String
+  restaurantBranchId String @db.Uuid
+
+  restaurantBranch RestaurantBranch @relation(fields: [restaurantBranchId], references: [id])
+
+  storageIngredients      StorageIngredient[]
+  inventoryCountTemplates InventoryCountTemplate[]
+}
+
+model StorageIngredient {
+  id           String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  storageId    String  @db.Uuid
+  ingredientId String? @db.Uuid
+  recipeId     String? @db.Uuid
+
+  storages   Storage     @relation(fields: [storageId], references: [id])
+  ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
+  recipe     Recipe?     @relation(fields: [recipeId], references: [id])
+}
+
+model InventoryCountTemplate {
+  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type      String
+  storegeId String @db.Uuid
+
+  storage Storage @relation(fields: [storegeId], references: [id])
 }
