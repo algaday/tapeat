@@ -4,24 +4,39 @@ export class MenuItemMapper {
   static toDto(entity: MenuItemWithImage): MenuItemWithImageDto {
     const {
       id,
-      category,
+      categoryId,
       description,
       nameOfDish,
       price,
       restaurantId,
       createdAt,
       updatedAt,
+      category,
       image: {
         id: imageId,
         originalPath,
         mediumThumbnailPath,
         smallThumbnailPath,
       },
+      modificationGroups,
     } = entity;
+
+    const formattedModificationGroups = modificationGroups.map(
+      (modificationGroup) => {
+        const modifications = modificationGroup.modificationGroup.modifications;
+        return {
+          id: modificationGroup.modificationGroup.id,
+          isMultipleChoice:
+            modificationGroup.modificationGroup.isMultipleChoice,
+          name: modificationGroup.modificationGroup.name,
+          modifications,
+        };
+      },
+    );
 
     return {
       id,
-      category,
+      categoryId,
       description,
       nameOfDish,
       price: String(price),
@@ -35,6 +50,8 @@ export class MenuItemMapper {
         mediumThumbnailPath,
         smallThumbnailPath,
       },
+      category,
+      modificationGroups: formattedModificationGroups,
     };
   }
 }

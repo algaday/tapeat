@@ -8,10 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
-import {
-  CreateMenuItemDto,
-  ModificationGroupDto,
-} from './dto/create-menu-item.dto';
+import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { GetCurrentUser, AuthUser } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
@@ -29,7 +26,7 @@ export class MenuController {
 
   @Get('menu-items')
   getAllMenuItems(@GetCurrentUser() user: AuthUser) {
-    return this.menuService.getAllMenuItems(user);
+    return this.menuService.findMenuItems(user);
   }
 
   @Post('create-menu-item')
@@ -48,10 +45,5 @@ export class MenuController {
   @Delete('delete-menu-item')
   deleteMenuItem(@Body() menuItemId: DeleteMenuItemDto) {
     return this.menuService.deleteMenuItem(menuItemId);
-  }
-
-  @Post('modification')
-  createModificationGroup(@Body() dto: ModificationGroupDto) {
-    return this.menuService.createModificationGroup(dto);
   }
 }

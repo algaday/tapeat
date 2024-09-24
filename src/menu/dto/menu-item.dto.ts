@@ -1,4 +1,4 @@
-import { Image, MenuItem } from '@prisma/client';
+import { Image, Modification, Prisma } from '@prisma/client';
 import { Expose, Type } from 'class-transformer';
 import {
   IsDefined,
@@ -8,7 +8,24 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export type MenuItemWithImage = MenuItem & { image: Image };
+type MenuItem = Prisma.MenuItemGetPayload<{
+  include: {
+    category: true;
+    modificationGroups: {
+      include: {
+        modificationGroup: {
+          include: {
+            modifications: true;
+          };
+        };
+      };
+    };
+  };
+}>;
+
+export type MenuItemWithImage = MenuItem & {
+  image: Image;
+};
 
 class ImageDto {
   @IsNotEmpty()
@@ -51,7 +68,7 @@ export class MenuItemWithImageDto {
   @IsNotEmpty()
   @IsString()
   @Expose()
-  category: string;
+  categoryId: string;
 
   @IsNotEmpty()
   @IsString()
@@ -83,4 +100,46 @@ export class MenuItemWithImageDto {
   @Type(() => ImageDto)
   @ValidateNested()
   image: ImageDto;
+
+  @Type(() => Category)
+  category: Category;
+
+  @Type(() => ModificationGroup)
+  modificationGroups?: ModificationGroup[];
+}
+
+class ModificationGroup {
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  id: string;
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  name: string;
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  isMultipleChoice: boolean;
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  modifications: Modification[];
+}
+
+class Category {
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Expose()
+  restaurantId: string;
 }

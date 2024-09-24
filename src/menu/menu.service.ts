@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateMenuItemDto, ModificationGroupDto } from './dto';
+import { CreateMenuItemDto } from './dto';
 import { MenuItemMapper } from './menu-item.mapper';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
-import { MenuItemDoesNotExist } from './errors/menu-item-does-not-exist.error';
+import { MenuItemDoesNotExist as MenuItemNotFound } from './errors/menu-item-not-found.error';
 import { MediaService } from 'src/media/media.service';
 import { Prisma } from '@prisma/client';
 import { DeleteMenuItemDto } from './dto/delete-menu-item.dto';
@@ -24,29 +24,51 @@ export class MenuService {
       },
       include: {
         image: true,
+        category: true,
+        modificationGroups: {
+          include: {
+            modificationGroup: {
+              include: {
+                modifications: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    if (!menuItem) {
+      throw new MenuItemNotFound();
+    }
 
     return MenuItemMapper.toDto(menuItem);
   }
 
-  async getAllMenuItems(user: AuthUser) {
+  async findMenuItems(user: AuthUser) {
     const menuItems = await this.prisma.menuItem.findMany({
       where: {
         restaurantId: user.restaurantId,
       },
       include: {
+        category: true,
         image: true,
+      },
+      orderBy: {
+        category: {
+          name: 'asc',
+        },
       },
     });
 
-    return menuItems.map((menuItem) => MenuItemMapper.toDto(menuItem));
+    return menuItems;
+
+    // return menuItems.map((menuItem) => MenuItemMapper.toDto(menuItem));
   }
 
   async createMenuItem(dto: CreateMenuItemDto, user: AuthUser) {
     const {
       name,
-      category,
+      categoryId,
       description,
       price,
       imageId,
@@ -54,19 +76,12 @@ export class MenuService {
     } = dto;
 
     const menuItem = await this.prisma.$transaction(async () => {
-      await this.prisma.image.update({
-        where: {
-          id: imageId,
-        },
-        data: {
-          isAssigned: true,
-        },
-      }); //todo: use mediaservice
+      await this.mediaService.markImageAssigned(imageId);
 
       const menuItem = await this.prisma.menuItem.create({
         data: {
           nameOfDish: name,
-          category,
+          categoryId,
           description,
           price,
           imageId,
@@ -75,12 +90,10 @@ export class MenuService {
       });
 
       if (modificationGroupIds.length) {
-        await this.prisma.menuItemModificationGroup.createMany({
-          data: modificationGroupIds.map((modification) => ({
-            menuItemId: menuItem.id,
-            modificationId: modification,
-          })),
-        });
+        await this.createManyMenuItemModifications(
+          menuItem.id,
+          modificationGroupIds,
+        );
       }
     });
 
@@ -97,9 +110,10 @@ export class MenuService {
       name,
       menuItemId,
       imageId: newImageId,
-      category,
+      categoryId,
       description,
       price,
+      modificationGroupIds,
     } = dto;
 
     const menuItem = await this.prisma.menuItem.findUnique({
@@ -109,18 +123,30 @@ export class MenuService {
     });
 
     if (!menuItem) {
-      throw new MenuItemDoesNotExist();
+      throw new MenuItemNotFound();
     }
 
     const updateData = {
       nameOfDish: name,
-      category,
+      categoryId,
       description,
       price,
     };
 
     if (newImageId === menuItem.imageId) {
-      return this.updateMenuItemData(menuItemId, updateData);
+      return this.prisma.$transaction(async () => {
+        const updatedMenuItem = await this.updateMenuItemData(
+          menuItemId,
+          updateData,
+        );
+
+        await this.updateMenuItemModificationGroup(
+          updatedMenuItem.id,
+          modificationGroupIds,
+        );
+
+        return updatedMenuItem;
+      });
     }
 
     return await this.prisma.$transaction(async () => {
@@ -132,6 +158,11 @@ export class MenuService {
       await this.mediaService.markImageAssigned(newImageId);
 
       await this.mediaService.markImageUnassigned(menuItem.imageId);
+
+      await this.updateMenuItemModificationGroup(
+        updatedMenuItem.id,
+        modificationGroupIds,
+      );
 
       return updatedMenuItem;
     });
@@ -145,7 +176,7 @@ export class MenuService {
     });
 
     if (!menuItem) {
-      throw new MenuItemDoesNotExist();
+      throw new MenuItemNotFound();
     }
 
     const deletedMenuItem = this.prisma.$transaction(async () => {
@@ -161,31 +192,39 @@ export class MenuService {
     return deletedMenuItem;
   }
 
-  async createModificationGroup(modificationGroupDto: ModificationGroupDto) {
-    const modificationGroup = await this.prisma.modificationGroup.create({
-      data: {
-        name: modificationGroupDto.name,
-      },
-    });
-
-    await this.prisma.modification.createMany({
-      data: modificationGroupDto.options.map((modification) => ({
-        name: modification.name,
-        price: modification.price,
-        modificationGroupId: modificationGroup.id,
-      })),
-      skipDuplicates: true,
-    });
-
-    return modificationGroup;
-  }
-
   updateMenuItemData(id: string, data: Prisma.MenuItemUncheckedUpdateInput) {
     return this.prisma.menuItem.update({
       where: {
         id,
       },
       data,
+    });
+  }
+
+  updateMenuItemModificationGroup(id: string, modificationGroupIds: string[]) {
+    const menuItemModificationGroups = this.prisma.$transaction(async () => {
+      await this.deleteManyMenuItemModifications(id);
+
+      return this.createManyMenuItemModifications(id, modificationGroupIds);
+    });
+
+    return menuItemModificationGroups;
+  }
+
+  deleteManyMenuItemModifications(id: string) {
+    return this.prisma.menuItemModificationGroup.deleteMany({
+      where: {
+        menuItemId: id,
+      },
+    });
+  }
+
+  createManyMenuItemModifications(id: string, modificationGroupIds: string[]) {
+    return this.prisma.menuItemModificationGroup.createMany({
+      data: modificationGroupIds.map((modification) => ({
+        menuItemId: id,
+        modificationId: modification,
+      })),
     });
   }
 }
