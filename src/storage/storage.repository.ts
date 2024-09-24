@@ -6,7 +6,7 @@ import { CreateStorageBodyDto } from './dto';
 export class StorageRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createOne(data: CreateStorageBodyDto) {
+  async create(data: CreateStorageBodyDto) {
     return this.prismaService.storage.create({ data });
   }
 

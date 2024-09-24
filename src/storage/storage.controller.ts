@@ -14,32 +14,32 @@ import { StorageService } from './storage.service';
 export class StorageController {
   constructor(private storageService: StorageService) {}
   @Post()
-  async createStorage(@Body() data: CreateStorageBodyDto) {
-    return this.storageService.createStorage(data);
+  async create(@Body() data: CreateStorageBodyDto) {
+    return this.storageService.create(data);
   }
 
   @Post('bulk')
-  async createStorages(@Body() data: CreateStorageBodyDto[]) {
-    return this.storageService.createStorages(data);
+  async createMany(@Body() data: CreateStorageBodyDto[]) {
+    return this.storageService.createMany(data);
   }
 
   @Delete(':id')
-  async deleteStorage(@Param('id') id: string) {
-    return this.storageService.deleteStorage(id);
+  async delete(@Param('id') id: string) {
+    return this.storageService.delete(id);
   }
 
   @Put(':id')
-  async updateStorage(@Param() id: string, @Body() data: CreateStorageBodyDto) {
-    return this.storageService.updateStorage(id, data);
+  async update(@Param() id: string, @Body() data: CreateStorageBodyDto) {
+    return this.storageService.update(id, data);
   }
 
   @Get()
-  async getStorages() {
-    return this.storageService.getStorages();
+  async getAll() {
+    return this.storageService.findAll();
   }
 
   @Get(':id')
-  async getStorage(@Param('id') id: string) {
-    return this.storageService.getStorage(id);
+  async getById(@Param('id') id: string) {
+    return this.storageService.findById(id);
   }
 }

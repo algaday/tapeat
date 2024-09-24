@@ -6,27 +6,27 @@ import { StorageRepository } from './storage.repository';
 export class StorageService {
   constructor(private readonly storageRepository: StorageRepository) {}
 
-  async createStorage(data: CreateStorageBodyDto) {
-    return this.storageRepository.createOne(data);
+  async create(data: CreateStorageBodyDto) {
+    return this.storageRepository.create(data);
   }
 
-  async createStorages(data: CreateStorageBodyDto[]) {
+  async createMany(data: CreateStorageBodyDto[]) {
     return this.storageRepository.createMany(data);
   }
 
-  async getStorage(id: string) {
+  async findById(id: string) {
     return this.storageRepository.findById(id);
   }
 
-  async getStorages() {
+  async findAll() {
     return this.storageRepository.findAll();
   }
 
-  async deleteStorage(id: string) {
+  async delete(id: string) {
     return this.storageRepository.delete(id);
   }
 
-  async updateStorage(id: string, data: CreateStorageBodyDto) {
+  async update(id: string, data: CreateStorageBodyDto) {
     return this.storageRepository.update(id, data);
   }
 }
