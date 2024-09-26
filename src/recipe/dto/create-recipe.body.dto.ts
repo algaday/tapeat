@@ -3,22 +3,24 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
-import { IngredientUnit } from 'src/constants/enums/ingredient-unit.enum';
+import { Unit } from 'src/constants/enums/unit.enum';
 
 export class CreateRecipeBodyDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(IngredientUnit)
+  @IsEnum(Unit)
   @IsNotEmpty()
-  unit: IngredientUnit;
+  unit: Unit;
 
   @IsNumber({ maxDecimalPlaces: 4 })
   yield: number;
 
   @IsBoolean()
+  @IsOptional()
   isAvailableInInventory: boolean;
 }
