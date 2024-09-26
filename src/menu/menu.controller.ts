@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
-import { GetCurrentUser, AuthUser } from 'src/common/decorators';
+import { GetCurrentUser, AuthUser, Public } from 'src/common/decorators';
 import { JwtGuard } from 'src/common/guards/jwt-guard';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
 import { DeleteMenuItemDto } from './dto/delete-menu-item.dto';
@@ -19,6 +19,7 @@ import { DeleteMenuItemDto } from './dto/delete-menu-item.dto';
 export class MenuController {
   constructor(private menuService: MenuService) {}
 
+  @Public()
   @Get('menu-item-info/:id')
   getMenuItem(@Param() params: { id: string }) {
     return this.menuService.getMenuItem(params);

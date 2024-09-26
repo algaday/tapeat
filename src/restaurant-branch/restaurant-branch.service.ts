@@ -7,17 +7,19 @@ import { RestaurantBranchMapper } from './restaurant-branch.mapper';
 @Injectable()
 export class RestaurantBranchService {
   constructor(private prisma: PrismaService) {}
-  async createBranch(dto: CreateBranchDto, user: AuthUser) {
+  async create(dto: CreateBranchDto, user: AuthUser) {
     const restaurantBranch = await this.prisma.restaurantBranch.create({
       data: {
         address: dto.address,
+        longitude: dto.longitude,
+        latitude: dto.latitude,
         restaurantId: user.restaurantId,
       },
     });
     return RestaurantBranchMapper.toDto(restaurantBranch);
   }
 
-  async deleteBranch(body) {
+  async delete(body) {
     const branch = await this.prisma.restaurantBranch.delete({
       where: { id: body.branchId },
     });

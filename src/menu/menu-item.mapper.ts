@@ -28,6 +28,7 @@ export class MenuItemMapper {
           id: modificationGroup.modificationGroup.id,
           isMultipleChoice:
             modificationGroup.modificationGroup.isMultipleChoice,
+          isMandatory: modificationGroup.modificationGroup.isMandatory,
           name: modificationGroup.modificationGroup.name,
           modifications,
         };
