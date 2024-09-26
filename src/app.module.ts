@@ -17,6 +17,7 @@ import { CategoryModule } from './category/category.module';
 import { IngredientModule } from './ingredient/ingredient.module';
 import { RecipeModule } from './recipe/recipe.module';
 import { StorageModule } from './storage/storage.module';
+import { SubRecipeModule } from './sub-recipe/sub-recipe.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { StorageModule } from './storage/storage.module';
     IngredientModule,
     RecipeModule,
     StorageModule,
+    SubRecipeModule,
   ],
 })
 export class AppModule {}

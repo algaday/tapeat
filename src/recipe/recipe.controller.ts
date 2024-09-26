@@ -9,10 +9,14 @@ import {
 } from '@nestjs/common';
 import { CreateRecipeBodyDto } from './dto';
 import { RecipeService } from './recipe.service';
+import { SubRecipeService } from 'src/sub-recipe/sub-recipe.service';
 
 @Controller('recipes')
 export class RecipeController {
-  constructor(private recipeService: RecipeService) {}
+  constructor(
+    private recipeService: RecipeService,
+    private subRecipeService: SubRecipeService,
+  ) {}
   @Post()
   async create(@Body() data: CreateRecipeBodyDto) {
     return this.recipeService.create(data);
@@ -41,5 +45,10 @@ export class RecipeController {
   @Get(':id')
   async getById(@Param('id') id: string) {
     return this.recipeService.findById(id);
+  }
+
+  @Get(':recipeId/detailed')
+  async getRecipeIngredientsWithSubs(@Param('recipeId') recipeId: string) {
+    return this.subRecipeService.getRecipeIngredientsWithSubs(recipeId);
   }
 }
