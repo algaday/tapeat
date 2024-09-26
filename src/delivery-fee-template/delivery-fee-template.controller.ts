@@ -30,8 +30,8 @@ export class DeliveryFeeTemplateController {
     return this.deliveryFeeTemplateService.delete(id);
   }
 
-  @Get()
-  get(@GetCurrentUser() user: AuthUser) {
-    return this.deliveryFeeTemplateService.get(user);
+  @Get(':restaurantId')
+  get(@Param('restaurantId') restaurantId: string) {
+    return this.deliveryFeeTemplateService.get(restaurantId);
   }
 }
