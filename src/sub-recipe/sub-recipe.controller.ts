@@ -1,16 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { CreateSubRecipeBodyDto } from './dto';
 import { SubRecipeService } from './sub-recipe.service';
 
-@Controller('sub-recipe')
+@Controller('sub-recipes')
 export class SubRecipeController {
   constructor(private subRecipeService: SubRecipeService) {}
   @Post()
@@ -29,15 +21,5 @@ export class SubRecipeController {
     @Body() data: Partial<CreateSubRecipeBodyDto>,
   ) {
     return this.subRecipeService.update(id, data);
-  }
-
-  @Get()
-  async getAll() {
-    return this.subRecipeService.findAll();
-  }
-
-  @Get(':id')
-  async getById(@Param('id') id: string) {
-    return this.subRecipeService.findById(id);
   }
 }
