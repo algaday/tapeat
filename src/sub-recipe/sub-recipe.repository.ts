@@ -10,14 +10,6 @@ export class SubRecipeRepository {
     return this.prismaService.recipeIngredient.create({ data });
   }
 
-  async findById(id: string) {
-    return this.prismaService.recipeIngredient.findFirst({ where: { id } });
-  }
-
-  async findAll() {
-    return this.prismaService.recipeIngredient.findMany();
-  }
-
   async update(id: string, data: Partial<CreateSubRecipeBodyDto>) {
     return this.prismaService.recipeIngredient.update({
       where: { id },
@@ -27,5 +19,19 @@ export class SubRecipeRepository {
 
   async delete(id: string) {
     return this.prismaService.recipeIngredient.delete({ where: { id } });
+  }
+
+  async findRecipeIngredientsWithSubs(recipeId: string) {
+    return this.prismaService.recipe.findUnique({
+      where: { id: recipeId },
+      include: {
+        recipeIngredients: {
+          include: { ingredient: true, subRecipe: true },
+        },
+        subRecipeIngredients: {
+          include: { ingredient: true, subRecipe: true },
+        },
+      },
+    });
   }
 }

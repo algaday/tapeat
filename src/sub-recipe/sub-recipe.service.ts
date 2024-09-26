@@ -10,19 +10,15 @@ export class SubRecipeService {
     return this.subRecipeRepository.create(data);
   }
 
-  async findById(id: string) {
-    return this.subRecipeRepository.findById(id);
-  }
-
-  async findAll() {
-    return this.subRecipeRepository.findAll();
-  }
-
   async delete(id: string) {
     return this.subRecipeRepository.delete(id);
   }
 
   async update(id: string, data: Partial<CreateSubRecipeBodyDto>) {
     return this.subRecipeRepository.update(id, data);
+  }
+
+  async getRecipeIngredientsWithSubs(recipeId: string) {
+    return this.subRecipeRepository.findRecipeIngredientsWithSubs(recipeId);
   }
 }

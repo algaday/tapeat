@@ -7,5 +7,6 @@ import { SubRecipeRepository } from './sub-recipe.repository';
   imports: [],
   controllers: [SubRecipeController],
   providers: [SubRecipeService, SubRecipeRepository],
+  exports: [SubRecipeService],
 })
 export class SubRecipeModule {}
