@@ -4,7 +4,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { AuthUser } from 'src/common/decorators';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryNotFoundError } from './errors/catergory-not-found.error';
-import { GetCategoriesMapper } from './mapper/get-categories.mapper';
+import { GetCategoryMapper } from './mapper/get-categories.mapper';
 
 @Injectable()
 export class CategoryService {
@@ -17,9 +17,7 @@ export class CategoryService {
       },
     });
 
-    return categories.map((category) =>
-      GetCategoriesMapper.toRespone(category),
-    );
+    return categories.map((category) => GetCategoryMapper.toRespone(category));
   }
 
   getCategoriesWithMenuItems(restaurantId: string) {
@@ -53,7 +51,7 @@ export class CategoryService {
       },
     });
 
-    return GetCategoriesMapper.toRespone(category);
+    return GetCategoryMapper.toRespone(category);
   }
 
   update(id: string, dto: UpdateCategoryDto) {
