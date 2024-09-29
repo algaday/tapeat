@@ -16,6 +16,10 @@ export class CreateModificationGroupDto {
 
   @IsNotEmpty()
   @IsBoolean()
+  isMandatory: boolean;
+
+  @IsNotEmpty()
+  @IsBoolean()
   isMultipleChoice: boolean;
 
   @IsDefined()
@@ -34,8 +38,4 @@ class Modification {
   @IsNotEmpty()
   @IsString()
   price: number;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  isMandatory: boolean;
 }

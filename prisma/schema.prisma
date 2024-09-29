@@ -133,7 +133,7 @@ model ModificationGroup {
   updatedAt DateTime @updatedAt
   restaurantId String @db.Uuid
   isMultipleChoice Boolean @default(false)
-
+  isMandatory Boolean @default(false)
   menuItem MenuItemModificationGroup[]
   modifications Modification[]
 
@@ -145,7 +145,6 @@ model Modification {
   modificationGroupId String @db.Uuid
   name String
   price Decimal @db.Decimal(12,2) @default(0)
-  isMandatory Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
