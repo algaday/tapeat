@@ -1,26 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { OmitType } from '@nestjs/mapped-types';
+import { CustomerDto } from './customer.dto';
 
-export class CreateCustomerDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  address: string;
-
-  @ValidateNested()
-  @Type(() => PhoneNumberDto)
-  phonerNumber: PhoneNumberDto;
-}
-
-export class PhoneNumberDto {
-  @IsString()
-  @IsNotEmpty()
-  code: string;
-
-  @IsString()
-  @IsNotEmpty()
-  number: string;
-}
+export class CreateCustomerDto extends OmitType(CustomerDto, ['id'] as const) {}

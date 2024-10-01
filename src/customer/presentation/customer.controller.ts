@@ -1,13 +1,13 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { CustomerService } from '../application/services/customer.application-service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
+import { CreateCustomerUseCase } from '../application/use-cases/create-customer/create-customer.use-case';
 
-@Controller('customer')
+@Controller('customers')
 export class CustomerController {
-  constructor(private customerService: CustomerService) {}
+  constructor(private readonly createCustomer: CreateCustomerUseCase) {}
 
   @Post()
   async create(@Body() dto: CreateCustomerDto) {
-    return await this.customerService.create(dto);
+    return await this.createCustomer.execute(dto);
   }
 }
