@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { CustomerDto } from './dto/customer.dto';
+import { CustomerDto } from './presentation/dto/customer.dto';
 import { plainToClass } from 'class-transformer';
 
 export class CustomerMapper {
