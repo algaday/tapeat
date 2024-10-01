@@ -4,23 +4,26 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { AuthUser } from 'src/common/decorators';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryNotFoundError } from './errors/catergory-not-found.error';
+import { GetCategoryMapper } from './mapper/get-categories.mapper';
 
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  getCategories(user: AuthUser) {
-    return this.prisma.menuItemCategory.findMany({
+  async getCategories(restaurantId: string) {
+    const categories = await this.prisma.menuItemCategory.findMany({
       where: {
-        restaurantId: user.restaurantId,
+        restaurantId,
       },
     });
+
+    return categories.map((category) => GetCategoryMapper.toRespone(category));
   }
 
-  getCategoriesWithMenuItems(user: AuthUser) {
+  getCategoriesWithMenuItems(restaurantId: string) {
     return this.prisma.menuItemCategory.findMany({
       where: {
-        restaurantId: user.restaurantId,
+        restaurantId,
       },
       include: {
         menuItems: {
@@ -35,18 +38,20 @@ export class CategoryService {
   create(user: AuthUser, dto: CreateCategoryDto) {
     return this.prisma.menuItemCategory.create({
       data: {
-        name: dto.name,
+        name: dto.category,
         restaurantId: user.restaurantId,
       },
     });
   }
 
-  delete(id: string) {
-    return this.prisma.menuItemCategory.delete({
+  async delete(id: string) {
+    const category = await this.prisma.menuItemCategory.delete({
       where: {
         id,
       },
     });
+
+    return GetCategoryMapper.toRespone(category);
   }
 
   update(id: string, dto: UpdateCategoryDto) {
