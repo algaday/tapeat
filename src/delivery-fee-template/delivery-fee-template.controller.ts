@@ -13,11 +13,11 @@ import { AuthUser, GetCurrentUser } from 'src/common/decorators';
 import { CreateDeliveryFeeTemplatesDto } from './dto';
 
 @Controller('delivery-fee-templates')
-@UseGuards(JwtGuard)
 export class DeliveryFeeTemplateController {
   constructor(private deliveryFeeTemplateService: DeliveryTemplateFeeService) {}
 
   @Post()
+  @UseGuards(JwtGuard)
   create(
     @GetCurrentUser() user: AuthUser,
     @Body() dto: CreateDeliveryFeeTemplatesDto,
@@ -26,12 +26,13 @@ export class DeliveryFeeTemplateController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtGuard)
   delete(@Param('id') id: string) {
     return this.deliveryFeeTemplateService.delete(id);
   }
 
-  @Get()
-  get(@GetCurrentUser() user: AuthUser) {
-    return this.deliveryFeeTemplateService.get(user);
+  @Get(':restaurantId')
+  get(@Param('restaurantId') restaurantId: string) {
+    return this.deliveryFeeTemplateService.get(restaurantId);
   }
 }

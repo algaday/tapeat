@@ -39,7 +39,7 @@ export class MediaService {
 
       const resizedImage = await this.sharpService.resize(image, resolution);
 
-      await this.uploadImage(resizedImage, imagePath);
+      await this.uploadImage(resizedImage.buffer, imagePath);
 
       return imagePath;
     });
