@@ -14,7 +14,6 @@ import { JwtGuard } from 'src/common/guards/jwt-guard';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
 import { DeleteMenuItemDto } from './dto/delete-menu-item.dto';
 
-@UseGuards(JwtGuard)
 @Controller('menu')
 export class MenuController {
   constructor(private menuService: MenuService) {}
@@ -25,11 +24,13 @@ export class MenuController {
   }
 
   @Get('menu-items')
+  @UseGuards(JwtGuard)
   getAllMenuItems(@GetCurrentUser() user: AuthUser) {
     return this.menuService.findMenuItems(user);
   }
 
   @Post('create-menu-item')
+  @UseGuards(JwtGuard)
   createMenuItem(
     @Body() dto: CreateMenuItemDto,
     @GetCurrentUser() user: AuthUser,
@@ -38,11 +39,13 @@ export class MenuController {
   }
 
   @Post('update-menu-item')
+  @UseGuards(JwtGuard)
   updateMenuItem(@Body() dto: UpdateMenuItemDto) {
     return this.menuService.updateMenuItem(dto);
   }
 
   @Delete('delete-menu-item')
+  @UseGuards(JwtGuard)
   deleteMenuItem(@Body() menuItemId: DeleteMenuItemDto) {
     return this.menuService.deleteMenuItem(menuItemId);
   }

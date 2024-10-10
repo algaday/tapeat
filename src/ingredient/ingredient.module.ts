@@ -7,5 +7,6 @@ import { IngredientRepository } from './ingredient.repository';
   imports: [],
   controllers: [IngredientController],
   providers: [IngredientService, IngredientRepository],
+  exports: [IngredientService, IngredientRepository],
 })
 export class IngredientModule {}
