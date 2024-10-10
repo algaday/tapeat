@@ -14,9 +14,8 @@ import { OrderModule } from './order/order.module';
 import { DeliveryFeeTemplateModule } from './delivery-fee-template/delivery-fee-template.module';
 import { CategoryModule } from './category/category.module';
 import { IngredientModule } from './ingredient/ingredient.module';
-import { RecipeModule } from './recipe/recipe.module';
+import { RecipeModule } from './recipe/infra/framework/recipe.module';
 import { StorageModule } from './storage/storage.module';
-import { SubRecipeModule } from './sub-recipe/sub-recipe.module';
 import { CustomerModule } from './customer/infra/framework/customer.module';
 
 @Module({
@@ -41,7 +40,6 @@ import { CustomerModule } from './customer/infra/framework/customer.module';
     IngredientModule,
     RecipeModule,
     StorageModule,
-    SubRecipeModule,
   ],
 })
 export class AppModule {}
