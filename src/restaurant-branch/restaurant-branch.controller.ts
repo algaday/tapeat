@@ -9,8 +9,8 @@ import { CreateBranchDto } from './dto/create-branch.dto';
 export class RestaurantBranchController {
   constructor(private restaurantBranchService: RestaurantBranchService) {}
   @Post('create')
-  createBranch(@Body() dto: CreateBranchDto, @GetCurrentUser() user: AuthUser) {
-    return this.restaurantBranchService.createBranch(dto, user);
+  create(@Body() dto: CreateBranchDto, @GetCurrentUser() user: AuthUser) {
+    return this.restaurantBranchService.create(dto, user);
   }
 
   @Get('branches')
@@ -19,7 +19,7 @@ export class RestaurantBranchController {
   }
 
   @Delete('branches')
-  deleteBranch(@Body() body: { branchId: string }) {
-    return this.restaurantBranchService.deleteBranch(body);
+  delete(@Body() body: { branchId: string }) {
+    return this.restaurantBranchService.delete(body);
   }
 }

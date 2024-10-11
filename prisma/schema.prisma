@@ -66,9 +66,10 @@ model RestaurantBranch{
   id String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   address String
   restaurantId String @db.Uuid
+  longitude String
+  latitude String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  
   branchMenuItems BranchMenuItem[]
   
   restaurant Restaurant @relation(fields: [restaurantId],  references: [id])
