@@ -4,7 +4,6 @@ interface RecipeItemProps {
   name: string;
   type: RecipeItemType;
   quantity: number;
-  itemId: string;
 }
 
 export enum RecipeItemType {
