@@ -14,21 +14,27 @@ import { RecipeDbRecord } from 'src/recipe/infra/repositories/prisma-recipe-repo
 @Injectable()
 export class RecipeMapper {
   toDomain(record: RecipeDbRecord): RecipeEntity {
-    const recipeIngredients = record.ingredients.map((item) =>
-      RecipeItemEntity.create({
-        itemId: item.id,
-        name: item.ingredient?.name,
-        type: RecipeItemType.INGREDIENT,
-        quantity: item.quantity,
-      }),
+    const recipeIngredients = record.ingredients.map(
+      (item) =>
+        new RecipeItemEntity({
+          id: item.id,
+          props: {
+            name: item.ingredient?.name,
+            type: RecipeItemType.INGREDIENT,
+            quantity: item.quantity,
+          },
+        }),
     );
-    const recipeSubRecipes = record.usedAsSubRecipe.map((item) =>
-      RecipeItemEntity.create({
-        itemId: item.id,
-        name: item.subRecipe?.name,
-        type: RecipeItemType.SUB_RECIPE,
-        quantity: item.quantity,
-      }),
+    const recipeSubRecipes = record.usedAsSubRecipe.map(
+      (item) =>
+        new RecipeItemEntity({
+          id: item.id,
+          props: {
+            name: item.subRecipe?.name,
+            type: RecipeItemType.SUB_RECIPE,
+            quantity: item.quantity,
+          },
+        }),
     );
 
     return new RecipeEntity({
@@ -46,7 +52,7 @@ export class RecipeMapper {
     const props = entity.getProps();
 
     return {
-      id: props.itemId,
+      id: entity.getId(),
       name: props.name,
       type: props.type,
       quantity: props.quantity,
