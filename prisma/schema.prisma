@@ -304,16 +304,16 @@ model StorageIngredient {
 model InventoryCountTemplate {
   id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   type      String
-  storegeId String @db.Uuid
+  storageId String @db.Uuid
 
   inventoryCountTemplateStorages InventoryCountTemplateStorage[]
 }
 
 model InventoryCountTemplateStorage {
   id                       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  storegeId                String @db.Uuid
-  inventoryCountTempleteId String @db.Uuid
+  storageId                String @db.Uuid
+  inventoryCountTemplateId String @db.Uuid
 
-  storage                Storage                @relation(fields: [storegeId], references: [id])
-  inventoryCountTemplete InventoryCountTemplate @relation(fields: [inventoryCountTempleteId], references: [id])
+  storage                Storage                @relation(fields: [storageId], references: [id])
+  inventoryCountTemplate InventoryCountTemplate @relation(fields: [inventoryCountTemplateId], references: [id])
 }
