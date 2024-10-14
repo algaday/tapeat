@@ -10,7 +10,10 @@ import {
 } from 'src/core/domain/repository.interface';
 import { Decimal } from '@prisma/client/runtime/library';
 import { Prisma, RecipeIngredient } from '@prisma/client';
-import { RecipeIngredientEntity } from 'src/recipe/domain/recipe-ingredient.entity';
+import {
+  RecipeItemEntity,
+  RecipeItemType,
+} from 'src/recipe/domain/recipe-item.entity';
 
 const RecipePrismaValidator = Prisma.validator<Prisma.RecipeDefaultArgs>()({
   include: {
@@ -40,18 +43,18 @@ export class PrismaRecipeRepositoryAdapter
       await this.prisma.recipe.create({
         data: this.mapToRecipeDbRecord(recipe),
       });
-      const recipeSubRecipes = recipe
-        .getProps()
-        .recipeSubRecipes.map((subRecipe) =>
+      const subRecipes = recipe
+        .getSubRecipes()
+        .map((subRecipe) =>
           this.mapToRecipeIngredientDbRecord(recipe.getId(), subRecipe),
         );
-      const recipeIngredients = recipe
-        .getProps()
-        .recipeIngredients.map((ingredient) =>
+      const ingredients = recipe
+        .getIngredients()
+        .map((ingredient) =>
           this.mapToRecipeIngredientDbRecord(recipe.getId(), ingredient),
         );
       await this.prisma.recipeIngredient.createMany({
-        data: [...recipeSubRecipes, ...recipeIngredients],
+        data: [...subRecipes, ...ingredients],
       });
     });
   }
@@ -70,15 +73,17 @@ export class PrismaRecipeRepositoryAdapter
   }
   private mapToRecipeIngredientDbRecord(
     recipeId: string,
-    recipeIngredient: RecipeIngredientEntity,
+    recipeItem: RecipeItemEntity,
   ): RecipeIngredient {
-    const props = recipeIngredient.getProps();
+    const props = recipeItem.getProps();
 
     return {
       id: props.id,
       recipeId,
-      ingredientId: props.ingredientId,
-      subRecipeId: props.subRecipeId,
+      ingredientId:
+        props.type === RecipeItemType.INGREDIENT ? props.itemId : null,
+      subRecipeId:
+        props.type === RecipeItemType.SUB_RECIPE ? props.itemId : null,
       quantity: props.quantity,
     };
   }
@@ -93,7 +98,6 @@ export class PrismaRecipeRepositoryAdapter
       ...RecipePrismaValidator,
       where: { id },
     });
-    console.log(recipe.ingredients[0]);
     return recipe ? this.mapper.toDomain(recipe) : null;
   }
 

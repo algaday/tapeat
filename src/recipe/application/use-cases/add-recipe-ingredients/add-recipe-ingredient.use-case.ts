@@ -6,18 +6,18 @@ import { RecipeNotFoundError } from 'src/recipe/errors/recipe-not-found.error';
 
 import { RecipeRepositoryPort } from 'src/recipe/domain/recipe-repository.port';
 import { IngredientService } from 'src/ingredient/ingredient.service';
-import {
-  RecipeIngredientEntity,
-  RecipeIngredientType,
-} from 'src/recipe/domain/recipe-ingredient.entity';
+
 import { RecipeIngredientNotFoundError } from 'src/recipe/errors/recipe-ingredient-not-found.error';
+import {
+  RecipeItemEntity,
+  RecipeItemType,
+} from 'src/recipe/domain/recipe-item.entity';
 
 interface Props {
   recipeId: string;
-  type: RecipeIngredientType;
+  type: RecipeItemType;
   quantity: number;
-  recipeIngredientId?: string;
-  recipeSubRecipeId?: string;
+  recipeItemId?: string;
 }
 
 @Injectable()
@@ -45,63 +45,55 @@ export class AddRecipeIngredientsUseCase implements UseCase<Props, RecipeUi> {
     return this.recipeMapper.toUi(recipe);
   }
 
-  private async getRecipeIngredient(
-    props: Props,
-  ): Promise<RecipeIngredientEntity> {
-    if (props.type === RecipeIngredientType.SUB_RECIPE) {
+  private async getRecipeIngredient(props: Props): Promise<RecipeItemEntity> {
+    if (props.type === RecipeItemType.SUB_RECIPE) {
       return this.handleSubRecipe(props);
     } else {
       return this.handleIngredient(props);
     }
   }
 
-  private async handleSubRecipe(props: Props): Promise<RecipeIngredientEntity> {
-    if (!props.recipeSubRecipeId) {
+  private async handleSubRecipe(props: Props): Promise<RecipeItemEntity> {
+    if (!props.recipeItemId) {
       throw new RecipeIngredientNotFoundError('Sub-recipe ID not provided.');
     }
 
-    const subRecipe = await this.recipeRepository.findById(
-      props.recipeSubRecipeId,
-    );
+    const subRecipe = await this.recipeRepository.findById(props.recipeItemId);
 
     if (!subRecipe) {
       throw new RecipeNotFoundError(
-        `Sub-recipe with ID ${props.recipeSubRecipeId} not found.`,
+        `Sub-recipe with ID ${props.recipeItemId} not found.`,
       );
     }
 
-    return RecipeIngredientEntity.create({
+    return RecipeItemEntity.create({
       name: subRecipe.getProps().name,
-      type: RecipeIngredientType.SUB_RECIPE,
+      type: RecipeItemType.SUB_RECIPE,
       quantity: props.quantity,
-      subRecipeId: subRecipe.getId(),
-      ingredientId: null,
+      itemId: subRecipe.getId(),
     });
   }
 
-  private async handleIngredient(
-    props: Props,
-  ): Promise<RecipeIngredientEntity> {
-    if (!props.recipeIngredientId) {
+  private async handleIngredient(props: Props): Promise<RecipeItemEntity> {
+    if (!props.recipeItemId) {
       throw new RecipeIngredientNotFoundError('Ingredient ID not provided.');
     }
 
     const ingredient = await this.ingredientService.findById(
-      props.recipeIngredientId,
+      props.recipeItemId,
     );
 
     if (!ingredient) {
       throw new RecipeIngredientNotFoundError(
-        `Ingredient with ID ${props.recipeIngredientId} not found.`,
+        `Ingredient with ID ${props.recipeItemId} not found.`,
       );
     }
 
-    return RecipeIngredientEntity.create({
+    return RecipeItemEntity.create({
       name: ingredient.name,
-      type: RecipeIngredientType.INGREDIENT,
+      type: RecipeItemType.INGREDIENT,
       quantity: props.quantity,
-      subRecipeId: null,
-      ingredientId: ingredient.id,
+      itemId: ingredient.id,
     });
   }
 }

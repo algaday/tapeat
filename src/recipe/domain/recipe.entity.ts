@@ -1,14 +1,13 @@
 import { Unit } from 'src/constants/enums/unit.enum';
 import { Entity } from 'src/core/domain/entity.base';
-import { RecipeIngredientEntity } from './recipe-ingredient.entity';
+import { RecipeItemEntity } from './recipe-item.entity';
 
 interface RecipeProps {
   name: string;
   unit: Unit;
   yield: number;
   isAvailableInInventory?: boolean;
-  recipeIngredients?: RecipeIngredientEntity[];
-  recipeSubRecipes?: RecipeIngredientEntity[];
+  recipeItems?: RecipeItemEntity[];
 }
 
 export class RecipeEntity extends Entity<RecipeProps> {
@@ -16,22 +15,18 @@ export class RecipeEntity extends Entity<RecipeProps> {
     return new RecipeEntity({ props });
   }
 
-  getIngredients(): RecipeIngredientEntity[] {
-    return (
-      this.props.recipeIngredients?.filter((item) => item.isIngredient()) ?? []
-    );
+  getIngredients(): RecipeItemEntity[] {
+    return this.props.recipeItems?.filter((item) => item.isIngredient()) ?? [];
   }
 
-  getSubRecipes(): RecipeIngredientEntity[] {
-    return (
-      this.props.recipeIngredients?.filter((item) => item.isRecipe()) ?? []
-    );
+  getSubRecipes(): RecipeItemEntity[] {
+    return this.props.recipeItems?.filter((item) => item.isRecipe()) ?? [];
   }
-  addRecipeIngredient(ingredient: RecipeIngredientEntity): void {
-    if (!this.props.recipeIngredients) {
-      this.props.recipeIngredients = [];
+  addRecipeIngredient(ingredient: RecipeItemEntity): void {
+    if (!this.props.recipeItems) {
+      this.props.recipeItems = [];
     }
 
-    this.props.recipeIngredients.push(ingredient);
+    this.props.recipeItems.push(ingredient);
   }
 }

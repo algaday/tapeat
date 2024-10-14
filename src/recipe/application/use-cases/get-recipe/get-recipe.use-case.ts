@@ -19,7 +19,9 @@ export class GetRecipeUseCase implements UseCase<Props, RecipeUi> {
   async execute(props: Props): Promise<RecipeUi> {
     const recipe = await this.recipeRepository.findById(props.recipeId);
     if (!recipe) {
-      throw new RecipeNotFoundError();
+      throw new RecipeNotFoundError(
+        `Recipe with id:${props.recipeId} do not exists`,
+      );
     }
     return this.mapper.toUi(recipe);
   }

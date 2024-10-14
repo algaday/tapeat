@@ -3,7 +3,7 @@ import { UpdateRecipeUseCase } from './update-recipe/update-recipe.use-case';
 import { GetRecipeUseCase } from './get-recipe/get-recipe.use-case';
 import { DeleteRecipeUseCase } from './delete-recipe/delete-recipe.use-case';
 import { AddRecipeIngredientsUseCase } from './add-recipe-ingredients/add-recipe-ingredient.use-case';
-import { RecipeIngredientService } from '../services/recipe-ingredient.service';
+import { RecipeItemService } from '../services/recipe-item.service';
 
 export const RECIPE_USE_CASES = [
   CreateRecipeUseCase,
@@ -12,4 +12,4 @@ export const RECIPE_USE_CASES = [
   DeleteRecipeUseCase,
   AddRecipeIngredientsUseCase,
 ];
-export const RECIPE_APPLICATION_SERVICES = [RecipeIngredientService];
+export const RECIPE_APPLICATION_SERVICES = [RecipeItemService];

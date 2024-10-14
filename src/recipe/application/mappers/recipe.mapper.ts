@@ -1,35 +1,33 @@
 import { RecipeEntity } from 'src/recipe/domain/recipe.entity';
 import {
-  RecipeIngredientDto,
+  RecipeItemDto,
   RecipeDto as RecipeUi,
 } from 'src/recipe/presentation/dto/recipe.dto';
 import { Unit } from 'src/constants/enums/unit.enum';
 import { Injectable } from '@nestjs/common';
 import {
-  RecipeIngredientEntity,
-  RecipeIngredientType,
-} from 'src/recipe/domain/recipe-ingredient.entity';
+  RecipeItemEntity,
+  RecipeItemType,
+} from 'src/recipe/domain/recipe-item.entity';
 import { RecipeDbRecord } from 'src/recipe/infra/repositories/prisma-recipe-repository.adapter';
 
 @Injectable()
 export class RecipeMapper {
   toDomain(record: RecipeDbRecord): RecipeEntity {
     const recipeIngredients = record.ingredients.map((item) =>
-      RecipeIngredientEntity.create({
-        ingredientId: item.id,
+      RecipeItemEntity.create({
+        itemId: item.id,
         name: item.ingredient?.name,
-        type: RecipeIngredientType.INGREDIENT,
+        type: RecipeItemType.INGREDIENT,
         quantity: item.quantity,
-        subRecipeId: null,
       }),
     );
     const recipeSubRecipes = record.usedAsSubRecipe.map((item) =>
-      RecipeIngredientEntity.create({
-        subRecipeId: item.id,
+      RecipeItemEntity.create({
+        itemId: item.id,
         name: item.subRecipe?.name,
-        type: RecipeIngredientType.SUB_RECIPE,
+        type: RecipeItemType.SUB_RECIPE,
         quantity: item.quantity,
-        ingredientId: null,
       }),
     );
 
@@ -40,19 +38,15 @@ export class RecipeMapper {
         unit: record.unit as Unit,
         yield: record.yield.toNumber(),
         isAvailableInInventory: record.isAvailableInInventory,
-        recipeIngredients: recipeIngredients,
-        recipeSubRecipes: recipeSubRecipes,
+        recipeItems: [...recipeIngredients, ...recipeSubRecipes],
       },
     });
   }
-
-  private mapRecipeIngredientUi(
-    entity: RecipeIngredientEntity,
-  ): RecipeIngredientDto {
+  private mapRecipeItemUi(entity: RecipeItemEntity): RecipeItemDto {
     const props = entity.getProps();
 
     return {
-      id: props.id,
+      id: props.itemId,
       name: props.name,
       type: props.type,
       quantity: props.quantity,
@@ -67,9 +61,7 @@ export class RecipeMapper {
       unit: props.unit,
       yield: props.yield,
       isAvailableInInventory: props.isAvailableInInventory,
-      recipeIngredients: props.recipeIngredients?.map((item) =>
-        this.mapRecipeIngredientUi(item),
-      ),
+      recipeItems: props.recipeItems?.map((item) => this.mapRecipeItemUi(item)),
     };
   }
 }

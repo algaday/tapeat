@@ -13,7 +13,7 @@ import { CreateRecipeUseCase } from '../application/use-cases/create-recipe/crea
 import { UpdateRecipeUseCase } from '../application/use-cases/update-recipe/update-recipe.use-case';
 import { GetRecipeUseCase } from '../application/use-cases/get-recipe/get-recipe.use-case';
 import { DeleteRecipeUseCase } from '../application/use-cases/delete-recipe/delete-recipe.use-case';
-import { AddRecipeIngredientDto } from './dto/add-recipe-ingredient.dto';
+import { AddRecipeItemDto } from './dto/add-recipe-item.dto';
 import { AddRecipeIngredientsUseCase } from '../application/use-cases/add-recipe-ingredients/add-recipe-ingredient.use-case';
 
 @Controller('recipes')
@@ -46,7 +46,7 @@ export class RecipeController {
   }
 
   @Post('ingredient')
-  async addIngredient(@Body() dto: AddRecipeIngredientDto) {
+  async addIngredient(@Body() dto: AddRecipeItemDto) {
     return this.addRecipeIngredient.execute(dto);
   }
 }

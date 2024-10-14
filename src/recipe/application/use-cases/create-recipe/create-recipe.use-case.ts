@@ -5,15 +5,17 @@ import { RecipeDto as RecipeUi } from 'src/recipe/presentation/dto/recipe.dto';
 import { RecipeMapper } from '../../mappers/recipe.mapper';
 import { RecipeEntity } from 'src/recipe/domain/recipe.entity';
 import { RecipeRepositoryPort } from 'src/recipe/domain/recipe-repository.port';
-import { RecipeIngredientService } from '../../services/recipe-ingredient.service';
+import {
+  RecipeItemProps,
+  RecipeItemService,
+} from '../../services/recipe-item.service';
 
 interface Props {
   name: string;
   unit: Unit;
   yield: number;
   isAvailableInInventory?: boolean;
-  recipeIngredients?: { quantity: number; id: string }[];
-  recipeSubRecipes?: { quantity: number; id: string }[];
+  recipeItems?: RecipeItemProps[];
 }
 
 @Injectable()
@@ -22,18 +24,15 @@ export class CreateRecipeUseCase implements UseCase<Props, RecipeUi> {
     private readonly mapper: RecipeMapper,
     @Inject(RecipeRepositoryPort)
     private readonly recipeRepository: RecipeRepositoryPort,
-    private readonly recipeIngredientService: RecipeIngredientService,
+    private readonly recipeItemService: RecipeItemService,
   ) {}
   async execute(props: Props): Promise<RecipeUi> {
-    const { recipeIngredients, subRecipes } =
-      await this.recipeIngredientService.getValidatedRecipeIngredients(
-        props.recipeIngredients,
-        props.recipeSubRecipes,
-      );
+    const recipeItems = await this.recipeItemService.getValidatedRecipeItems(
+      props.recipeItems,
+    );
     const recipe = RecipeEntity.create({
       ...props,
-      recipeIngredients: recipeIngredients,
-      recipeSubRecipes: subRecipes,
+      recipeItems,
     });
 
     await this.recipeRepository.create(recipe);
