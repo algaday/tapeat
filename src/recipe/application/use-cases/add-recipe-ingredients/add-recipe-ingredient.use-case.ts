@@ -47,13 +47,12 @@ export class AddRecipeIngredientsUseCase implements UseCase<Props, RecipeUi> {
 
   private async getRecipeIngredient(props: Props): Promise<RecipeItemEntity> {
     if (props.type === RecipeItemType.SUB_RECIPE) {
-      return this.handleSubRecipe(props);
-    } else {
-      return this.handleIngredient(props);
+      return this.getSubRecipe(props);
     }
+    return this.getIngredient(props);
   }
 
-  private async handleSubRecipe(props: Props): Promise<RecipeItemEntity> {
+  private async getSubRecipe(props: Props): Promise<RecipeItemEntity> {
     if (!props.recipeItemId) {
       throw new RecipeIngredientNotFoundError('Sub-recipe ID not provided.');
     }
@@ -70,11 +69,10 @@ export class AddRecipeIngredientsUseCase implements UseCase<Props, RecipeUi> {
       name: subRecipe.getProps().name,
       type: RecipeItemType.SUB_RECIPE,
       quantity: props.quantity,
-      itemId: subRecipe.getId(),
     });
   }
 
-  private async handleIngredient(props: Props): Promise<RecipeItemEntity> {
+  private async getIngredient(props: Props): Promise<RecipeItemEntity> {
     if (!props.recipeItemId) {
       throw new RecipeIngredientNotFoundError('Ingredient ID not provided.');
     }
@@ -93,7 +91,6 @@ export class AddRecipeIngredientsUseCase implements UseCase<Props, RecipeUi> {
       name: ingredient.name,
       type: RecipeItemType.INGREDIENT,
       quantity: props.quantity,
-      itemId: ingredient.id,
     });
   }
 }
