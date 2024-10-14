@@ -40,18 +40,18 @@ export class PrismaRecipeRepositoryAdapter
 
   async create(recipe: RecipeEntity): Promise<void> {
     await this.prisma.$transaction(async () => {
-      await this.prisma.recipe.create({
+      const newRecipe = await this.prisma.recipe.create({
         data: this.mapToRecipeDbRecord(recipe),
       });
       const subRecipes = recipe
         .getSubRecipes()
         .map((subRecipe) =>
-          this.mapToRecipeIngredientDbRecord(recipe.getId(), subRecipe),
+          this.mapToRecipeIngredientDbRecord(newRecipe.id, subRecipe),
         );
       const ingredients = recipe
         .getIngredients()
         .map((ingredient) =>
-          this.mapToRecipeIngredientDbRecord(recipe.getId(), ingredient),
+          this.mapToRecipeIngredientDbRecord(newRecipe.id, ingredient),
         );
       await this.prisma.recipeIngredient.createMany({
         data: [...subRecipes, ...ingredients],
@@ -81,9 +81,9 @@ export class PrismaRecipeRepositoryAdapter
       id: props.id,
       recipeId,
       ingredientId:
-        props.type === RecipeItemType.INGREDIENT ? props.itemId : null,
+        props.type === RecipeItemType.INGREDIENT ? recipeItem.getId() : null,
       subRecipeId:
-        props.type === RecipeItemType.SUB_RECIPE ? props.itemId : null,
+        props.type === RecipeItemType.SUB_RECIPE ? recipeItem.getId() : null,
       quantity: props.quantity,
     };
   }
