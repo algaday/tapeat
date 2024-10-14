@@ -7,7 +7,7 @@ interface RecipeProps {
   unit: Unit;
   yield: number;
   isAvailableInInventory?: boolean;
-  recipeItems?: RecipeItemEntity[];
+  recipeItems: RecipeItemEntity[];
 }
 
 export class RecipeEntity extends Entity<RecipeProps> {
