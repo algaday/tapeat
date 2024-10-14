@@ -66,6 +66,7 @@ export class AddRecipeIngredientsUseCase implements UseCase<Props, RecipeUi> {
     }
 
     return RecipeItemEntity.create({
+      itemId: subRecipe.getId(),
       name: subRecipe.getProps().name,
       type: RecipeItemType.SUB_RECIPE,
       quantity: props.quantity,
@@ -88,6 +89,7 @@ export class AddRecipeIngredientsUseCase implements UseCase<Props, RecipeUi> {
     }
 
     return RecipeItemEntity.create({
+      itemId: ingredient.id,
       name: ingredient.name,
       type: RecipeItemType.INGREDIENT,
       quantity: props.quantity,

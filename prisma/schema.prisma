@@ -232,9 +232,9 @@ model Ingredient {
   yield Decimal @db.Decimal(5, 4)
   unit  String
 
-  recipeIngredients         RecipeIngredient[]
+  usedAsRecipeItems         RecipeItem[]
   inventoryCountIngredients InventoryCountIngredient[]
-  storageIngredients        StorageIngredient[]
+  storageItems              StorageItem[]
 }
 
 model Recipe {
@@ -244,13 +244,13 @@ model Recipe {
   yield                  Decimal @db.Decimal(5, 4)
   isAvailableInInventory Boolean @default(false)
 
-  ingredients     RecipeIngredient[] @relation("Recipe")
-  usedAsSubRecipe RecipeIngredient[] @relation("UsedAsSubRecipe")
+  items             RecipeItem[] @relation("Recipe")
+  usedAsRecipeItems RecipeItem[] @relation("UsedAsRecipeItem")
 
-  storageIngredients StorageIngredient[]
+  storageItems StorageItem[]
 }
 
-model RecipeIngredient {
+model RecipeItem {
   id           String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   recipeId     String      @db.Uuid
   ingredientId String?     @db.Uuid
@@ -258,7 +258,7 @@ model RecipeIngredient {
   quantity     Int
   ingredient   Ingredient? @relation(fields: [ingredientId], references: [id])
   recipe       Recipe      @relation("Recipe", fields: [recipeId], references: [id])
-  subRecipe    Recipe?     @relation("UsedAsSubRecipe", fields: [subRecipeId], references: [id])
+  subRecipe    Recipe?     @relation("UsedAsRecipeItem", fields: [subRecipeId], references: [id])
 }
 
 model InventoryCount {
@@ -286,11 +286,11 @@ model Storage {
 
   restaurantBranch RestaurantBranch @relation(fields: [restaurantBranchId], references: [id])
 
-  storageIngredients             StorageIngredient[]
+  items                          StorageItem[]
   inventoryCountTemplateStorages InventoryCountTemplateStorage[]
 }
 
-model StorageIngredient {
+model StorageItem {
   id           String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   storageId    String  @db.Uuid
   ingredientId String? @db.Uuid

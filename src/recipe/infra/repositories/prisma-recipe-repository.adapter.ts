@@ -9,7 +9,7 @@ import {
   PaginatedQueryParams,
 } from 'src/core/domain/repository.interface';
 import { Decimal } from '@prisma/client/runtime/library';
-import { Prisma, RecipeIngredient } from '@prisma/client';
+import { Prisma, RecipeItem } from '@prisma/client';
 import {
   RecipeItemEntity,
   RecipeItemType,
@@ -17,8 +17,7 @@ import {
 
 const RecipePrismaValidator = Prisma.validator<Prisma.RecipeDefaultArgs>()({
   include: {
-    ingredients: { include: { ingredient: true } },
-    usedAsSubRecipe: { include: { subRecipe: true } },
+    items: { include: { ingredient: true, subRecipe: true } },
   },
 });
 
@@ -43,24 +42,20 @@ export class PrismaRecipeRepositoryAdapter
       const newRecipe = await this.prisma.recipe.create({
         data: this.mapToRecipeDbRecord(recipe),
       });
-      const subRecipes = recipe
-        .getSubRecipes()
-        .map((subRecipe) =>
-          this.mapToRecipeIngredientDbRecord(newRecipe.id, subRecipe),
+      const recipeItems = recipe
+        .getProps()
+        .recipeItems.map((item) =>
+          this.mapToRecipeItemDbRecord(newRecipe.id, item),
         );
-      const ingredients = recipe
-        .getIngredients()
-        .map((ingredient) =>
-          this.mapToRecipeIngredientDbRecord(newRecipe.id, ingredient),
-        );
-      await this.prisma.recipeIngredient.createMany({
-        data: [...subRecipes, ...ingredients],
+
+      await this.prisma.recipeItem.createMany({
+        data: recipeItems,
       });
     });
   }
   private mapToRecipeDbRecord(
     recipe: RecipeEntity,
-  ): Omit<RecipeDbRecord, 'ingredients' | 'usedAsSubRecipe'> {
+  ): Omit<RecipeDbRecord, 'items'> {
     const props = recipe.getProps();
 
     return {
@@ -71,19 +66,19 @@ export class PrismaRecipeRepositoryAdapter
       yield: new Decimal(props.yield),
     };
   }
-  private mapToRecipeIngredientDbRecord(
+  private mapToRecipeItemDbRecord(
     recipeId: string,
     recipeItem: RecipeItemEntity,
-  ): RecipeIngredient {
+  ): RecipeItem {
     const props = recipeItem.getProps();
 
     return {
       id: props.id,
       recipeId,
       ingredientId:
-        props.type === RecipeItemType.INGREDIENT ? recipeItem.getId() : null,
+        props.type === RecipeItemType.INGREDIENT ? props.itemId : null,
       subRecipeId:
-        props.type === RecipeItemType.SUB_RECIPE ? recipeItem.getId() : null,
+        props.type === RecipeItemType.SUB_RECIPE ? props.itemId : null,
       quantity: props.quantity,
     };
   }

@@ -86,14 +86,15 @@ export class RecipeItemService {
           `${type === RecipeItemType.INGREDIENT ? 'Ingredient' : 'Sub-recipe'} with ID ${item.id} not found.`,
         );
       }
-
-      return new RecipeItemEntity({
-        id: foundItem.id,
-        props: {
-          name: foundItem.name,
-          type,
-          quantity: item.quantity,
-        },
+      return RecipeItemEntity.create({
+        itemId:
+          type === RecipeItemType.INGREDIENT ? foundItem.id : foundItem.getId(),
+        name:
+          type === RecipeItemType.INGREDIENT
+            ? foundItem.name
+            : foundItem.getProps().name,
+        type,
+        quantity: item.quantity,
       });
     });
   }

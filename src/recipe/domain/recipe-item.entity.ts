@@ -1,6 +1,7 @@
 import { Entity } from 'src/core/domain/entity.base';
 
 interface RecipeItemProps {
+  itemId: string;
   name: string;
   type: RecipeItemType;
   quantity: number;
