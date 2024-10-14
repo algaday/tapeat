@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
@@ -5,8 +6,10 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { Unit } from 'src/constants/enums/unit.enum';
+import { RecipeItemType } from 'src/recipe/domain/recipe-item.entity';
 
 export class CreateRecipeDto {
   @IsString()
@@ -23,4 +26,20 @@ export class CreateRecipeDto {
   @IsBoolean()
   @IsOptional()
   isAvailableInInventory: boolean;
+
+  @ValidateNested()
+  @IsOptional()
+  @Type(() => RecipeItemDto)
+  recipeItems?: RecipeItemDto[];
+}
+
+class RecipeItemDto {
+  @IsString()
+  id: string;
+
+  @IsEnum(RecipeItemType)
+  type: RecipeItemType;
+
+  @IsNumber()
+  quantity: number;
 }
