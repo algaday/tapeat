@@ -1,18 +1,18 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { RecipeIngredientType } from 'src/recipe/domain/recipe-ingredient.entity';
+import { RecipeItemType } from 'src/recipe/domain/recipe-item.entity';
 
-export class AddRecipeIngredientDto {
+export class AddRecipeItemDto {
   @IsString()
   @IsNotEmpty()
   recipeId: string;
 
   @IsString()
   @IsNotEmpty()
-  recipeIngredientId: string;
+  recipeItemId: string;
 
-  @IsEnum(RecipeIngredientType)
+  @IsEnum(RecipeItemType)
   @IsNotEmpty()
-  type: RecipeIngredientType;
+  type: RecipeItemType;
 
   @IsNumber()
   @IsNotEmpty()

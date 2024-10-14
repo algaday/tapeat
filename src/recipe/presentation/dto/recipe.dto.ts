@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Unit } from 'src/constants/enums/unit.enum';
-import { RecipeIngredientType } from 'src/recipe/domain/recipe-ingredient.entity';
+import { RecipeItemType } from 'src/recipe/domain/recipe-item.entity';
 
 export class RecipeDto {
   @IsString()
@@ -31,11 +31,11 @@ export class RecipeDto {
 
   @ValidateNested()
   @IsOptional()
-  @Type(() => RecipeIngredientDto)
-  recipeIngredients?: RecipeIngredientDto[];
+  @Type(() => RecipeItemDto)
+  recipeItems?: RecipeItemDto[];
 }
 
-export class RecipeIngredientDto {
+export class RecipeItemDto {
   @IsString()
   id: string;
 
@@ -43,8 +43,8 @@ export class RecipeIngredientDto {
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(RecipeIngredientType)
-  type: RecipeIngredientType;
+  @IsEnum(RecipeItemType)
+  type: RecipeItemType;
 
   @IsNumber()
   quantity: number;
