@@ -25,6 +25,10 @@ export class RecipeItemService {
   async getValidatedRecipeItems(
     recipeItems: RecipeItemProps[],
   ): Promise<RecipeItemEntity[]> {
+    if (!recipeItems) {
+      return [];
+    }
+
     const ingredientItems = recipeItems.filter(
       (item) => item.type === RecipeItemType.INGREDIENT,
     );
@@ -83,11 +87,13 @@ export class RecipeItemService {
         );
       }
 
-      return RecipeItemEntity.create({
-        itemId: foundItem.id,
-        name: foundItem.name,
-        type,
-        quantity: item.quantity,
+      return new RecipeItemEntity({
+        id: foundItem.id,
+        props: {
+          name: foundItem.name,
+          type,
+          quantity: item.quantity,
+        },
       });
     });
   }
