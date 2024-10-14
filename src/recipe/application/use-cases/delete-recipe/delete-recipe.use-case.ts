@@ -18,10 +18,13 @@ export class DeleteRecipeUseCase implements UseCase<Props, RecipeUi> {
   ) {}
   async execute(props: Props): Promise<RecipeUi> {
     const recipe = await this.recipeRepository.findById(props.recipeId);
+
     if (!recipe) {
       throw new RecipeNotFoundError();
     }
+
     await this.recipeRepository.delete(recipe);
+
     return this.mapper.toUi(recipe);
   }
 }

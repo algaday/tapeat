@@ -23,9 +23,11 @@ export class UpdateRecipeUseCase implements UseCase<Props, RecipeUi> {
   ) {}
   async execute(props: Props): Promise<RecipeUi> {
     const recipe = await this.recipeRepository.findById(props.recipeId);
+
     if (!recipe) {
       throw new RecipeNotFoundError();
     }
+
     recipe.update({
       ...props,
     });
