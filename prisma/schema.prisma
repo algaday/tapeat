@@ -69,8 +69,8 @@ model RestaurantBranch {
 
   branchMenuItems BranchMenuItem[]
 
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
-  storages   Storage[]
+  restaurant              Restaurant               @relation(fields: [restaurantId], references: [id])
+  inventoryCountTemplates InventoryCountTemplate[]
 }
 
 model MenuItem {
@@ -280,11 +280,8 @@ model InventoryCountIngredient {
 }
 
 model Storage {
-  id                 String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name               String
-  restaurantBranchId String @db.Uuid
-
-  restaurantBranch RestaurantBranch @relation(fields: [restaurantBranchId], references: [id])
+  id   String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name String
 
   items                          StorageItem[]
   inventoryCountTemplateStorages InventoryCountTemplateStorage[]
@@ -302,10 +299,11 @@ model StorageItem {
 }
 
 model InventoryCountTemplate {
-  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  type      String
-  storageId String @db.Uuid
+  id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  type     String
+  branchId String @db.Uuid
 
+  branch                         RestaurantBranch                @relation(fields: [branchId], references: [id])
   inventoryCountTemplateStorages InventoryCountTemplateStorage[]
 }
 
