@@ -29,4 +29,20 @@ export class StorageService {
   async update(id: string, data: CreateStorageBodyDto) {
     return this.storageRepository.update(id, data);
   }
+
+  async assignIngredient(storageId: string, ingredientId: string) {
+    return this.storageRepository.assignIngredient(storageId, ingredientId);
+  }
+
+  async unassignIngredient(storageId: string, ingredientId: string) {
+    return this.storageRepository.unassignIngredient(storageId, ingredientId);
+  }
+
+  async assignRecipe(storageId: string, recipeId: string) {
+    return this.storageRepository.assignRecipe(storageId, recipeId);
+  }
+
+  async unassignRecipe(storageId: string, recipeId: string) {
+    return this.storageRepository.unassignRecipe(storageId, recipeId);
+  }
 }
