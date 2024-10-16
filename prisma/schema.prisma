@@ -296,6 +296,9 @@ model StorageItem {
   storages   Storage     @relation(fields: [storageId], references: [id])
   ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
   recipe     Recipe?     @relation(fields: [recipeId], references: [id])
+
+  @@unique([storageId, ingredientId])
+  @@unique([storageId, recipeId])
 }
 
 model InventoryCountTemplate {
