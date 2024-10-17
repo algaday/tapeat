@@ -308,6 +308,8 @@ model InventoryCountTemplate {
 
   branch                         RestaurantBranch                @relation(fields: [branchId], references: [id])
   inventoryCountTemplateStorages InventoryCountTemplateStorage[]
+
+  @@unique([type, branchId])
 }
 
 model InventoryCountTemplateStorage {
