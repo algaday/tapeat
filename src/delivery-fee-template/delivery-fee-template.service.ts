@@ -51,9 +51,9 @@ export class DeliveryTemplateFeeService {
     return deliveryFee;
   }
 
-  async get(user: AuthUser) {
+  async get(restaurantId: string) {
     return this.prisma.deliveryTemplateFee.findMany({
-      where: { restaurantId: user.restaurantId },
+      where: { restaurantId },
       orderBy: {
         minOrderAmount: 'asc',
       },

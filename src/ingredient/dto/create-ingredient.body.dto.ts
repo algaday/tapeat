@@ -1,14 +1,14 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { IngredientUnit } from 'src/constants/enums/ingredient-unit.enum';
+import { Unit } from 'src/constants/enums/unit.enum';
 
 export class CreateIngredientBodyDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(IngredientUnit)
+  @IsEnum(Unit)
   @IsNotEmpty()
-  unit: IngredientUnit;
+  unit: Unit;
 
   @IsNumber({ maxDecimalPlaces: 4 })
   yield: number;
