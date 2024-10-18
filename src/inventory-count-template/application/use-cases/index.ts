@@ -7,4 +7,3 @@ export const INVENTORY_COUNT_TEMPLATE_USE_CASES = [
   CreateInventoryCountTemplateUseCase,
   GetInventoryCountTemplateUseCase,
 ];
-export { AssignStorageUseCase };
