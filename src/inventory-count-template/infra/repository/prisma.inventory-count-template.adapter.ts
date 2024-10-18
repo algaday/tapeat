@@ -34,6 +34,7 @@ export class PrismaInventoryCountTemplateAdapter
   ) {
     super(prisma);
   }
+
   async create(entity: InventoryCountTemplateEntity): Promise<void> {
     await this.prisma.inventoryCountTemplate.create({
       data: this.mapToInventoryCountTemplateDbRecord(entity),
@@ -53,8 +54,10 @@ export class PrismaInventoryCountTemplateAdapter
     entity: InventoryCountTemplateEntity,
   ): Omit<InventoryCountTemplateDbRecord, 'inventoryCountTemplateStorages'> {
     const props = entity.getProps();
+
     return { branchId: props.branchId, id: props.id, type: props.templateType };
   }
+
   async findById(id: string): Promise<InventoryCountTemplateEntity | null> {
     const inventoryCountTemplate =
       await this.prisma.inventoryCountTemplate.findUnique({
@@ -62,14 +65,15 @@ export class PrismaInventoryCountTemplateAdapter
         where: { id },
       });
 
-    return inventoryCountTemplate
-      ? this.mapper.toDomain(inventoryCountTemplate)
-      : null;
+    return (
+      inventoryCountTemplate && this.mapper.toDomain(inventoryCountTemplate)
+    );
   }
 
   update(entity: InventoryCountTemplateEntity): Promise<void> {
     throw new Error('Method not implemented.');
   }
+
   delete(entity: InventoryCountTemplateEntity): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
@@ -77,6 +81,7 @@ export class PrismaInventoryCountTemplateAdapter
   findAll(): Promise<InventoryCountTemplateEntity[]> {
     throw new Error('Method not implemented.');
   }
+
   findAllPaginated(
     params: PaginatedQueryParams,
   ): Promise<Paginated<InventoryCountTemplateEntity>> {

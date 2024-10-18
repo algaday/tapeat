@@ -38,16 +38,19 @@ export class StorageRepository {
       data: { storageId, ingredientId },
     });
   }
+
   async assignRecipe(storageId: string, recipeId: string) {
     return this.prismaService.storageItem.create({
       data: { storageId, recipeId },
     });
   }
+
   async unassignIngredient(storageId: string, ingredientId) {
     return this.prismaService.storageItem.delete({
       where: { storageId_ingredientId: { storageId, ingredientId } },
     });
   }
+
   async unassignRecipe(storageId: string, recipeId: string) {
     return this.prismaService.storageItem.delete({
       where: {
