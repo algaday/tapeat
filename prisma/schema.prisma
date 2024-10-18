@@ -293,7 +293,7 @@ model StorageItem {
   ingredientId String? @db.Uuid
   recipeId     String? @db.Uuid
 
-  storages   Storage     @relation(fields: [storageId], references: [id])
+  storage    Storage     @relation(fields: [storageId], references: [id])
   ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
   recipe     Recipe?     @relation(fields: [recipeId], references: [id])
 
@@ -308,8 +308,6 @@ model InventoryCountTemplate {
 
   branch                         RestaurantBranch                @relation(fields: [branchId], references: [id])
   inventoryCountTemplateStorages InventoryCountTemplateStorage[]
-
-  @@unique([type, branchId])
 }
 
 model InventoryCountTemplateStorage {
@@ -319,4 +317,6 @@ model InventoryCountTemplateStorage {
 
   storage                Storage                @relation(fields: [storageId], references: [id])
   inventoryCountTemplate InventoryCountTemplate @relation(fields: [inventoryCountTemplateId], references: [id])
+
+  @@unique([inventoryCountTemplateId, storageId])
 }
