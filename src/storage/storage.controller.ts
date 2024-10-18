@@ -13,6 +13,7 @@ import { StorageService } from './storage.service';
 @Controller('storages')
 export class StorageController {
   constructor(private storageService: StorageService) {}
+
   @Post()
   async create(@Body() data: CreateStorageBodyDto) {
     return this.storageService.create(data);
@@ -29,7 +30,7 @@ export class StorageController {
   }
 
   @Put(':id')
-  async update(@Param() id: string, @Body() data: CreateStorageBodyDto) {
+  async update(@Param('id') id: string, @Body() data: CreateStorageBodyDto) {
     return this.storageService.update(id, data);
   }
 
@@ -41,5 +42,37 @@ export class StorageController {
   @Get(':id')
   async getById(@Param('id') id: string) {
     return this.storageService.findById(id);
+  }
+
+  @Post(':storageId/ingredients')
+  async assignIngredient(
+    @Param('storageId') storageId: string,
+    @Body('ingredientId') ingredientId: string,
+  ) {
+    return this.storageService.assignIngredient(storageId, ingredientId);
+  }
+
+  @Delete(':storageId/ingredients/:ingredientId')
+  async unassignIngredient(
+    @Param('storageId') storageId: string,
+    @Param('ingredientId') ingredientId: string,
+  ) {
+    return this.storageService.unassignIngredient(storageId, ingredientId);
+  }
+
+  @Post(':storageId/recipes')
+  async assignRecipe(
+    @Param('storageId') storageId: string,
+    @Body('recipeId') recipeId: string,
+  ) {
+    return this.storageService.assignRecipe(storageId, recipeId);
+  }
+
+  @Delete(':storageId/recipes/:recipeId')
+  async unassignRecipe(
+    @Param('storageId') storageId: string,
+    @Param('recipeId') recipeId: string,
+  ) {
+    return this.storageService.unassignRecipe(storageId, recipeId);
   }
 }
