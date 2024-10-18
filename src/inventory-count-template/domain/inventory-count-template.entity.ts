@@ -10,6 +10,7 @@ export enum InventoryCountTemplateType {
   NIGHTLY = 'nightly',
   DAILY = 'daily',
   WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
 }
 
 export class InventoryCountTemplateEntity extends Entity<Props> {
