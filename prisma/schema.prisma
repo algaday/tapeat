@@ -232,9 +232,9 @@ model Ingredient {
   yield Decimal @db.Decimal(5, 4)
   unit  String
 
-  usedAsRecipeItems         RecipeItem[]
-  inventoryCountIngredients InventoryCountIngredient[]
-  storageItems              StorageItem[]
+  usedAsRecipeItems   RecipeItem[]
+  inventoryCountItems InventoryCountItem[]
+  storageItems        StorageItem[]
 }
 
 model Recipe {
@@ -247,7 +247,8 @@ model Recipe {
   items             RecipeItem[] @relation("Recipe")
   usedAsRecipeItems RecipeItem[] @relation("UsedAsRecipeItem")
 
-  storageItems StorageItem[]
+  storageItems        StorageItem[]
+  inventoryCountItems InventoryCountItem[]
 }
 
 model RecipeItem {
@@ -262,20 +263,27 @@ model RecipeItem {
 }
 
 model InventoryCount {
-  id   String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  date DateTime
+  id                       String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  staffName                String
+  inventoryCountTemplateId String   @db.Uuid
+  createdAt                DateTime @default(now())
+  modifiedAt               DateTime @updatedAt
 
-  inventoryCountIngredient InventoryCountIngredient[]
+  inventoryCountTemplate InventoryCountTemplate @relation(fields: [inventoryCountTemplateId], references: [id])
+  inventoryCountItems    InventoryCountItem[]
 }
 
-model InventoryCountIngredient {
+model InventoryCountItem {
   id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   quantity Int
 
-  ingredientId     String @db.Uuid
+  ingredientId String? @db.Uuid
+  recipeId     String? @db.Uuid
+
   inventoryCountId String @db.Uuid
 
-  ingredient     Ingredient     @relation(fields: [ingredientId], references: [id])
+  ingredient     Ingredient?    @relation(fields: [ingredientId], references: [id])
+  recipe         Recipe?        @relation(fields: [recipeId], references: [id])
   inventoryCount InventoryCount @relation(fields: [inventoryCountId], references: [id])
 }
 
@@ -308,6 +316,7 @@ model InventoryCountTemplate {
 
   branch                         RestaurantBranch                @relation(fields: [branchId], references: [id])
   inventoryCountTemplateStorages InventoryCountTemplateStorage[]
+  inventoryCounts                InventoryCount[]
 }
 
 model InventoryCountTemplateStorage {
