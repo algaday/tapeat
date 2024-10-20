@@ -18,6 +18,7 @@ import { RecipeModule } from './recipe/infra/framework/recipe.module';
 import { StorageModule } from './storage/storage.module';
 import { CustomerModule } from './customer/infra/framework/customer.module';
 import { InventoryCountTemplateModule } from './inventory-count-template/infra/framework/inventory-count-template.module';
+import { InventoryCountModule } from './inventory-count/infra/framework/inventory-count.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { InventoryCountTemplateModule } from './inventory-count-template/infra/f
     RecipeModule,
     StorageModule,
     InventoryCountTemplateModule,
+    InventoryCountModule,
   ],
 })
 export class AppModule {}
