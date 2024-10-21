@@ -15,7 +15,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 const InventoryCountTemplatePrismaValidator =
   Prisma.validator<Prisma.InventoryCountTemplateDefaultArgs>()({
-    include: { inventoryCountTemplateStorages: true },
+    include: { storages: true },
   });
 
 export type InventoryCountTemplateDbRecord =
@@ -52,7 +52,7 @@ export class PrismaInventoryCountTemplateAdapter
 
   mapToInventoryCountTemplateDbRecord(
     entity: InventoryCountTemplateEntity,
-  ): Omit<InventoryCountTemplateDbRecord, 'inventoryCountTemplateStorages'> {
+  ): Omit<InventoryCountTemplateDbRecord, 'storages'> {
     const props = entity.getProps();
 
     return { branchId: props.branchId, id: props.id, type: props.templateType };

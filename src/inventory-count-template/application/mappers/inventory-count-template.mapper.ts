@@ -16,9 +16,7 @@ export class InventoryCountTemplateMapper {
       props: {
         branchId: record.branchId,
         templateType: record.type as InventoryCountTemplateType,
-        storageIds: record.inventoryCountTemplateStorages.map(
-          (storage) => storage.storageId,
-        ),
+        storageIds: record.storages.map((storage) => storage.storageId),
       },
     });
   }
