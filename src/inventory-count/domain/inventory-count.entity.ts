@@ -6,7 +6,10 @@ interface Props {
   inventoryCountTemplateId: string;
   inventoryCountItems: InventoryCountItemEntity[];
 }
-
+export enum InventoryCountItemType {
+  INGREDIENT = 'ingredient',
+  RECIPE = 'recipe',
+}
 export class InventoryCountEntity extends Entity<Props> {
   static create(props: Props) {
     return new InventoryCountEntity({ props });
