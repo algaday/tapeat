@@ -26,7 +26,9 @@ export class CreateInventoryCountUseCase
       ...props,
       inventoryCountItems: [],
     });
+
     await this.inventoryCountRepository.create(inventoryCount);
+
     return this.mapper.toUi(inventoryCount);
   }
 }
