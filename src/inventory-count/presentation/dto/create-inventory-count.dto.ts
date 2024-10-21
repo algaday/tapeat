@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateInventoryCountDto {
   @IsString()
@@ -6,6 +6,5 @@ export class CreateInventoryCountDto {
   inventoryCountTemplateId: string;
 
   @IsString()
-  @IsOptional()
   staffName: string;
 }
