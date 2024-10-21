@@ -1,0 +1,34 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { UseCase } from 'src/core/domain/use-case.interface';
+import { InventoryCountRepositoryPort } from 'src/inventory-count/domain/inventory-count-repository.port';
+import { InventoryCountDto as InventoryCountUi } from 'src/inventory-count/presentation/dto/inventory-count.dto';
+import { InventoryCountMapper } from '../../mappers/inventory-count.mapper';
+import { InventoryCountNotFoundError } from 'src/inventory-count/errors/inventory-count-not-found.error';
+
+interface Props {
+  inventoryCountId: string;
+}
+
+@Injectable()
+export class GetInventoryCountUseCase
+  implements UseCase<Props, InventoryCountUi>
+{
+  constructor(
+    private readonly mapper: InventoryCountMapper,
+
+    @Inject(InventoryCountRepositoryPort)
+    private readonly inventoryCountRepository: InventoryCountRepositoryPort,
+  ) {}
+
+  async execute(props: Props): Promise<InventoryCountUi> {
+    const inventoryCount = await this.inventoryCountRepository.findById(
+      props.inventoryCountId,
+    );
+
+    if (!inventoryCount) {
+      throw new InventoryCountNotFoundError();
+    }
+
+    return this.mapper.toUi(inventoryCount);
+  }
+}
