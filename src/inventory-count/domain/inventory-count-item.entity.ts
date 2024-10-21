@@ -1,10 +1,11 @@
 import { Entity } from 'src/core/domain/entity.base';
-import { RecipeItemType } from 'src/recipe/domain/recipe-item.entity';
+import { InventoryCountItemType } from './inventory-count.entity';
 
 interface Props {
   itemId: string;
-  type: RecipeItemType;
+  type: InventoryCountItemType;
   quantity: number;
+  storageName: string;
 }
 
 export class InventoryCountItemEntity extends Entity<Props> {
