@@ -8,7 +8,9 @@ import { InventoryCountDbRecord } from 'src/inventory-count/infra/repository/pri
 import {
   InventoryCountDto,
   InventoryCountItemDto,
+  InventoryCountStoragesDto,
 } from 'src/inventory-count/presentation/dto/inventory-count.dto';
+import _ from 'lodash';
 
 @Injectable()
 export class InventoryCountMapper {
@@ -52,12 +54,24 @@ export class InventoryCountMapper {
   toUi(entity: InventoryCountEntity): InventoryCountDto {
     const props = entity.getProps();
 
+    const groupedByStorage = _.groupBy(
+      props.inventoryCountItems,
+      (item) => item.getProps().storageName,
+    );
+
+    const storages: InventoryCountStoragesDto[] = Object.entries(
+      groupedByStorage,
+    ).map(([storageName, items]) => ({
+      storageName,
+      inventoryCountItems: items.map((item) =>
+        this.mapInventoryCountItemUi(item),
+      ),
+    }));
+
     return {
       id: props.id,
       staffName: props.staffName,
-      inventoryCountItems: props.inventoryCountItems?.map((item) =>
-        this.mapInventoryCountItemUi(item),
-      ),
+      storages,
     };
   }
 }

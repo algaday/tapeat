@@ -9,7 +9,16 @@ export class InventoryCountDto {
   @IsString()
   staffName: string;
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => InventoryCountStoragesDto)
+  storages: InventoryCountStoragesDto[];
+}
+
+export class InventoryCountStoragesDto {
+  @IsString()
+  storageName: string;
+
+  @ValidateNested({ each: true })
   @Type(() => InventoryCountItemDto)
   inventoryCountItems: InventoryCountItemDto[];
 }
