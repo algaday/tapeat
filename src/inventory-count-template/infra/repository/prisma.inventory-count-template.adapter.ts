@@ -5,12 +5,17 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { RepositoryBase } from 'src/core/domain/repository.base';
 import {
-  PaginatedQueryParams,
   Paginated,
+  PaginatedQueryParams,
 } from 'src/core/domain/repository.interface';
 import { InventoryCountTemplateMapper } from 'src/inventory-count-template/application/mappers/inventory-count-template.mapper';
 import { InventoryCountTemplateRepositoryPort } from 'src/inventory-count-template/domain/inventory-count-template-repository.port';
-import { InventoryCountTemplateEntity } from 'src/inventory-count-template/domain/inventory-count-template.entity';
+import {
+  InventoryCountTemplateEntity,
+  InventoryCountTemplateType,
+} from 'src/inventory-count-template/domain/inventory-count-template.entity';
+import { InventoryCountTemplateNotFoundError } from 'src/inventory-count-template/errors/inventory-count-template-not-found.error';
+import { TemplateStoragesWithItemsDto } from 'src/inventory-count-template/presentation/dto/template-storages-with-items.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 const InventoryCountTemplatePrismaValidator =
@@ -33,6 +38,37 @@ export class PrismaInventoryCountTemplateAdapter
     private readonly mapper: InventoryCountTemplateMapper,
   ) {
     super(prisma);
+  }
+
+  async findTemplateStoragesWithItems(
+    inventoryCountTemplateId: string,
+  ): Promise<TemplateStoragesWithItemsDto> {
+    const detailedTemplate =
+      await this.prisma.inventoryCountTemplate.findUnique({
+        where: { id: inventoryCountTemplateId },
+        include: {
+          storages: {
+            include: {
+              storage: {
+                include: {
+                  items: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+    if (!detailedTemplate) {
+      throw new InventoryCountTemplateNotFoundError(
+        `InventoryCountTemplate with ID ${inventoryCountTemplateId} not found.`,
+      );
+    }
+
+    return {
+      ...detailedTemplate,
+      type: detailedTemplate.type as InventoryCountTemplateType,
+    };
   }
 
   async create(entity: InventoryCountTemplateEntity): Promise<void> {
