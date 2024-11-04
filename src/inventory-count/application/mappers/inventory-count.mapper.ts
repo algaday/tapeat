@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InventoryCountItem as InventoryCountItemDbRecord } from '@prisma/client';
+import _ from 'lodash';
 import { InventoryCountItemEntity } from 'src/inventory-count/domain/inventory-count-item.entity';
 import {
   InventoryCountEntity,
   InventoryCountItemType,
+  InventoryCountStatus,
 } from 'src/inventory-count/domain/inventory-count.entity';
 import { InventoryCountDbRecord } from 'src/inventory-count/infra/repository/prisma.inventory-count.adapter';
 import {
-  InventoryCountDto,
   InventoryCountItemDto,
   InventoryCountStoragesDto,
+  InventoryCountWithStorageDto,
 } from 'src/inventory-count/presentation/dto/inventory-count.dto';
-import _ from 'lodash';
 
 @Injectable()
 export class InventoryCountMapper {
@@ -20,38 +22,15 @@ export class InventoryCountMapper {
       props: {
         staffName: record.staffName,
         inventoryCountTemplateId: record.inventoryCountTemplateId,
-        inventoryCountItems: record.inventoryCountItems.map(
-          (item) =>
-            new InventoryCountItemEntity({
-              id: item.id,
-              props: {
-                itemId: item.ingredientId || item.recipeId,
-                quantity: item.quantity,
-                type: item.ingredientId
-                  ? InventoryCountItemType.INGREDIENT
-                  : InventoryCountItemType.RECIPE,
-                storageName: item.storageName,
-              },
-            }),
+        inventoryCountItems: record.inventoryCountItems.map((item) =>
+          this.toInventoryCountItemDomain(item),
         ),
+        status: record.status as InventoryCountStatus,
       },
     });
   }
 
-  private mapInventoryCountItemUi(
-    entity: InventoryCountItemEntity,
-  ): InventoryCountItemDto {
-    const props = entity.getProps();
-
-    return {
-      id: props.itemId,
-      quantity: props.quantity,
-      type: props.type,
-      storageName: props.storageName,
-    };
-  }
-
-  toUi(entity: InventoryCountEntity): InventoryCountDto {
+  toUi(entity: InventoryCountEntity): InventoryCountWithStorageDto {
     const props = entity.getProps();
 
     const groupedByStorage = _.groupBy(
@@ -64,7 +43,7 @@ export class InventoryCountMapper {
     ).map(([storageName, items]) => ({
       storageName,
       inventoryCountItems: items.map((item) =>
-        this.mapInventoryCountItemUi(item),
+        this.toInventoryCountItemUi(item),
       ),
     }));
 
@@ -73,5 +52,34 @@ export class InventoryCountMapper {
       staffName: props.staffName,
       storages,
     };
+  }
+
+  toInventoryCountItemUi(
+    entity: InventoryCountItemEntity,
+  ): InventoryCountItemDto {
+    const props = entity.getProps();
+
+    return {
+      id: props.itemId,
+      quantity: props.quantity,
+      type: props.type,
+      storageName: props.storageName,
+    };
+  }
+
+  toInventoryCountItemDomain(
+    record: InventoryCountItemDbRecord,
+  ): InventoryCountItemEntity {
+    return new InventoryCountItemEntity({
+      id: record.id,
+      props: {
+        itemId: record.ingredientId || record.recipeId,
+        quantity: Number(record.quantity),
+        type: record.ingredientId
+          ? InventoryCountItemType.INGREDIENT
+          : InventoryCountItemType.RECIPE,
+        storageName: record.storageName,
+      },
+    });
   }
 }
