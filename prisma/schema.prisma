@@ -265,6 +265,7 @@ model RecipeItem {
 model InventoryCount {
   id                       String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   staffName                String
+  status                   String
   inventoryCountTemplateId String   @db.Uuid
   createdAt                DateTime @default(now())
   modifiedAt               DateTime @updatedAt
@@ -274,8 +275,8 @@ model InventoryCount {
 }
 
 model InventoryCountItem {
-  id          String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  quantity    Int
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  quantity    Decimal?
   storageName String
 
   ingredientId String? @db.Uuid
