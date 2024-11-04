@@ -6,12 +6,12 @@ import {
   InventoryCountItem as InventoryCountItemDbRecord,
   Prisma,
 } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 import { RepositoryBase } from 'src/core/domain/repository.base';
 import {
-  PaginatedQueryParams,
   Paginated,
+  PaginatedQueryParams,
 } from 'src/core/domain/repository.interface';
-import { InventoryCountTemplateNotFoundError } from 'src/inventory-count-template/errors/inventory-count-template-not-found.error';
 import { InventoryCountMapper } from 'src/inventory-count/application/mappers/inventory-count.mapper';
 import { InventoryCountItemEntity } from 'src/inventory-count/domain/inventory-count-item.entity';
 import { InventoryCountRepositoryPort } from 'src/inventory-count/domain/inventory-count-repository.port';
@@ -42,51 +42,90 @@ export class PrismaInventoryCountAdapter
     super(prisma);
   }
 
-  async create(entity: InventoryCountEntity): Promise<void> {
-    await this.prisma.$transaction(async () => {
-      const inventoryCount = await this.prisma.inventoryCount.create({
-        data: this.mapToInventoryCountDbRecord(entity),
-      });
-
-      const templateStorages =
-        await this.prisma.inventoryCountTemplate.findUnique({
-          where: { id: entity.getProps().inventoryCountTemplateId },
-          include: {
-            storages: {
-              include: {
-                storage: {
-                  include: {
-                    items: true,
-                  },
-                },
-              },
-            },
-          },
-        });
-
-      if (!templateStorages) {
-        throw new InventoryCountTemplateNotFoundError(
-          `InventoryCountTemplate with ID ${entity.getProps().inventoryCountTemplateId} not found.`,
-        );
-      }
-
-      const inventoryCountItems = templateStorages.storages.flatMap(
-        (templateStorage) =>
-          templateStorage.storage.items.map((item) => ({
-            inventoryCountId: inventoryCount.id,
-            storageName: templateStorage.storage.name,
-            ingredientId: item.ingredientId ?? null,
-            recipeId: item.recipeId ?? null,
-            quantity: 0,
-          })),
-      );
-
-      if (inventoryCountItems.length > 0) {
-        await this.prisma.inventoryCountItem.createMany({
-          data: inventoryCountItems,
-        });
-      }
+  async findByIds(
+    inventoryCountIds: string[],
+  ): Promise<InventoryCountEntity[]> {
+    const inventoryCounts = await this.prisma.inventoryCount.findMany({
+      ...InventoryCountPrismaValidator,
+      where: { id: { in: inventoryCountIds } },
     });
+
+    return inventoryCounts.map((count) => {
+      const domainEntity = this.mapper.toDomain({
+        ...count,
+        inventoryCountItems: count.inventoryCountItems || [],
+      });
+      return domainEntity;
+    });
+  }
+
+  async findById(id: string): Promise<InventoryCountEntity | null> {
+    const inventoryCount = await this.prisma.inventoryCount.findUnique({
+      ...InventoryCountPrismaValidator,
+      where: { id },
+    });
+
+    return inventoryCount && this.mapper.toDomain(inventoryCount);
+  }
+
+  async create(entity: InventoryCountEntity): Promise<void> {
+    await this.prisma.inventoryCount.create({
+      data: this.mapToInventoryCountDbRecord(entity),
+    });
+  }
+
+  async update(inventoryCount: InventoryCountEntity): Promise<void> {
+    await this.prisma.inventoryCount.update({
+      where: { id: inventoryCount.getId() },
+      data: this.mapToInventoryCountDbRecord(inventoryCount),
+    });
+  }
+
+  async createInventoryCountItems(params: {
+    items: InventoryCountItemEntity[];
+    inventoryCountId: string;
+  }): Promise<void> {
+    const { items, inventoryCountId } = params;
+
+    const inventoryCountItemsData = items.map((item) =>
+      this.mapToInventoryCountItemDbRecord({
+        inventoryCountId,
+        inventoryCountItem: item,
+      }),
+    );
+
+    await this.prisma.inventoryCountItem.createMany({
+      data: inventoryCountItemsData,
+    });
+  }
+
+  async updateInventoryCountItem(params: {
+    entity: InventoryCountItemEntity;
+    inventoryCountId: string;
+  }): Promise<void> {
+    const { entity, inventoryCountId } = params;
+    await this.prisma.inventoryCountItem.update({
+      data: this.mapToInventoryCountItemDbRecord({
+        inventoryCountId,
+        inventoryCountItem: entity,
+      }),
+      where: {
+        id: entity.getId(),
+      },
+    });
+  }
+
+  async findInventoryCountItemById(
+    inventoryCountItemId: string,
+  ): Promise<InventoryCountItemEntity> {
+    const inventoryCountItem = await this.prisma.inventoryCountItem.findUnique({
+      where: { id: inventoryCountItemId },
+    });
+
+    return (
+      inventoryCountItem &&
+      this.mapper.toInventoryCountItemDomain(inventoryCountItem)
+    );
   }
 
   private mapToInventoryCountDbRecord(
@@ -100,12 +139,16 @@ export class PrismaInventoryCountAdapter
       id: props.id,
       createdAt: props.createdAt,
       modifiedAt: props.updatedAt,
+      status: props.status,
     };
   }
-  private mapToInventoryCountItemDbRecord(
-    inventoryCountId: string,
-    inventoryCountItem: InventoryCountItemEntity,
-  ): InventoryCountItemDbRecord {
+
+  private mapToInventoryCountItemDbRecord(params: {
+    inventoryCountItem: InventoryCountItemEntity;
+    inventoryCountId: string;
+  }): InventoryCountItemDbRecord {
+    const { inventoryCountId, inventoryCountItem } = params;
+
     const props = inventoryCountItem.getProps();
 
     return {
@@ -114,59 +157,12 @@ export class PrismaInventoryCountAdapter
         props.type === InventoryCountItemType.INGREDIENT ? props.itemId : null,
       recipeId:
         props.type === InventoryCountItemType.RECIPE ? props.itemId : null,
-      quantity: props.quantity,
+      quantity: new Decimal(props.quantity),
       inventoryCountId,
       createdAt: props.createdAt,
       modifiedAt: props.updatedAt,
       storageName: props.storageName,
     };
-  }
-
-  async findById(id: string): Promise<InventoryCountEntity | null> {
-    const inventoryCount = await this.prisma.inventoryCount.findUnique({
-      ...InventoryCountPrismaValidator,
-      where: { id },
-    });
-
-    return inventoryCount && this.mapper.toDomain(inventoryCount);
-  }
-
-  async update(inventoryCount: InventoryCountEntity): Promise<void> {
-    await this.prisma.$transaction(async () => {
-      await this.prisma.inventoryCount.update({
-        where: { id: inventoryCount.getId() },
-        data: this.mapToInventoryCountDbRecord(inventoryCount),
-      });
-
-      const updateInventoryCountItems = inventoryCount
-        .getProps()
-        .inventoryCountItems.map(async (item) =>
-          this.prisma.inventoryCountItem.upsert({
-            where: { id: item.getId() },
-            create: this.mapToInventoryCountItemDbRecord(
-              inventoryCount.getId(),
-              item,
-            ),
-            update: this.mapToInventoryCountItemDbRecord(
-              inventoryCount.getId(),
-              item,
-            ),
-          }),
-        );
-
-      const updatedInventoryCountItems = await Promise.all(
-        updateInventoryCountItems,
-      );
-
-      await this.prisma.inventoryCountItem.deleteMany({
-        where: {
-          inventoryCountId: inventoryCount.getId(),
-          id: {
-            notIn: updatedInventoryCountItems.map(({ id }) => id),
-          },
-        },
-      });
-    });
   }
 
   delete(entity: InventoryCountEntity): Promise<boolean> {
