@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RestaurantDto } from './dto';
 import { AuthUser } from 'src/common/decorators';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { RestaurantDto } from './dto';
 
 @Injectable()
 export class RestaurantService {
@@ -24,5 +24,11 @@ export class RestaurantService {
       where: { ownerId: user.id },
     });
     return restaurant;
+  }
+
+  async getRestaurantBranches(restaurantId: string) {
+    return await this.prisma.restaurantBranch.findMany({
+      where: { restaurantId },
+    });
   }
 }
