@@ -8,4 +8,8 @@ export class CreateInventoryCountTemplateDto {
   @IsString()
   @IsNotEmpty()
   branchId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 }

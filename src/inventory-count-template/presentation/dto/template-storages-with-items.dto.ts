@@ -6,6 +6,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { Unit } from 'src/constants/enums/unit.enum';
 import { InventoryCountTemplateType } from 'src/inventory-count-template/domain/inventory-count-template.entity';
 
 export class TemplateStoragesWithItemsDto {
@@ -14,6 +15,9 @@ export class TemplateStoragesWithItemsDto {
 
   @IsEnum(InventoryCountTemplateType)
   type: InventoryCountTemplateType;
+
+  @IsString()
+  branchName: string;
 
   @IsArray()
   @ValidateNested({ each: true })
@@ -63,4 +67,10 @@ class ItemDto {
   @IsOptional()
   @IsString()
   recipeId: string | null;
+
+  @IsString()
+  name: string;
+
+  @IsEnum(Unit)
+  unit: Unit;
 }
