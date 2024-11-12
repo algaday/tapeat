@@ -12,6 +12,12 @@ export interface InventoryCountTemplateRepositoryPort
   findTemplateStoragesWithItems(
     inventoryCountTemplateId: string,
   ): Promise<TemplateStoragesWithItemsDto>;
+
+  findBranchInventoryCountTemplates(
+    branchId: string,
+  ): Promise<InventoryCountTemplateEntity[]>;
+
+  findByIds(ids: string[]): Promise<InventoryCountTemplateEntity[]>;
 }
 
 export const InventoryCountTemplateRepositoryPort: unique symbol = Symbol(
