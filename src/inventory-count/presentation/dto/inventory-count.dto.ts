@@ -1,6 +1,16 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { InventoryCountItemType } from 'src/inventory-count/domain/inventory-count.entity';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { Unit } from 'src/constants/enums/unit.enum';
+import {
+  InventoryCountItemType,
+  InventoryCountStatus,
+} from 'src/inventory-count/domain/inventory-count.entity';
 
 export class InventoryCountDto {
   @IsString()
@@ -8,21 +18,36 @@ export class InventoryCountDto {
 
   @IsString()
   staffName: string;
-}
 
-export class InventoryCountWithStorageDto extends InventoryCountDto {
-  @ValidateNested({ each: true })
-  @Type(() => InventoryCountStoragesDto)
-  storages: InventoryCountStoragesDto[];
-}
+  @IsEnum(InventoryCountStatus)
+  status: InventoryCountStatus;
 
-export class InventoryCountStoragesDto {
   @IsString()
-  storageName: string;
+  branchName: string;
+
+  @IsString()
+  createdAt: string;
+
+  @IsString()
+  templateName: string;
+}
+
+export class InventoryCountExtendedDto extends InventoryCountDto {
+  @ValidateNested({ each: true })
+  @Type(() => InventoryCountStorageDto)
+  storages: InventoryCountStorageDto[];
+}
+
+export class InventoryCountStorageDto {
+  @IsString()
+  name: string;
+
+  @IsString()
+  slug: string;
 
   @ValidateNested({ each: true })
   @Type(() => InventoryCountItemDto)
-  inventoryCountItems: InventoryCountItemDto[];
+  items: InventoryCountItemDto[];
 }
 
 export class InventoryCountItemDto {
@@ -33,8 +58,15 @@ export class InventoryCountItemDto {
   type: InventoryCountItemType;
 
   @IsNumber()
-  quantity: number;
+  @IsOptional()
+  quantity?: number;
 
   @IsString()
   storageName: string;
+
+  @IsString()
+  name: string;
+
+  @IsEnum(Unit)
+  unit: Unit;
 }
