@@ -269,6 +269,7 @@ model InventoryCount {
   inventoryCountTemplateId String   @db.Uuid
   createdAt                DateTime @default(now())
   modifiedAt               DateTime @updatedAt
+  branchName               String
 
   inventoryCountTemplate InventoryCountTemplate @relation(fields: [inventoryCountTemplateId], references: [id])
   inventoryCountItems    InventoryCountItem[]
@@ -305,9 +306,9 @@ model StorageItem {
   ingredientId String? @db.Uuid
   recipeId     String? @db.Uuid
 
-  storage    Storage     @relation(fields: [storageId], references: [id])
-  ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
-  recipe     Recipe?     @relation(fields: [recipeId], references: [id])
+  storage    Storage     @relation(fields: [storageId], references: [id], onDelete: Cascade)
+  ingredient Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  recipe     Recipe?     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@unique([storageId, ingredientId])
   @@unique([storageId, recipeId])
@@ -317,6 +318,7 @@ model InventoryCountTemplate {
   id       String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   type     String
   branchId String @db.Uuid
+  name     String
 
   branch          RestaurantBranch                @relation(fields: [branchId], references: [id])
   storages        InventoryCountTemplateStorage[]
