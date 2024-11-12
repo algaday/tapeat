@@ -7,4 +7,7 @@ export class CreateInventoryCountDto {
 
   @IsString()
   staffName: string;
+
+  @IsString()
+  branchName: string;
 }
