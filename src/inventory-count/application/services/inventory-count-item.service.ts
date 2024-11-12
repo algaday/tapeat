@@ -96,6 +96,8 @@ export class InventoryCountItemService {
         type,
         quantity: foundItem.quantity,
         storageName: foundItem.storageName,
+        name: foundItem.name,
+        unit: foundItem.unit,
       });
     });
   }
