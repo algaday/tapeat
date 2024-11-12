@@ -24,7 +24,7 @@ export class RestaurantController {
     return this.restaurantService.getRestaurantByOwnerId(user);
   }
 
-  @Get(':restaurantId')
+  @Get(':restaurantId/branches')
   getRestaurantBranches(@Param('restaurantId') restaurantId: string) {
     return this.restaurantService.getRestaurantBranches(restaurantId);
   }
