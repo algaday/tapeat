@@ -1,13 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UseCase } from 'src/core/domain/use-case.interface';
 import { InventoryCountRepositoryPort } from 'src/inventory-count/domain/inventory-count-repository.port';
+import { InventoryCountStatus } from 'src/inventory-count/domain/inventory-count.entity';
 import { InventoryCountNotFoundError } from 'src/inventory-count/errors/inventory-count-not-found.error';
-import { InventoryCountWithStorageDto as InventoryCountUi } from 'src/inventory-count/presentation/dto/inventory-count.dto';
+import { InventoryCountExtendedDto as InventoryCountUi } from 'src/inventory-count/presentation/dto/inventory-count.dto';
 import { InventoryCountMapper } from '../../mappers/inventory-count.mapper';
 
 interface Props {
-  staffName: string;
+  staffName?: string;
   inventoryCountId: string;
+  status?: InventoryCountStatus;
 }
 
 @Injectable()
@@ -31,6 +33,7 @@ export class UpdateInventoryCountUseCase
 
     inventoryCount.update({
       staffName: props.staffName,
+      status: props.status,
     });
 
     await this.inventoryCountRepository.update(inventoryCount);

@@ -6,6 +6,7 @@ interface Props {
   inventoryCountTemplateId: string;
   status: InventoryCountStatus;
   inventoryCountItems: InventoryCountItemEntity[];
+  branchName: string;
 }
 
 export enum InventoryCountItemType {

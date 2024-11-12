@@ -8,13 +8,14 @@ import {
   InventoryCountEntity,
   InventoryCountItemType,
 } from 'src/inventory-count/domain/inventory-count.entity';
-import { InventoryCountWithStorageDto as InventoryCountUi } from 'src/inventory-count/presentation/dto/inventory-count.dto';
+import { InventoryCountExtendedDto as InventoryCountUi } from 'src/inventory-count/presentation/dto/inventory-count.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { InventoryCountMapper } from '../../mappers/inventory-count.mapper';
 
 interface Props {
   inventoryCountTemplateId: string;
   staffName: string;
+  branchName: string;
 }
 
 @Injectable()
@@ -44,7 +45,6 @@ export class CreateInventoryCountUseCase
           `InventoryCountTemplate with ID ${props.inventoryCountTemplateId} not found.`,
         );
       }
-
       const inventoryCountItems = detailedTemplate.storages.flatMap(
         (templateStorage) =>
           templateStorage.storage.items.map((item) =>
@@ -55,13 +55,15 @@ export class CreateInventoryCountUseCase
               type: item.ingredientId
                 ? InventoryCountItemType.INGREDIENT
                 : InventoryCountItemType.RECIPE,
+              name: item.name,
+              unit: item.unit,
             }),
           ),
       );
-
       const inventoryCount = InventoryCountEntity.create({
         ...props,
         inventoryCountItems,
+        branchName: detailedTemplate.branchName,
       });
 
       await this.inventoryCountRepository.create(inventoryCount);

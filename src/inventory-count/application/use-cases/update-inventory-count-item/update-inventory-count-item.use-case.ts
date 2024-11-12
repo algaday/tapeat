@@ -22,7 +22,7 @@ export class UpdateInventoryCountItemUseCase
   ) {}
 
   async execute(props: Props): Promise<InventoryCountItemUi> {
-    const { id, inventoryCountId } = props;
+    const { id, inventoryCountId, quantity } = props;
 
     const inventoryCountItem =
       await this.inventoryCountRepository.findInventoryCountItemById(id);
@@ -33,6 +33,7 @@ export class UpdateInventoryCountItemUseCase
 
     inventoryCountItem.update({
       ...inventoryCountItem,
+      quantity,
     });
 
     await this.inventoryCountRepository.updateInventoryCountItem({
