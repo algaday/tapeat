@@ -1,6 +1,9 @@
 import { IRepository } from 'src/core/domain/repository.interface';
 import { InventoryCountItemEntity } from './inventory-count-item.entity';
-import { InventoryCountEntity } from './inventory-count.entity';
+import {
+  InventoryCountEntity,
+  InventoryCountStatus,
+} from './inventory-count.entity';
 
 export interface InventoryCountRepositoryPort
   extends IRepository<InventoryCountEntity> {
@@ -18,7 +21,10 @@ export interface InventoryCountRepositoryPort
     inventoryCountId: string;
   }): Promise<void>;
 
-  findByIds(inventoryCountIds: string[]): Promise<InventoryCountEntity[]>;
+  findByIds(params: {
+    inventoryCountIds: string[];
+    status: InventoryCountStatus;
+  }): Promise<InventoryCountEntity[]>;
 }
 
 export const InventoryCountRepositoryPort: unique symbol = Symbol(

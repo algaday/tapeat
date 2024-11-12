@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { Injectable } from '@nestjs/common';
-import {
-  InventoryCountItem as InventoryCountItemDbRecord,
-  Prisma,
-} from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 import { RepositoryBase } from 'src/core/domain/repository.base';
 import {
@@ -18,17 +14,28 @@ import { InventoryCountRepositoryPort } from 'src/inventory-count/domain/invento
 import {
   InventoryCountEntity,
   InventoryCountItemType,
+  InventoryCountStatus,
 } from 'src/inventory-count/domain/inventory-count.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 const InventoryCountPrismaValidator =
   Prisma.validator<Prisma.InventoryCountDefaultArgs>()({
-    include: { inventoryCountItems: true },
+    include: {
+      inventoryCountItems: {
+        include: {
+          ingredient: true,
+          recipe: true,
+        },
+      },
+    },
   });
 
 export type InventoryCountDbRecord = Prisma.InventoryCountGetPayload<
   typeof InventoryCountPrismaValidator
 >;
+
+export type InventoryCountItemDbRecord =
+  InventoryCountDbRecord['inventoryCountItems'][number];
 
 @Injectable()
 export class PrismaInventoryCountAdapter
@@ -42,12 +49,15 @@ export class PrismaInventoryCountAdapter
     super(prisma);
   }
 
-  async findByIds(
-    inventoryCountIds: string[],
-  ): Promise<InventoryCountEntity[]> {
+  async findByIds(params: {
+    inventoryCountIds: string[];
+    status: InventoryCountStatus;
+  }): Promise<InventoryCountEntity[]> {
+    const { inventoryCountIds, status } = params;
+
     const inventoryCounts = await this.prisma.inventoryCount.findMany({
       ...InventoryCountPrismaValidator,
-      where: { id: { in: inventoryCountIds } },
+      where: { id: { in: inventoryCountIds }, status },
     });
 
     return inventoryCounts.map((count) => {
@@ -86,14 +96,12 @@ export class PrismaInventoryCountAdapter
     inventoryCountId: string;
   }): Promise<void> {
     const { items, inventoryCountId } = params;
-
     const inventoryCountItemsData = items.map((item) =>
       this.mapToInventoryCountItemDbRecord({
         inventoryCountId,
         inventoryCountItem: item,
       }),
     );
-
     await this.prisma.inventoryCountItem.createMany({
       data: inventoryCountItemsData,
     });
@@ -120,6 +128,10 @@ export class PrismaInventoryCountAdapter
   ): Promise<InventoryCountItemEntity> {
     const inventoryCountItem = await this.prisma.inventoryCountItem.findUnique({
       where: { id: inventoryCountItemId },
+      include: {
+        ingredient: true,
+        recipe: true,
+      },
     });
 
     return (
@@ -140,13 +152,14 @@ export class PrismaInventoryCountAdapter
       createdAt: props.createdAt,
       modifiedAt: props.updatedAt,
       status: props.status,
+      branchName: props.branchName,
     };
   }
 
   private mapToInventoryCountItemDbRecord(params: {
     inventoryCountItem: InventoryCountItemEntity;
     inventoryCountId: string;
-  }): InventoryCountItemDbRecord {
+  }): Omit<InventoryCountItemDbRecord, 'recipe' | 'ingredient'> {
     const { inventoryCountId, inventoryCountItem } = params;
 
     const props = inventoryCountItem.getProps();
@@ -157,7 +170,7 @@ export class PrismaInventoryCountAdapter
         props.type === InventoryCountItemType.INGREDIENT ? props.itemId : null,
       recipeId:
         props.type === InventoryCountItemType.RECIPE ? props.itemId : null,
-      quantity: new Decimal(props.quantity),
+      quantity: props.quantity ? new Decimal(props.quantity) : null,
       inventoryCountId,
       createdAt: props.createdAt,
       modifiedAt: props.updatedAt,
