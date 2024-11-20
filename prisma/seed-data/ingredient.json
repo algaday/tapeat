@@ -3,432 +3,504 @@
     "id": "0e960f05-8bae-4479-994c-8b72adcfd887",
     "name": "Соус Фрито",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "10"
   },
   {
     "id": "1374b525-c986-4db7-8ab3-dbc649c81924",
     "name": "Соус Терияки",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "2aeb5ee4-c575-4c68-a8b9-76c473096331",
     "name": "Белый соус",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "0933eab2-bb0e-4421-94f5-e1883a9a533c",
     "name": "Сальса",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "26f920eb-8ee1-475e-be4b-536a9753d377",
     "name": "Соус Корея",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "3"
   },
   {
     "id": "064a9fee-800b-41a5-9f09-5e54c8a19549",
     "name": "Шрирача",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "1"
   },
   {
     "id": "053dd0bb-150b-4ae4-b0db-60930fdf7ab9",
     "name": "Сладкий чили",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "03e06b04-329d-4cd3-b6c9-898d0780c308",
     "name": "Майонез",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "3"
   },
   {
     "id": "08440eec-f69f-4d6b-a21d-7e6b56944e2b",
     "name": "Анти-жир",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "49917c13-a615-4cec-99d6-99361e2b0482",
     "name": "Фери",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "286a2fc7-0b21-40ad-9181-fc1c9bef4760",
     "name": "Тряпка",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "3"
   },
   {
     "id": "6ac224c4-72ec-41b6-829d-cc6bd4644a0e",
     "name": "Масло фритюр",
     "yield": "1.0000",
-    "unit": "litre"
+    "unit": "litre",
+    "minQuantityThreshold": "60"
   },
   {
     "id": "267bd3d3-5f23-4616-9ee3-9b515b68f7bd",
     "name": "Вода 20л",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "1"
   },
   {
     "id": "9d803cc2-3e78-42f4-98c3-54889d784085",
     "name": "Помидор",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "9f5d4c66-b455-4541-918c-1796fe986dcb",
     "name": "Морковь",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "0.5"
   },
   {
     "id": "569b198b-3e3b-4296-8cc1-c072a6882a2a",
     "name": "Халапеньо",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "1"
   },
   {
     "id": "0ea83c29-76b8-45d8-afb6-9841f43da5c4",
     "name": "Салат коул-слоу",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "1"
   },
   {
     "id": "d7f9cfb8-19c2-4ceb-aa2f-762ef81235d4",
     "name": "Капуста зеленая",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "3"
   },
   {
     "id": "b734b99f-8bfa-4eeb-b9dd-dc1957b857c8",
     "name": "Капуста красная",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "23de39bf-b642-482a-b9da-165231dc6ea7",
     "name": "Айсберг",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "0ff21bd6-95c2-46f4-9133-f83bcb4b4eaa",
     "name": "Булочки",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "200"
   },
   {
     "id": "d4d627fb-a72a-4a7f-9634-e4e006cc7139",
     "name": "Тортилья 25 см",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "9d4e6a44-2fb9-4519-8f51-aeee2308fde7",
     "name": "Тортилья 30 см",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "9c7a6c04-0ae2-40db-b7e7-27867cbc993a",
     "name": "Сыр дольки",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "100"
   },
   {
     "id": "438d7a62-40df-4aff-bd9a-4d02f783fe8c",
     "name": "Сыр",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "3"
   },
   {
     "id": "7def508f-70d7-4464-ad3c-593cf3245e11",
     "name": "Филе грудки замороженное",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "12"
   },
   {
     "id": "13e5e8fa-3c01-4a8a-b5ec-3a6367f339d6",
     "name": "Стрипсы (маринад)",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "12"
   },
   {
     "id": "083b463e-a345-4608-a97f-d0bd335835b3",
     "name": "Наггетсы (маринад)",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "6"
   },
   {
     "id": "307e8724-d0d6-43d0-a994-d95fa7ba3128",
     "name": "Филе котлет (маринад)",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "24"
   },
   {
     "id": "88b38c86-c0bb-47dc-9be8-9946680481b4",
     "name": "Мука",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "25"
   },
   {
     "id": "9c8f1eca-5de0-4bfc-8441-726dc455194e",
     "name": "Панировка",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "5"
   },
   {
     "id": "03168009-8c32-44d5-bbc0-052e0bea7b80",
     "name": "Крахмал",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "10"
   },
   {
     "id": "38234ac4-211d-4835-810f-7e7185efc2e0",
     "name": "Разрыхлитель теста",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "1"
   },
   {
     "id": "fbb4966b-c70a-4750-96d2-852803abe494",
     "name": "Микс панировка",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "b3dd2394-85bf-43d4-885d-20672027d22a",
     "name": "Микс маринад",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "4def50df-e593-4801-8998-fa8fa9fafaf6",
     "name": "Специи для фри",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "500"
   },
   {
     "id": "ba4e7d20-fea3-49c5-8611-bd09eae4814f",
     "name": "Дракон",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "500"
   },
   {
     "id": "623f7e27-2bbb-41c3-a02a-2a51aab533bb",
     "name": "Огонь",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "500"
   },
   {
     "id": "21744ced-2bf4-47ee-8753-d09801ec10f2",
     "name": "Жара",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "500"
   },
   {
     "id": "fec1e675-30e1-415e-ba26-9dce0e1d8b04",
     "name": "Искра",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "500"
   },
   {
     "id": "66703992-82b7-4f85-9542-fb25324d64ce",
     "name": "Паприка",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "1000"
   },
   {
     "id": "1e3ecaa0-870d-4bca-bd63-997e45542504",
     "name": "Соль",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "1000"
   },
   {
     "id": "ce217294-e8f4-4649-be2b-89d9555b5ede",
     "name": "Чеснок",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "1000"
   },
   {
     "id": "f0678f43-2384-4208-8d47-57de1dded591",
     "name": "Черный перец",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "1000"
   },
   {
     "id": "7a23c124-e600-4274-b086-d4443fa5903b",
     "name": "Кайенский перец",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "1000"
   },
   {
     "id": "bd7781b8-7e88-4c19-af2a-dfb54d218b51",
     "name": "Соус 30мл",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "50"
   },
   {
     "id": "e59c810b-d230-46ab-8a77-9ccf42a0ffe1",
     "name": "Соус 50мл",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "50"
   },
   {
     "id": "8ac8d854-bfd0-40e9-b2c9-a66608d5e6f6",
     "name": "Соус сырный",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "50"
   },
   {
     "id": "9144e4cd-3762-4c01-b011-d6deba1eeb51",
     "name": "Соус кетчуп",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "50"
   },
   {
     "id": "c0fe8b2a-dba3-43dd-b088-e362b625a3b0",
     "name": "Туалетная бумага",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "24"
   },
   {
     "id": "1d00edef-0b3a-4e85-85db-5fd52f292117",
     "name": "Жидкое мыло",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "litre",
+    "minQuantityThreshold": "5"
   },
   {
     "id": "0dd4af22-1434-455c-8c72-c9994c6ec5c6",
     "name": "Перчатки",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "pack",
+    "minQuantityThreshold": "5"
   },
   {
     "id": "0a4727e6-7601-4aa4-8691-8bb2f74ab5fa",
     "name": "Салфетки для диспенсера",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "pack",
+    "minQuantityThreshold": "10"
   },
   {
     "id": "c08331c5-9884-4344-a91b-ff4d8dd2963b",
     "name": "Маркер",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "pack",
+    "minQuantityThreshold": "1"
   },
   {
     "id": "c9ac5754-d3df-47dd-87d2-bd3e110e3e3b",
     "name": "Рулон пакетов",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "pack",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "45028afa-25c4-4594-bc78-816a0a4fe26c",
     "name": "Рулон мусорных пакетов",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "pack",
+    "minQuantityThreshold": "2"
   },
   {
     "id": "524137bc-0ede-4be4-ae15-6fff1928cb04",
     "name": "Соленые огурцы",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "5"
   },
   {
     "id": "2b0154be-88a5-4da7-8c37-c56e40caecc6",
     "name": "Фри",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "15"
   },
   {
     "id": "419fabb3-08da-4335-a1db-3ae5dd9c0e24",
     "name": "Скобы степлера",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "pack",
+    "minQuantityThreshold": "5"
   },
   {
     "id": "d3e57f30-d58c-4dcb-bed8-393d1def4223",
     "name": "Кола",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "60"
   },
   {
     "id": "75ce8ffd-e764-4607-9be4-903efa92c0f6",
     "name": "Кола зиро",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "24"
   },
   {
     "id": "e071556a-85eb-4096-b389-bf655fda55b3",
     "name": "Спрайт",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "24"
   },
   {
     "id": "b944b139-7963-4d4a-80d2-6f544b9570b2",
     "name": "Фанта",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "23"
   },
   {
     "id": "57c6b589-7373-4dee-a1b3-0bde3d48900a",
     "name": "Фьюс персик",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "23"
   },
   {
     "id": "3dccf551-c9ef-41cf-b550-155fe0eba429",
     "name": "Фьюс ягоды",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "23"
   },
   {
     "id": "45f97b83-7818-4438-9a1b-c3bcad3c1a42",
     "name": "Фьюс ромашка",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "24"
   },
   {
     "id": "b845686a-3c14-47d4-b7dc-78e581a7e790",
     "name": "Фьюс манго ананас",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "24"
   },
   {
     "id": "902cb9f8-6e87-49dd-a1c3-bb2ab75f5302",
     "name": "Вода",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "24"
   },
   {
     "id": "31bd6cea-cdc0-4d75-8b58-ebd4bc240b1c",
     "name": "Красный перец",
     "yield": "1.0000",
-    "unit": "g"
+    "unit": "g",
+    "minQuantityThreshold": "1000"
   },
   {
     "id": "c857f367-ccf0-435e-87a9-9afa1f226250",
     "name": "Салфетки",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "pack",
+    "minQuantityThreshold": "60"
   },
   {
     "id": "576172b0-d262-4914-ac60-2e01ea683932",
     "name": "Красный лук",
     "yield": "1.0000",
-    "unit": "kg"
+    "unit": "kg",
+    "minQuantityThreshold": "1"
   },
   {
     "id": "07a1fbba-d79c-4082-b471-a560a419265c",
     "name": "Губка",
     "yield": "1.0000",
-    "unit": "piece"
+    "unit": "piece",
+    "minQuantityThreshold": "3"
   }
 ]

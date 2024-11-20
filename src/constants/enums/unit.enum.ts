@@ -4,4 +4,5 @@ export enum Unit {
   KILOGRAM = 'kg',
   GRAM = 'g',
   PIECE = 'piece',
+  PACK = 'pack',
 }
