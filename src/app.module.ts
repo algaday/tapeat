@@ -19,6 +19,9 @@ import { StorageModule } from './storage/storage.module';
 import { CustomerModule } from './customer/infra/framework/customer.module';
 import { InventoryCountTemplateModule } from './inventory-count-template/infra/framework/inventory-count-template.module';
 import { InventoryCountModule } from './inventory-count/infra/framework/inventory-count.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { TelegramChatModule } from './telegram-chat/infra/framework/telegram-chat.module';
+import { NotificationSubscriptionCodeModule } from './notification-subscription-code/infra/framework/notification-subscription-code.module';
 
 @Module({
   imports: [
@@ -44,6 +47,9 @@ import { InventoryCountModule } from './inventory-count/infra/framework/inventor
     StorageModule,
     InventoryCountTemplateModule,
     InventoryCountModule,
+    TelegramModule,
+    TelegramChatModule,
+    NotificationSubscriptionCodeModule,
   ],
 })
 export class AppModule {}
