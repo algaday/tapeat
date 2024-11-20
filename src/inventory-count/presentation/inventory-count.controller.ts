@@ -8,9 +8,11 @@ import { InventoryCountStatus } from '../domain/inventory-count.entity';
 import { CreateInventoryCountDto } from './dto/create-inventory-count.dto';
 import { InventoryCountExtendedDto } from './dto/inventory-count.dto';
 import {
+  SubmitInventoryCountDto,
   UpdateInventoryCountDto,
   UpdateInventoryCountItemDto,
 } from './dto/update-inventory-count.dto';
+import { SubmitInventoryCountUseCase } from '../application/use-cases/submit-inventory-count/submit-inventory-count.use-case';
 
 @Controller('inventory-counts')
 export class InventoryCountController {
@@ -20,6 +22,7 @@ export class InventoryCountController {
     private readonly getInventoryCount: GetInventoryCountUseCase,
     private readonly getInventoryCounts: GetInventoryCountsUseCase,
     private readonly updateInventoryCountItem: UpdateInventoryCountItemUseCase,
+    private readonly submitInventoryCount: SubmitInventoryCountUseCase,
   ) {}
 
   @Get(':inventoryCountId')
@@ -49,6 +52,17 @@ export class InventoryCountController {
     @Param('inventoryCountId') inventoryCountId: string,
   ) {
     return this.updateInventoryCount.execute({
+      ...dto,
+      inventoryCountId,
+    });
+  }
+
+  @Put(':inventoryCountId/submit')
+  public async submit(
+    @Body() dto: SubmitInventoryCountDto,
+    @Param('inventoryCountId') inventoryCountId: string,
+  ) {
+    return this.submitInventoryCount.execute({
       ...dto,
       inventoryCountId,
     });

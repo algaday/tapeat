@@ -9,6 +9,9 @@ export class UpdateInventoryCountDto extends PartialType(
   @IsEnum(InventoryCountStatus)
   status: InventoryCountStatus;
 }
+export class SubmitInventoryCountDto extends PartialType(
+  CreateInventoryCountDto,
+) {}
 
 export class UpdateInventoryCountItemDto {
   @IsNumber()
