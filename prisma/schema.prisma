@@ -71,6 +71,7 @@ model RestaurantBranch {
 
   restaurant              Restaurant               @relation(fields: [restaurantId], references: [id])
   inventoryCountTemplates InventoryCountTemplate[]
+  telegramChats           TelegramChat[]
 }
 
 model MenuItem {
@@ -334,4 +335,28 @@ model InventoryCountTemplateStorage {
   inventoryCountTemplate InventoryCountTemplate @relation(fields: [inventoryCountTemplateId], references: [id])
 
   @@unique([inventoryCountTemplateId, storageId])
+}
+
+model TelegramChat {
+  id                 String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chatIdAtTelegram   String
+  restaurantBranchId String @db.Uuid
+  chatType           String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurantBranch              RestaurantBranch               @relation(fields: [restaurantBranchId], references: [id], onDelete: Cascade)
+}
+
+model NotificationSubscriptionCode {
+  id             String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chatIdAtTelegram String
+  secretCode     String @unique
+  status         String
+  activatedAt    DateTime?
+  expiresAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
