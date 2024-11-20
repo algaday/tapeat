@@ -22,6 +22,7 @@ import { InventoryCountModule } from './inventory-count/infra/framework/inventor
 import { TelegramModule } from './telegram/telegram.module';
 import { TelegramChatModule } from './telegram-chat/infra/framework/telegram-chat.module';
 import { NotificationSubscriptionCodeModule } from './notification-subscription-code/infra/framework/notification-subscription-code.module';
+import { NotificationModule } from './notification/infra/framework/notification.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { NotificationSubscriptionCodeModule } from './notification-subscription-
     TelegramModule,
     TelegramChatModule,
     NotificationSubscriptionCodeModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}
