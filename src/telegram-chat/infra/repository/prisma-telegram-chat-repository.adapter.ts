@@ -32,6 +32,16 @@ export class PrismaTelegramChatRepositoryAdapter
   ) {
     super(prisma);
   }
+  async findByRestaurantBranchId(
+    restaurantBranchId: string,
+  ): Promise<TelegramChatEntity | null> {
+    const telegramChat = await this.prisma.telegramChat.findFirst({
+      ...TelegramChatPrismaValidator,
+      where: { restaurantBranchId },
+    });
+
+    return telegramChat && this.mapper.toDomain(telegramChat);
+  }
 
   async create(entity: TelegramChatEntity): Promise<void> {
     await this.prisma.telegramChat.create({
