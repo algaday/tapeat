@@ -39,6 +39,17 @@ export class StorageRepository {
     });
   }
 
+  async assignIngredients(params: {
+    storageId: string;
+    ingredientIds: string[];
+  }) {
+    const { ingredientIds, storageId } = params;
+    const data = ingredientIds.map((id) => ({ ingredientId: id, storageId }));
+    console.log(data);
+
+    return this.prismaService.storageItem.createMany({ data });
+  }
+
   async assignRecipe(storageId: string, recipeId: string) {
     return this.prismaService.storageItem.create({
       data: { storageId, recipeId },

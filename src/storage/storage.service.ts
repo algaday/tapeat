@@ -34,6 +34,13 @@ export class StorageService {
     return this.storageRepository.assignIngredient(storageId, ingredientId);
   }
 
+  async assignIngredients(params: {
+    storageId: string;
+    ingredientIds: string[];
+  }) {
+    return this.storageRepository.assignIngredients(params);
+  }
+
   async unassignIngredient(storageId: string, ingredientId: string) {
     return this.storageRepository.unassignIngredient(storageId, ingredientId);
   }
