@@ -232,6 +232,7 @@ model Ingredient {
   name  String
   yield Decimal @db.Decimal(5, 4)
   unit  String
+  minQuantityThreshold Decimal
 
   usedAsRecipeItems   RecipeItem[]
   inventoryCountItems InventoryCountItem[]

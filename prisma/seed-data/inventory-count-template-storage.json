@@ -1,0 +1,52 @@
+[
+  {
+    "id": "738b3984-7461-4d09-b9cf-0ca5131c760a",
+    "inventoryCountTemplateId": "01250df8-7b82-4cfa-a4e9-61c9b3ab8d19",
+    "storageId": "2eb961e3-4188-4419-9513-ceca6893e83e"
+  },
+  {
+    "id": "d458d151-abdc-441a-bcf6-ec444d8e8c2e",
+    "inventoryCountTemplateId": "01250df8-7b82-4cfa-a4e9-61c9b3ab8d19",
+    "storageId": "fa83de6b-c3ef-4950-b4ac-1948f83031b8"
+  },
+  {
+    "id": "4a97e051-bb23-4104-bd92-9cca46b77ae6",
+    "inventoryCountTemplateId": "01250df8-7b82-4cfa-a4e9-61c9b3ab8d19",
+    "storageId": "41ad988f-9d86-4967-8efd-460ec61e0866"
+  },
+  {
+    "id": "764f4f0c-5770-4ae3-a191-caebf85406d5",
+    "inventoryCountTemplateId": "01250df8-7b82-4cfa-a4e9-61c9b3ab8d19",
+    "storageId": "32d9a779-8641-44d7-9229-79a4c0993ed7"
+  },
+  {
+    "id": "48eea52a-b3d5-4f3b-89a5-6239cb1e917a",
+    "inventoryCountTemplateId": "c2eb727d-e8ba-4e4b-8d46-8895cde82dde",
+    "storageId": "3208d813-9edc-4412-8c19-14d65124a430"
+  },
+  {
+    "id": "99ab4736-adc7-47bf-8ff0-027c56646269",
+    "inventoryCountTemplateId": "c2eb727d-e8ba-4e4b-8d46-8895cde82dde",
+    "storageId": "f65342f7-d4a5-49db-ae53-6167b9bd27e2"
+  },
+  {
+    "id": "faa0ba0e-8183-4c99-8677-b9d7d7fb8da6",
+    "inventoryCountTemplateId": "c2eb727d-e8ba-4e4b-8d46-8895cde82dde",
+    "storageId": "7569efdd-f018-4526-9d48-65b8e1a4e2d5"
+  },
+  {
+    "id": "3417be13-95fb-484c-b28d-ebea14bc8948",
+    "inventoryCountTemplateId": "e0c42a2b-9952-46bc-829b-8b52f06f4b55",
+    "storageId": "67f75a7d-7371-48a8-923d-8b6ef9d6e987"
+  },
+  {
+    "id": "269ec7cd-47f6-471a-ba96-f6ca564d760e",
+    "inventoryCountTemplateId": "e0c42a2b-9952-46bc-829b-8b52f06f4b55",
+    "storageId": "778c698d-9d2d-4072-aca6-eb831cab6d2c"
+  },
+  {
+    "id": "04f2ca45-8e16-47c5-90ef-0208e508da93",
+    "inventoryCountTemplateId": "e0c42a2b-9952-46bc-829b-8b52f06f4b55",
+    "storageId": "1013a4f2-39b5-48d7-a5ea-81216407d869"
+  }
+]

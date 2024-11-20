@@ -12,4 +12,7 @@ export class CreateIngredientBodyDto {
 
   @IsNumber({ maxDecimalPlaces: 4 })
   yield: number;
+
+  @IsNumber()
+  minQuantityThreshold: number;
 }

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateStorageBodyDto } from './dto';
 import { StorageService } from './storage.service';
+import { AssignStorageItemDto } from './dto/assign-storage-item.dto';
 
 @Controller('storages')
 export class StorageController {
@@ -21,6 +22,8 @@ export class StorageController {
 
   @Post('bulk')
   async createMany(@Body() data: CreateStorageBodyDto[]) {
+    console.log(data);
+
     return this.storageService.createMany(data);
   }
 
@@ -50,6 +53,16 @@ export class StorageController {
     @Body('ingredientId') ingredientId: string,
   ) {
     return this.storageService.assignIngredient(storageId, ingredientId);
+  }
+  @Post(':storageId/ingredients/bulk')
+  async assignIngredients(
+    @Param('storageId') storageId: string,
+    @Body() dto: AssignStorageItemDto,
+  ) {
+    return this.storageService.assignIngredients({
+      storageId,
+      ingredientIds: dto.itemIds,
+    });
   }
 
   @Delete(':storageId/ingredients/:ingredientId')
