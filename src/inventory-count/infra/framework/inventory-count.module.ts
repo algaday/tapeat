@@ -10,6 +10,7 @@ import { InventoryCountRepositoryPort } from 'src/inventory-count/domain/invento
 import { InventoryCountController } from 'src/inventory-count/presentation/inventory-count.controller';
 import { RecipeModule } from 'src/recipe/infra/framework/recipe.module';
 import { PrismaInventoryCountAdapter } from '../repository/prisma.inventory-count.adapter';
+import { NotificationModule } from 'src/notification/infra/framework/notification.module';
 
 const REPOSITORIES = [
   {
@@ -19,7 +20,12 @@ const REPOSITORIES = [
 ];
 
 @Module({
-  imports: [IngredientModule, RecipeModule, InventoryCountTemplateModule],
+  imports: [
+    IngredientModule,
+    RecipeModule,
+    InventoryCountTemplateModule,
+    NotificationModule,
+  ],
   controllers: [InventoryCountController],
   providers: [
     InventoryCountMapper,

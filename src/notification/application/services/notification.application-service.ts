@@ -8,7 +8,6 @@ import { TelegramChatRepositoryPort } from 'src/telegram-chat/domain/telegram-ch
 import { Telegraf } from 'telegraf';
 
 export type NotifyInventoryCountByTelegramParams = {
-  restaurantBranchId: string;
   inventoryCount: InventoryCountEntity;
 };
 

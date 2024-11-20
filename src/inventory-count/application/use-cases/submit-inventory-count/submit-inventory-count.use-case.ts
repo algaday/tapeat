@@ -6,6 +6,7 @@ import { InventoryCountExtendedDto as InventoryCountUi } from 'src/inventory-cou
 import { InventoryCountMapper } from '../../mappers/inventory-count.mapper';
 import { IngredientRepository } from 'src/ingredient/ingredient.repository';
 import { InventoryCountStatus } from 'src/inventory-count/domain/inventory-count.entity';
+import { NotificationApplicationService } from 'src/notification/application/services/notification.application-service';
 
 interface Props {
   inventoryCountId: string;
@@ -21,6 +22,8 @@ export class SubmitInventoryCountUseCase
     private readonly inventoryCountRepository: InventoryCountRepositoryPort,
 
     private readonly ingredientRepository: IngredientRepository,
+
+    private readonly notificationApplicationService: NotificationApplicationService,
   ) {}
 
   async execute(props: Props): Promise<InventoryCountUi> {
@@ -60,6 +63,10 @@ export class SubmitInventoryCountUseCase
     });
 
     await this.inventoryCountRepository.update(inventoryCount);
+
+    await this.notificationApplicationService.notifyInventoryCountByTelegram({
+      inventoryCount,
+    });
 
     return this.mapper.toUi(inventoryCount);
   }
