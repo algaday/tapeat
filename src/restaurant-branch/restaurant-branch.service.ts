@@ -30,4 +30,18 @@ export class RestaurantBranchService {
     });
     return branches;
   }
+
+  async getById(id: string) {
+    const branch = await this.prisma.restaurantBranch.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!branch) {
+      throw new Error('Branch not found');
+    }
+
+    return branch;
+  }
 }
