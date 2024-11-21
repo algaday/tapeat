@@ -46,5 +46,5 @@ COPY --chown=node:node --from=build /usr/src/app/prisma ./prisma
 
 USER node
 
-CMD ["sh", "-c", "yarn prisma migrate deploy && node dist/src/main"]
+CMD ["sh", "-c", "yarn prisma migrate deploy && yarn prisma db seed && node dist/src/main"]
 
