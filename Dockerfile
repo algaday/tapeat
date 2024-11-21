@@ -1,10 +1,8 @@
-
-
 FROM node:20.18-alpine AS package
 
 WORKDIR /usr/src/app
 
-COPY --chown=node:node package.json yarn.lock ./ 
+COPY --chown=node:node package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile
 
@@ -16,10 +14,9 @@ WORKDIR /usr/src/app
 
 COPY --chown=node:node --from=package /usr/src/app/package.json ./
 COPY --chown=node:node --from=package /usr/src/app/yarn.lock ./
-
 COPY --chown=node:node --from=package /usr/src/app/node_modules ./node_modules
 
-COPY --chown=node:node  /prisma ./prisma
+COPY --chown=node:node /prisma ./prisma
 
 RUN yarn prisma generate
 
@@ -41,10 +38,9 @@ WORKDIR /usr/src/app
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-COPY --chown=node:node --from=build  /usr/src/app/package.json  ./
+COPY --chown=node:node --from=build /usr/src/app/package.json ./
 COPY --chown=node:node --from=build /usr/src/app/prisma ./prisma
 
 USER node
 
-CMD ["sh", "-c", "yarn prisma migrate deploy && yarn prisma db seed && node dist/src/main"]
-
+CMD ["sh", "-c", "yarn prisma migrate deploy && node dist/prisma/seed.js && node dist/src/main"]
