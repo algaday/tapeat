@@ -448,5 +448,18 @@
     "storageId": "32d9a779-8641-44d7-9229-79a4c0993ed7",
     "ingredientId": "31bd6cea-cdc0-4d75-8b58-ebd4bc240b1c",
     "recipeId": null
+  }, 
+  {
+    "id": "a7104e81-9676-495f-9b2a-e93f06f7e991",
+    "storageId": "aeb961e3-4188-4419-9513-ceca6893e831",
+    "ingredientId": "31bd6cea-cdc0-4d75-8b58-ebd4bc240b1c",
+    "recipeId": null
+  }, 
+  {
+    "id": "b7104e81-9676-495f-9b2a-e93f06f7e992",
+    "storageId": "aeb961e3-4188-4419-9513-ceca6893e831",
+    "ingredientId": "0dd4af22-1434-455c-8c72-c9994c6ec5c6",
+    "recipeId": null
   }
 ]
+

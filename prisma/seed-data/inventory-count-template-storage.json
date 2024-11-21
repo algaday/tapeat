@@ -103,5 +103,13 @@
     "id": "a4f2ca45-8e16-47c5-90ef-0208e508da91",
     "inventoryCountTemplateId": "a0c42a2b-9952-46bc-829b-8b52f06f4b51",
     "storageId": "1013a4f2-39b5-48d7-a5ea-81216407d869"
+  }, 
+
+
+  {
+    "id": "b4f2ca45-8e16-47c5-90ef-0208e508da92",
+    "inventoryCountTemplateId": "b2eb727d-e8ba-4e4b-8d46-8895cde82dd2",
+    "storageId": "aeb961e3-4188-4419-9513-ceca6893e831"
   }
 ]
+

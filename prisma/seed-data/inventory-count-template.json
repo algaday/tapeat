@@ -35,6 +35,12 @@
     "type": "daily",
     "branchId": "a26a39ed-8400-4160-992e-f29d2cdfe926",
     "name": "Сборка ежедневно"
+  }, 
+  {
+    "id": "b2eb727d-e8ba-4e4b-8d46-8895cde82dd2",
+    "type": "daily",
+    "branchId": "a26a39ed-8400-4160-992e-f29d2cdfe926",
+    "name": "Тестовый шаблон"
   }
 ]
 
