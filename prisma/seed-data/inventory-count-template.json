@@ -17,4 +17,25 @@
     "branchId": "22a4e61e-46d4-40b7-b011-b9380198a51e",
     "name": "Сборка ежедневно"
   }
+,
+  {
+    "id": "a0c42a2b-9952-46bc-829b-8b52f06f4b51",
+    "type": "daily",
+    "branchId": "a26a39ed-8400-4160-992e-f29d2cdfe926",
+    "name": "Касса ежедневно"
+  },
+  {
+    "id": "a1250df8-7b82-4cfa-a4e9-61c9b3ab8d11",
+    "type": "daily",
+    "branchId": "a26a39ed-8400-4160-992e-f29d2cdfe926",
+    "name": "Жарка ежедневно"
+  },
+  {
+    "id": "a2eb727d-e8ba-4e4b-8d46-8895cde82dd1",
+    "type": "daily",
+    "branchId": "a26a39ed-8400-4160-992e-f29d2cdfe926",
+    "name": "Сборка ежедневно"
+  }
 ]
+
+
