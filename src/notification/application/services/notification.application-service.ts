@@ -73,7 +73,6 @@ export class NotificationApplicationService {
     const inventoryCountItems =
       params.inventoryCount.getProps().inventoryCountItems;
 
-    // Fetch ingredients and thresholds
     const ingredients = await this.ingredientRepository.findByIds(
       inventoryCountItems.map((item) => item.getProps().itemId),
     );
@@ -81,7 +80,7 @@ export class NotificationApplicationService {
     const ingredientThresholds = new Map(
       ingredients.map((ingredient) => [
         ingredient.id,
-        ingredient.minQuantityThreshold,
+        ingredient.minQuantityThreshold?.toNumber(),
       ]),
     );
 
@@ -93,7 +92,6 @@ export class NotificationApplicationService {
       );
     });
 
-    // Build the message
     const header = `📊 *Отчет остатка* "${params.templateName}"\n📍 *Филиал*: ${params.branchAddress}\n`;
 
     if (itemsUnderThreshold.length === 0) {
@@ -106,7 +104,11 @@ export class NotificationApplicationService {
           (i) => i.id === item.getProps().itemId,
         );
         const threshold = ingredientThresholds.get(item.getProps().itemId);
-        return `⚠️ *${ingredient?.name || 'Неизвестный ингредиент'}*: ${item.getProps().quantity} (Минимум: ${threshold ?? 'нет'})`;
+        const minPurchase =
+          threshold !== undefined
+            ? threshold - Number(item.getProps().quantity)
+            : 0;
+        return `⚠️ *${ingredient?.name || 'Неизвестный ингредиент'}*: ${item.getProps().quantity} г (Порог: ${threshold ?? 'нет'}, минимум закуп: ${minPurchase} г)`;
       })
       .join('\n');
 
