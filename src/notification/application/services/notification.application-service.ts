@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
+import { IngredientRepository } from 'src/ingredient/ingredient.repository';
 import { InventoryCountTemplateRepositoryPort } from 'src/inventory-count-template/domain/inventory-count-template-repository.port';
 import { InventoryCountTemplateNotFoundError } from 'src/inventory-count-template/errors/inventory-count-template-not-found.error';
 import { InventoryCountEntity } from 'src/inventory-count/domain/inventory-count.entity';
@@ -20,6 +21,7 @@ export class NotificationApplicationService {
     private inventoryCountTemplateRepository: InventoryCountTemplateRepositoryPort,
     private restaurantBranchService: RestaurantBranchService, // TODO: use repository later
     @InjectBot() private readonly bot: Telegraf, // TODO: move to telegram module
+    private readonly ingredientRepository: IngredientRepository,
   ) {}
 
   async notifyInventoryCountByTelegram({
@@ -52,19 +54,62 @@ export class NotificationApplicationService {
 
     await this.bot.telegram.sendMessage(
       telegramChat.getProps().chatIdAtTelegram,
-      this.generateInventoryCountMessage({
+      await this.generateInventoryCountMessage({
         inventoryCount,
         templateName: inventoryCountTemplate.getProps().name,
         branchAddress: restaurantBranch.address,
       }),
+      {
+        parse_mode: 'Markdown',
+      },
     );
   }
 
-  private generateInventoryCountMessage(params: {
+  private async generateInventoryCountMessage(params: {
     inventoryCount: InventoryCountEntity;
     templateName: string;
     branchAddress: string;
   }) {
-    return `Отчет остатка "${params.templateName}" по филиалу "${params.branchAddress}"`;
+    const inventoryCountItems =
+      params.inventoryCount.getProps().inventoryCountItems;
+
+    // Fetch ingredients and thresholds
+    const ingredients = await this.ingredientRepository.findByIds(
+      inventoryCountItems.map((item) => item.getProps().itemId),
+    );
+
+    const ingredientThresholds = new Map(
+      ingredients.map((ingredient) => [
+        ingredient.id,
+        ingredient.minQuantityThreshold,
+      ]),
+    );
+
+    const itemsUnderThreshold = inventoryCountItems.filter((item) => {
+      const threshold = ingredientThresholds.get(item.getProps().itemId);
+      return (
+        Number(item.getProps().quantity) <
+        (threshold !== undefined ? Number(threshold) : Infinity)
+      );
+    });
+
+    // Build the message
+    const header = `📊 *Отчет остатка* "${params.templateName}"\n📍 *Филиал*: ${params.branchAddress}\n`;
+
+    if (itemsUnderThreshold.length === 0) {
+      return `${header}\n✅ Все ингредиенты находятся в норме.`;
+    }
+
+    const itemsList = itemsUnderThreshold
+      .map((item) => {
+        const ingredient = ingredients.find(
+          (i) => i.id === item.getProps().itemId,
+        );
+        const threshold = ingredientThresholds.get(item.getProps().itemId);
+        return `⚠️ *${ingredient?.name || 'Неизвестный ингредиент'}*: ${item.getProps().quantity} (Минимум: ${threshold ?? 'нет'})`;
+      })
+      .join('\n');
+
+    return `${header}\n🚨 *Ингредиенты ниже минимального порога*:\n${itemsList}`;
   }
 }
