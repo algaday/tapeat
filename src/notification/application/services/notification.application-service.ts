@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
+import { translateUnit } from 'src/core/infra/utils';
 import { IngredientRepository } from 'src/ingredient/ingredient.repository';
 import { InventoryCountTemplateRepositoryPort } from 'src/inventory-count-template/domain/inventory-count-template-repository.port';
 import { InventoryCountTemplateNotFoundError } from 'src/inventory-count-template/errors/inventory-count-template-not-found.error';
@@ -108,7 +109,7 @@ export class NotificationApplicationService {
           threshold !== undefined
             ? threshold - Number(item.getProps().quantity)
             : 0;
-        return `⚠️ *${ingredient?.name || 'Неизвестный ингредиент'}*: ${item.getProps().quantity} г (Порог: ${threshold ?? 'нет'}, минимум закуп: ${minPurchase} г)`;
+        return `⚠️ *${ingredient?.name || 'Неизвестный ингредиент'}*: ${item.getProps().quantity} ${translateUnit(ingredient.unit)} (Порог: ${threshold ?? 'нет'} ${translateUnit(ingredient.unit)}, минимум закуп: ${minPurchase} ${translateUnit(ingredient.unit)})`;
       })
       .join('\n');
 
