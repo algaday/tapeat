@@ -26,6 +26,9 @@ const InventoryCountPrismaValidator =
           ingredient: true,
           recipe: true,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       },
     },
   });
