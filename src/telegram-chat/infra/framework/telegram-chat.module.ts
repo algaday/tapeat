@@ -5,6 +5,9 @@ import { TelegramChatMapper } from 'src/telegram-chat/application/mappers/telegr
 import { NotificationSubscriptionCodeController } from 'src/telegram-chat/presentation/notification-subscription-code.controller';
 import { TelegramChatApplicationService } from 'src/telegram-chat/application/services/telegram-chat.application-service';
 import { NotificationSubscriptionCodeModule } from 'src/notification-subscription-code/infra/framework/notification-subscription-code.module';
+import { TelegrafModule } from 'nestjs-telegraf';
+import { TelegramConfig } from 'src/config/telegram.config';
+import { RestaurantBranchModule } from 'src/restaurant-branch/restaurant-branch.module';
 
 const REPOSITORIES = [
   {
@@ -14,7 +17,13 @@ const REPOSITORIES = [
 ];
 
 @Module({
-  imports: [NotificationSubscriptionCodeModule],
+  imports: [
+    NotificationSubscriptionCodeModule,
+    RestaurantBranchModule,
+    TelegrafModule.forRoot({
+      token: TelegramConfig.TELEGRAM_BOT_TOKEN,
+    }),
+  ],
   controllers: [NotificationSubscriptionCodeController],
   providers: [
     TelegramChatMapper,
