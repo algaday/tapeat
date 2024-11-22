@@ -163,14 +163,14 @@ export class PrismaInventoryCountAdapter
     const { inventoryCountId, inventoryCountItem } = params;
 
     const props = inventoryCountItem.getProps();
-
     return {
       id: props.id,
       ingredientId:
         props.type === InventoryCountItemType.INGREDIENT ? props.itemId : null,
       recipeId:
         props.type === InventoryCountItemType.RECIPE ? props.itemId : null,
-      quantity: props.quantity ? new Decimal(props.quantity) : null,
+      quantity:
+        typeof props.quantity === 'number' ? new Decimal(props.quantity) : null,
       inventoryCountId,
       createdAt: props.createdAt,
       modifiedAt: props.updatedAt,
