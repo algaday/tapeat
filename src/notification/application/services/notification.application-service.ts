@@ -85,34 +85,60 @@ export class NotificationApplicationService {
       ]),
     );
 
-    const itemsUnderThreshold = inventoryCountItems.filter((item) => {
+    const groupedItems = inventoryCountItems.reduce((groups, item) => {
+      const storageName = item.getProps().storageName || 'Неизвестный склад';
       const threshold = ingredientThresholds.get(item.getProps().itemId);
-      return (
-        Number(item.getProps().quantity) <
-        (threshold !== undefined ? Number(threshold) : Infinity)
-      );
+      const quantity = Number(item.getProps().quantity);
+
+      if (threshold !== undefined && quantity < threshold) {
+        if (!groups[storageName]) {
+          groups[storageName] = [];
+        }
+        groups[storageName].push(item);
+      }
+
+      return groups;
+    }, {});
+
+    const sortedStorageNames = Object.keys(groupedItems).sort((a, b) =>
+      a.localeCompare(b),
+    );
+
+    const groupedMessage = sortedStorageNames.map((storageName) => {
+      const items = groupedItems[storageName].sort((a, b) => {
+        const nameA =
+          ingredients.find((i) => i.id === a.getProps().itemId)?.name || '';
+        const nameB =
+          ingredients.find((i) => i.id === b.getProps().itemId)?.name || '';
+        return nameA.localeCompare(nameB);
+      });
+
+      const itemsList = items
+        .map((item) => {
+          const ingredient = ingredients.find(
+            (i) => i.id === item.getProps().itemId,
+          );
+          const threshold = ingredientThresholds.get(item.getProps().itemId);
+          const quantity = Number(item.getProps().quantity);
+          const minPurchase = Math.max(threshold - quantity, 0);
+
+          return `⚠️ **${ingredient?.name || 'Неизвестный ингредиент'}**: *${quantity} ${translateUnit(ingredient?.unit)}* (Порог: *${threshold} ${translateUnit(ingredient?.unit)}*, Минимум закуп: *${minPurchase} ${translateUnit(ingredient?.unit)}*)`;
+        })
+        .join('\n');
+
+      return `📦 *Склад*: **${storageName}**\n${itemsList}`;
     });
 
-    const header = `📊 *Отчет остатка* "${params.templateName}"\n📍 *Филиал*: ${params.branchAddress}\n`;
+    const staffName = params.inventoryCount.getProps().staffName;
+    const header =
+      `📊 *Отчет остатка* "${params.templateName}"\n` +
+      `📍 *Филиал*: ${params.branchAddress}\n` +
+      `👨‍🍳 *Ответственный сотрудник*: ${staffName}\n`;
 
-    if (itemsUnderThreshold.length === 0) {
-      return `${header}\n✅ Все ингредиенты находятся в норме.`;
-    }
+    const finalMessage = groupedMessage.length
+      ? `${header}\n🚨 *Ингредиенты ниже минимального порога*:\n\n${groupedMessage.join('\n\n')}`
+      : `${header}\n✅ Все ингредиенты находятся в норме.`;
 
-    const itemsList = itemsUnderThreshold
-      .map((item) => {
-        const ingredient = ingredients.find(
-          (i) => i.id === item.getProps().itemId,
-        );
-        const threshold = ingredientThresholds.get(item.getProps().itemId);
-        const minPurchase =
-          threshold !== undefined
-            ? threshold - Number(item.getProps().quantity)
-            : 0;
-        return `⚠️ *${ingredient?.name || 'Неизвестный ингредиент'}*: ${item.getProps().quantity} ${translateUnit(ingredient.unit)} (Порог: ${threshold ?? 'нет'} ${translateUnit(ingredient.unit)}, минимум закуп: ${minPurchase} ${translateUnit(ingredient.unit)})`;
-      })
-      .join('\n');
-
-    return `${header}\n🚨 *Ингредиенты ниже минимального порога*:\n${itemsList}`;
+    return finalMessage;
   }
 }
