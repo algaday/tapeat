@@ -1,8 +1,9 @@
 import { Type } from 'class-transformer';
 import {
+  IsDefined,
   IsEnum,
+  IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -58,8 +59,9 @@ export class InventoryCountItemDto {
   type: InventoryCountItemType;
 
   @IsNumber()
-  @IsOptional()
-  quantity?: number;
+  @IsNotEmpty()
+  @IsDefined()
+  quantity: number | null;
 
   @IsString()
   storageName: string;
