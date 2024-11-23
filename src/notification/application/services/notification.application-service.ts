@@ -78,6 +78,11 @@ export class NotificationApplicationService {
       inventoryCountItems.map((item) => item.getProps().itemId),
     );
 
+    const inventoryCountTemplate =
+      await this.inventoryCountTemplateRepository.findById(
+        params.inventoryCount.getProps().inventoryCountTemplateId,
+      );
+
     const ingredientThresholds = new Map(
       ingredients.map((ingredient) => [
         ingredient.id,
@@ -130,14 +135,16 @@ export class NotificationApplicationService {
     });
 
     const staffName = params.inventoryCount.getProps().staffName;
+    const inventoryCountLink = `${process.env.FRONTEND_HOST}/restaurants/${inventoryCountTemplate.getProps().branchId}/inventory-counts/${params.inventoryCount.getId()}`;
+
     const header =
       `📊 *Отчет остатка* "${params.templateName}"\n` +
       `📍 *Филиал*: ${params.branchAddress}\n` +
       `👨‍🍳 *Ответственный сотрудник*: ${staffName}\n`;
 
     const finalMessage = groupedMessage.length
-      ? `${header}\n🚨 *Ингредиенты ниже минимального порога*:\n\n${groupedMessage.join('\n\n')}`
-      : `${header}\n✅ Все ингредиенты находятся в норме.`;
+      ? `${header}\n🚨 *Ингредиенты ниже минимального порога*:\n\n${groupedMessage.join('\n\n')}\n\n[📥 Посмотреть полный отчет в системе](${inventoryCountLink})`
+      : `${header}\n✅ Все ингредиенты находятся в норме.\n\n[📥 Посмотреть полный отчет в системе](${inventoryCountLink})`;
 
     return finalMessage;
   }
