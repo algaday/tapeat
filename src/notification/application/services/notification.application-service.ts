@@ -70,80 +70,72 @@ export class NotificationApplicationService {
     inventoryCount: InventoryCountEntity;
     templateName: string;
     branchAddress: string;
-  }) {
-    const inventoryCountItems =
-      params.inventoryCount.getProps().inventoryCountItems;
+  }): Promise<string> {
+    const { inventoryCount, templateName, branchAddress } = params;
 
-    const ingredients = await this.ingredientRepository.findByIds(
-      inventoryCountItems.map((item) => item.getProps().itemId),
-    );
+    const { inventoryCountItems, staffName, inventoryCountTemplateId } =
+      inventoryCount.getProps();
 
-    const inventoryCountTemplate =
-      await this.inventoryCountTemplateRepository.findById(
-        params.inventoryCount.getProps().inventoryCountTemplateId,
-      );
+    const [ingredients, inventoryCountTemplate] = await Promise.all([
+      this.ingredientRepository.findByIds(
+        inventoryCountItems.map((item) => item.getProps().itemId),
+      ),
+      this.inventoryCountTemplateRepository.findById(inventoryCountTemplateId),
+    ]);
+
+    if (!inventoryCountTemplate) {
+      throw new InventoryCountTemplateNotFoundError();
+    }
 
     const ingredientThresholds = new Map(
       ingredients.map((ingredient) => [
         ingredient.id,
-        ingredient.minQuantityThreshold?.toNumber(),
+        ingredient.minQuantityThreshold.toNumber(),
       ]),
     );
 
-    const groupedItems = inventoryCountItems.reduce((groups, item) => {
-      const storageName = item.getProps().storageName || 'Неизвестный склад';
-      const threshold = ingredientThresholds.get(item.getProps().itemId);
-      const quantity = Number(item.getProps().quantity);
+    const groupedItems = inventoryCountItems.reduce<Record<string, string[]>>(
+      (groups, item) => {
+        const {
+          storageName = 'Неизвестный склад',
+          itemId,
+          quantity,
+        } = item.getProps();
+        const threshold = ingredientThresholds.get(itemId);
 
-      if (threshold !== undefined && quantity < threshold) {
-        if (!groups[storageName]) {
-          groups[storageName] = [];
+        if (quantity < threshold) {
+          const ingredient = ingredients.find((i) => i.id === itemId);
+          const minPurchase = Math.max(threshold - quantity, 0);
+          const unit = translateUnit(ingredient.unit);
+          const itemMessage = `⚠️ **${ingredient.name}**: *${quantity} ${unit}* (Порог: *${threshold} ${unit}*, Минимум закуп: *${minPurchase} ${unit}*)`;
+
+          if (!groups[storageName]) {
+            groups[storageName] = [];
+          }
+          groups[storageName].push(itemMessage);
         }
-        groups[storageName].push(item);
-      }
 
-      return groups;
-    }, {});
-
-    const sortedStorageNames = Object.keys(groupedItems).sort((a, b) =>
-      a.localeCompare(b),
+        return groups;
+      },
+      {},
     );
 
-    const groupedMessage = sortedStorageNames.map((storageName) => {
-      const items = groupedItems[storageName].sort((a, b) => {
-        const nameA =
-          ingredients.find((i) => i.id === a.getProps().itemId)?.name || '';
-        const nameB =
-          ingredients.find((i) => i.id === b.getProps().itemId)?.name || '';
-        return nameA.localeCompare(nameB);
-      });
+    const groupedMessage = Object.entries(groupedItems)
+      .map(
+        ([storageName, items]) =>
+          `📦 *Склад*: **${storageName}**\n${items.join('\n')}`,
+      )
+      .join('\n\n');
 
-      const itemsList = items
-        .map((item) => {
-          const ingredient = ingredients.find(
-            (i) => i.id === item.getProps().itemId,
-          );
-          const threshold = ingredientThresholds.get(item.getProps().itemId);
-          const quantity = Number(item.getProps().quantity);
-          const minPurchase = Math.max(threshold - quantity, 0);
-
-          return `⚠️ **${ingredient?.name || 'Неизвестный ингредиент'}**: *${quantity} ${translateUnit(ingredient?.unit)}* (Порог: *${threshold} ${translateUnit(ingredient?.unit)}*, Минимум закуп: *${minPurchase} ${translateUnit(ingredient?.unit)}*)`;
-        })
-        .join('\n');
-
-      return `📦 *Склад*: **${storageName}**\n${itemsList}`;
-    });
-
-    const staffName = params.inventoryCount.getProps().staffName;
-    const inventoryCountLink = `${process.env.FRONTEND_HOST}/restaurants/${inventoryCountTemplate.getProps().branchId}/inventory-counts/${params.inventoryCount.getId()}`;
+    const inventoryCountLink = `${process.env.FRONTEND_HOST}/restaurants/${inventoryCountTemplate.getProps().branchId}/inventory-counts/${inventoryCount.getId()}`;
 
     const header =
-      `📊 *Отчет остатка* "${params.templateName}"\n` +
-      `📍 *Филиал*: ${params.branchAddress}\n` +
+      `📊 *Отчет остатка* "${templateName}"\n` +
+      `📍 *Филиал*: ${branchAddress}\n` +
       `👨‍🍳 *Ответственный сотрудник*: ${staffName}\n`;
 
-    const finalMessage = groupedMessage.length
-      ? `${header}\n🚨 *Ингредиенты ниже минимального порога*:\n\n${groupedMessage.join('\n\n')}\n\n[📥 Посмотреть полный отчет в системе](${inventoryCountLink})`
+    const finalMessage = groupedMessage
+      ? `${header}\n🚨 *Ингредиенты ниже минимального порога*:\n\n${groupedMessage}\n\n[📥 Посмотреть полный отчет в системе](${inventoryCountLink})`
       : `${header}\n✅ Все ингредиенты находятся в норме.\n\n[📥 Посмотреть полный отчет в системе](${inventoryCountLink})`;
 
     return finalMessage;
