@@ -26,9 +26,7 @@ const InventoryCountPrismaValidator =
           ingredient: true,
           recipe: true,
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: [{ ingredient: { name: 'asc' } }, { recipe: { name: 'asc' } }],
       },
     },
   });
