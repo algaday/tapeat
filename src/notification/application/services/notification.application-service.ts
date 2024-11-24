@@ -105,7 +105,10 @@ export class NotificationApplicationService {
 
         if (quantity < threshold) {
           const ingredient = ingredients.find((i) => i.id === itemId);
-          const minPurchase = Math.max(threshold - quantity, 0);
+          const minPurchase = Math.max(
+            0,
+            parseFloat((threshold - quantity).toFixed(2)),
+          );
           const unit = translateUnit(ingredient.unit);
           const itemMessage = `⚠️ **${ingredient.name}**: *${quantity} ${unit}* (Порог: *${threshold} ${unit}*, Минимум закуп: *${minPurchase} ${unit}*)`;
 
