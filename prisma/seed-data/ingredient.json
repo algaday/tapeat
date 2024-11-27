@@ -144,7 +144,7 @@
     "name": "Булочки",
     "yield": "1.0000",
     "unit": "piece",
-    "minQuantityThreshold": "200"
+    "minQuantityThreshold": "250"
   },
   {
     "id": "d4d627fb-a72a-4a7f-9634-e4e006cc7139",
@@ -502,5 +502,20 @@
     "yield": "1.0000",
     "unit": "piece",
     "minQuantityThreshold": "3"
+  }, 
+
+  {
+    "id": "0ff21bd6-95c2-46f4-9133-f83bcb4b4ea1",
+    "name": "Тортилья 30см",
+    "yield": "1.0000",
+    "unit": "piece",
+    "minQuantityThreshold": "50"
+  },
+  {
+    "id": "0ff21bd6-95c2-46f4-9133-f83bcb4b4eab",
+    "name": "Тортилья 20см",
+    "yield": "1.0000",
+    "unit": "piece",
+    "minQuantityThreshold": "50"
   }
 ]
