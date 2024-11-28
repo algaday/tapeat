@@ -200,32 +200,18 @@
   {
     "id": "3450a67d-12de-4272-a248-fb9a8fe67f35",
     "storageId": "56879b0a-7255-43bf-8d09-498746deaad8",
-    "ingredientId": "0ff21bd6-95c2-46f4-9133-f83bcb4b4eaa",
+    "ingredientId": "0ff21bd6-95c2-46f4-9133-f83bcb4b4eab",
     "recipeId": null
   },
-
   {
-    "id": "3450a67d-12de-4272-a248-fb9a8fe67f35",
+    "id": "3450a67d-12de-4272-a248-fb9a8fe67f36",
     "storageId": "56879b0a-7255-43bf-8d09-498746deaad8",
     "ingredientId": "0ff21bd6-95c2-46f4-9133-f83bcb4b4ea1",
     "recipeId": null
   },{
-    "id": "3450a67d-12de-4272-a248-fb9a8fe67f35",
+    "id": "3450a67d-12de-4272-a248-fb9a8fe67f37",
     "storageId": "56879b0a-7255-43bf-8d09-498746deaad8",
-    "ingredientId": "0ff21bd6-95c2-46f4-9133-f83bcb4b4eab",
-    "recipeId": null
-  },
-
-  {
-    "id": "43424262-e96b-4e0a-920c-62f0dd4a2e48",
-    "storageId": "56879b0a-7255-43bf-8d09-498746deaad8",
-    "ingredientId": "d4d627fb-a72a-4a7f-9634-e4e006cc7139",
-    "recipeId": null
-  },
-  {
-    "id": "b74c60ba-2518-4c9a-bcad-48c532b417d9",
-    "storageId": "56879b0a-7255-43bf-8d09-498746deaad8",
-    "ingredientId": "9d4e6a44-2fb9-4519-8f51-aeee2308fde7",
+    "ingredientId": "0ff21bd6-95c2-46f4-9133-f83bcb4b4eaa",
     "recipeId": null
   },
   {
