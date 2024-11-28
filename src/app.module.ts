@@ -13,7 +13,11 @@ import { ModificationModule } from './modification/modification.module';
 import { OrderModule } from './order/order.module';
 import { DeliveryFeeTemplateModule } from './delivery-fee-template/delivery-fee-template.module';
 import { CategoryModule } from './category/category.module';
+import { IngredientModule } from './ingredient/ingredient.module';
+import { RecipeModule } from './recipe/infra/framework/recipe.module';
+import { StorageModule } from './storage/storage.module';
 import { CustomerModule } from './customer/infra/framework/customer.module';
+import { InventoryCountTemplateModule } from './inventory-count-template/infra/framework/inventory-count-template.module';
 
 @Module({
   imports: [
@@ -34,6 +38,10 @@ import { CustomerModule } from './customer/infra/framework/customer.module';
     CustomerModule,
     DeliveryFeeTemplateModule,
     CategoryModule,
+    IngredientModule,
+    RecipeModule,
+    StorageModule,
+    InventoryCountTemplateModule,
   ],
 })
 export class AppModule {}
