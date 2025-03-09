@@ -32,6 +32,20 @@ services:
     networks:
       - tapeat
 
+  tapeat-prisma:
+    image: tapeat
+    command: yarn prisma studio
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+    ports:
+      - 5555:5555
+    env_file:
+      - .env
+    networks:
+      - tapeat
+
 volumes:
   tapeat-postgres-data:
 
