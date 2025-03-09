@@ -12,6 +12,8 @@ USER node
 
 FROM node:20.18-alpine AS build
 
+RUN apk add --no-cache openssl
+
 WORKDIR /usr/src/app
 
 COPY --chown=node:node --from=package /usr/src/app/package.json ./
