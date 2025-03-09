@@ -109,7 +109,7 @@ export class InventoryCountMapper {
 
     return {
       id: entity.getId(),
-      quantity: props.quantity || null,
+      quantity: props.quantity,
       type: props.type,
       storageName: props.storageName,
       name: props.name,
@@ -124,7 +124,7 @@ export class InventoryCountMapper {
       id: record.id,
       props: {
         itemId: record.ingredientId || record.recipeId,
-        quantity: Number(record.quantity),
+        quantity: record.quantity === null ? null : record.quantity.toNumber(),
         type: record.ingredientId
           ? InventoryCountItemType.INGREDIENT
           : InventoryCountItemType.RECIPE,

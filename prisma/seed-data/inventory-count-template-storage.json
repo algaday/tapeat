@@ -111,5 +111,19 @@
     "inventoryCountTemplateId": "b2eb727d-e8ba-4e4b-8d46-8895cde82dd2",
     "storageId": "aeb961e3-4188-4419-9513-ceca6893e831"
   }
+,
+  {
+    "id": "b4f2ca45-8e16-47c5-90ef-0208e508da93",
+    "inventoryCountTemplateId": "a2eb727d-e8ba-4e4b-8d46-8895cde82dd1",
+    "storageId": "56879b0a-7255-43bf-8d09-498746deaad8"
+  }
+,
+  {
+    "id": "b4f2ca45-8e16-47c5-90ef-0208e508da94",
+    "inventoryCountTemplateId": "c2eb727d-e8ba-4e4b-8d46-8895cde82dde",
+    "storageId": "56879b0a-7255-43bf-8d09-498746deaad8"
+  }
+
+  
 ]
 
