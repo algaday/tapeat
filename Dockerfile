@@ -1,5 +1,7 @@
 FROM node:20.18-alpine AS package
 
+RUN apk add --no-cache openssl
+
 WORKDIR /usr/src/app
 
 COPY --chown=node:node package.json yarn.lock ./
@@ -33,6 +35,8 @@ RUN yarn cache clean
 USER node
 
 FROM node:20.18-alpine AS production
+
+RUN apk add --no-cache openssl
 
 WORKDIR /usr/src/app
 
