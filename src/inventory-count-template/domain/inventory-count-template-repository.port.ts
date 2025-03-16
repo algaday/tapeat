@@ -1,4 +1,5 @@
 import { IRepository } from 'src/core/domain/repository.interface';
+import { TemplateStoragesWithItemsDto } from '../presentation/dto/template-storages-with-items.dto';
 import { InventoryCountTemplateEntity } from './inventory-count-template.entity';
 
 export interface InventoryCountTemplateRepositoryPort
@@ -7,6 +8,16 @@ export interface InventoryCountTemplateRepositoryPort
     inventoryCountTemplateId: string,
     storageId: string,
   ): Promise<void>;
+
+  findTemplateStoragesWithItems(
+    inventoryCountTemplateId: string,
+  ): Promise<TemplateStoragesWithItemsDto>;
+
+  findBranchInventoryCountTemplates(
+    branchId: string,
+  ): Promise<InventoryCountTemplateEntity[]>;
+
+  findByIds(ids: string[]): Promise<InventoryCountTemplateEntity[]>;
 }
 
 export const InventoryCountTemplateRepositoryPort: unique symbol = Symbol(

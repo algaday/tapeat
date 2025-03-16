@@ -1,3 +1,5 @@
+import { idFactory } from './id.factory';
+
 export type CreateEntityProps<T> = {
   id?: string;
   createdAt?: Date;
@@ -24,7 +26,7 @@ export abstract class Entity<EntityProps> {
     props,
   }: CreateEntityProps<EntityProps>) {
     const now = new Date();
-    this.id = id;
+    this.id = id || idFactory();
     this.createdAt = createdAt || now;
     this.updatedAt = updatedAt || now;
 

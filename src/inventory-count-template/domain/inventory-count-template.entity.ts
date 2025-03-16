@@ -3,7 +3,8 @@ import { Entity } from 'src/core/domain/entity.base';
 interface Props {
   templateType: InventoryCountTemplateType;
   branchId: string;
-  storageIds?: string[]; //todo: refactor with storage entities later
+  storages: { id: string; name: string }[]; //todo: refactor with storage entities later
+  name: string;
 }
 
 export enum InventoryCountTemplateType {

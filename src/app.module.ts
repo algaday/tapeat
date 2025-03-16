@@ -18,6 +18,11 @@ import { RecipeModule } from './recipe/infra/framework/recipe.module';
 import { StorageModule } from './storage/storage.module';
 import { CustomerModule } from './customer/infra/framework/customer.module';
 import { InventoryCountTemplateModule } from './inventory-count-template/infra/framework/inventory-count-template.module';
+import { InventoryCountModule } from './inventory-count/infra/framework/inventory-count.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { TelegramChatModule } from './telegram-chat/infra/framework/telegram-chat.module';
+import { NotificationSubscriptionCodeModule } from './notification-subscription-code/infra/framework/notification-subscription-code.module';
+import { NotificationModule } from './notification/infra/framework/notification.module';
 
 @Module({
   imports: [
@@ -42,6 +47,11 @@ import { InventoryCountTemplateModule } from './inventory-count-template/infra/f
     RecipeModule,
     StorageModule,
     InventoryCountTemplateModule,
+    InventoryCountModule,
+    TelegramModule,
+    TelegramChatModule,
+    NotificationSubscriptionCodeModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

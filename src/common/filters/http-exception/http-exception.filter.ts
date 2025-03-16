@@ -7,7 +7,7 @@ import {
 import { Response } from 'express';
 import { ApplicationError } from 'src/errors';
 
-@Catch(HttpException)
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -15,8 +15,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     const request = ctx.getRequest<Request>();
-
-    const status = exception.getStatus();
 
     if (exception instanceof ApplicationError) {
       const status = 400;
@@ -29,8 +27,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
       });
     }
 
-    return response.status(status).json({
-      statusCode: status,
+    console.error(exception);
+
+    return response.status(500).json({
+      statusCode: 500,
       message: exception,
       timestamp: new Date().toISOString(),
     });

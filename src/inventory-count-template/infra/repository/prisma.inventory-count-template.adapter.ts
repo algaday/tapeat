@@ -3,19 +3,25 @@
 
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { Unit } from 'src/constants/enums/unit.enum';
 import { RepositoryBase } from 'src/core/domain/repository.base';
 import {
-  PaginatedQueryParams,
   Paginated,
+  PaginatedQueryParams,
 } from 'src/core/domain/repository.interface';
 import { InventoryCountTemplateMapper } from 'src/inventory-count-template/application/mappers/inventory-count-template.mapper';
 import { InventoryCountTemplateRepositoryPort } from 'src/inventory-count-template/domain/inventory-count-template-repository.port';
-import { InventoryCountTemplateEntity } from 'src/inventory-count-template/domain/inventory-count-template.entity';
+import {
+  InventoryCountTemplateEntity,
+  InventoryCountTemplateType,
+} from 'src/inventory-count-template/domain/inventory-count-template.entity';
+import { InventoryCountTemplateNotFoundError } from 'src/inventory-count-template/errors/inventory-count-template-not-found.error';
+import { TemplateStoragesWithItemsDto } from 'src/inventory-count-template/presentation/dto/template-storages-with-items.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 const InventoryCountTemplatePrismaValidator =
   Prisma.validator<Prisma.InventoryCountTemplateDefaultArgs>()({
-    include: { inventoryCountTemplateStorages: true },
+    include: { storages: { include: { storage: true } } },
   });
 
 export type InventoryCountTemplateDbRecord =
@@ -33,6 +39,80 @@ export class PrismaInventoryCountTemplateAdapter
     private readonly mapper: InventoryCountTemplateMapper,
   ) {
     super(prisma);
+  }
+  async findByIds(ids: string[]): Promise<InventoryCountTemplateEntity[]> {
+    const templates = await this.prisma.inventoryCountTemplate.findMany({
+      ...InventoryCountTemplatePrismaValidator,
+      where: { id: { in: ids } },
+    });
+
+    return templates.map((template) => this.mapper.toDomain(template));
+  }
+  async findBranchInventoryCountTemplates(
+    branchId: string,
+  ): Promise<InventoryCountTemplateEntity[]> {
+    const templates = await this.prisma.inventoryCountTemplate.findMany({
+      ...InventoryCountTemplatePrismaValidator,
+      where: { branchId },
+    });
+
+    return templates.map((template) => this.mapper.toDomain(template));
+  }
+
+  //todo: refactor
+  async findTemplateStoragesWithItems(
+    inventoryCountTemplateId: string,
+  ): Promise<TemplateStoragesWithItemsDto> {
+    const detailedTemplate =
+      await this.prisma.inventoryCountTemplate.findUnique({
+        where: { id: inventoryCountTemplateId },
+        include: {
+          storages: {
+            include: {
+              storage: {
+                include: {
+                  items: {
+                    include: { ingredient: true, recipe: true },
+                  },
+                },
+              },
+            },
+          },
+          branch: true,
+        },
+      });
+
+    if (!detailedTemplate) {
+      throw new InventoryCountTemplateNotFoundError(
+        `InventoryCountTemplate with ID ${inventoryCountTemplateId} not found.`,
+      );
+    }
+
+    return {
+      ...detailedTemplate,
+      type: detailedTemplate.type as InventoryCountTemplateType,
+      id: detailedTemplate.id,
+      branchName: detailedTemplate.branch.address,
+      storages: detailedTemplate.storages.map((storage) => ({
+        id: storage.id,
+        storageId: storage.storageId,
+        inventoryCountTemplateId: storage.inventoryCountTemplateId,
+        storage: {
+          id: storage.id,
+          name: storage.storage.name,
+          items: storage.storage.items.map((item) => ({
+            id: item.id,
+            storageId: item.storageId,
+            recipeId: item.recipeId,
+            ingredientId: item.ingredientId,
+            name: item.ingredientId ? item.ingredient.name : item.recipe.name,
+            unit: item.ingredientId
+              ? (item.ingredient.unit as Unit)
+              : (item.recipe.unit as Unit),
+          })),
+        },
+      })),
+    };
   }
 
   async create(entity: InventoryCountTemplateEntity): Promise<void> {
@@ -52,10 +132,15 @@ export class PrismaInventoryCountTemplateAdapter
 
   mapToInventoryCountTemplateDbRecord(
     entity: InventoryCountTemplateEntity,
-  ): Omit<InventoryCountTemplateDbRecord, 'inventoryCountTemplateStorages'> {
+  ): Omit<InventoryCountTemplateDbRecord, 'storages'> {
     const props = entity.getProps();
 
-    return { branchId: props.branchId, id: props.id, type: props.templateType };
+    return {
+      branchId: props.branchId,
+      id: props.id,
+      type: props.templateType,
+      name: props.name,
+    };
   }
 
   async findById(id: string): Promise<InventoryCountTemplateEntity | null> {

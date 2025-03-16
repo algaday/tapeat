@@ -16,18 +16,22 @@ export class InventoryCountTemplateMapper {
       props: {
         branchId: record.branchId,
         templateType: record.type as InventoryCountTemplateType,
-        storageIds: record.inventoryCountTemplateStorages.map(
-          (storage) => storage.storageId,
-        ),
+        storages: record.storages.map(({ storage }) => ({
+          id: storage.id,
+          name: storage.name,
+        })),
+        name: record.name,
       },
     });
   }
+
   toUi(entity: InventoryCountTemplateEntity): InventoryCountTemplateDto {
     const props = entity.getProps();
     return {
       id: props.id,
       templateType: props.templateType,
-      storageIds: props.storageIds,
+      storages: props.storages,
+      name: props.name,
     };
   }
 }
